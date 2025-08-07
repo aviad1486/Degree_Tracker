@@ -1,5 +1,4 @@
-import type { Student } from "./components/Student";
-import StudentRow from "./StudentRow";
+import type { Student } from "../components/Student";
 
 const students: Student[] = [
   {
