@@ -5,10 +5,12 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useNavigate } from 'react-router-dom';
 import type { Student } from '../components/Student';
 
 const StudentList: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('students') || '[]');
@@ -22,8 +24,7 @@ const StudentList: React.FC = () => {
   };
 
   const handleEdit = (id: string) => {
-    // TODO: navigate to edit form or open dialog
-    console.log(`Edit student ${id}`);
+    navigate(`/students/edit/${id}`);
   };
 
   return (
