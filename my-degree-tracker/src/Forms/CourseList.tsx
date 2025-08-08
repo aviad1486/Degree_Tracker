@@ -5,19 +5,12 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-
-// Interface should match CourseFormData plus createdAt and parsed types
-interface Course {
-  courseCode: string;
-  courseName: string;
-  credits: number;
-  semester: 'A' | 'B' | 'C';
-  assignments: string[];
-  createdAt: string;
-}
+import { useNavigate } from 'react-router-dom';
+import type { Course } from '../components/Course';
 
 const CourseList: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('courses') || '[]');
@@ -31,8 +24,7 @@ const CourseList: React.FC = () => {
   };
 
   const handleEdit = (code: string) => {
-    console.log(`Edit course ${code}`);
-    // TODO: navigate to edit form or open dialog
+    navigate(`/courses/edit/${code}`);
   };
 
   return (
