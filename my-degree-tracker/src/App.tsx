@@ -91,14 +91,27 @@ export default function App() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
           <Routes>
+            {/* Student routes */}
             <Route path="/students/new" element={<StudentForm />} />
+            <Route path="/students/edit/:id" element={<StudentForm />} />
             <Route path="/students" element={<StudentList />} />
+
+            {/* Course routes */}
             <Route path="/courses/new" element={<CourseForm />} />
+            <Route path="/courses/edit/:courseCode" element={<CourseForm />} />
             <Route path="/courses" element={<CourseList />} />
+
+            {/* StudentCourse routes */}
             <Route path="/student-courses/new" element={<StudentCourseForm />} />
+            <Route path="/student-courses/edit/:index" element={<StudentCourseForm />} />
             <Route path="/student-courses" element={<StudentCourseList />} />
+
+            {/* Program routes */}
             <Route path="/programs/new" element={<ProgramForm />} />
+            <Route path="/programs/edit/:name" element={<ProgramForm />} />
             <Route path="/programs" element={<ProgramList />} />
+
+            {/* Default */}
             <Route path="*" element={<StudentList />} />
           </Routes>
         </Box>
