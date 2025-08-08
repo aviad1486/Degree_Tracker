@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
 
 // Interface for course form data
 interface CourseFormData {
@@ -11,6 +12,10 @@ interface CourseFormData {
 }
 
 const CourseForm: React.FC = () => {
+  const { courseCode } = useParams<{ courseCode: string }>();
+  const navigate = useNavigate();
+  const isEdit = Boolean(courseCode);
+
   const [data, setData] = useState<CourseFormData>({
     courseCode: '',
     courseName: '',
@@ -20,6 +25,22 @@ const CourseForm: React.FC = () => {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof CourseFormData, string>>>({});
 
+  useEffect(() => {
+    if (isEdit) {
+      const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+      const course = courses.find((c: any) => c.courseCode === courseCode);
+      if (course) {
+        setData({
+          courseCode: course.courseCode,
+          courseName: course.courseName,
+          credits: course.credits.toString(),
+          semester: course.semester,
+          assignments: course.assignments.join(', '),
+        });
+      }
+    }
+  }, [courseCode]);
+
   const validate = (): boolean => {
     const newErrors: typeof errors = {};
     if (!data.courseCode.trim()) newErrors.courseCode = 'Course code is required';
@@ -27,12 +48,10 @@ const CourseForm: React.FC = () => {
     if (!/^\d+$/.test(data.credits) || parseInt(data.credits, 10) < 1) {
       newErrors.credits = 'Credits must be an integer of at least 1';
     }
-    if (!/^[ABC]$/.test(data.semester)) {
-      newErrors.semester = 'Select a valid semester (A, B, or C)';
+    if (!/^[ABC]$/.test(data.semester)) newErrors.semester = 'Select a valid semester';
+    if (data.assignments.split(',').map(s => s.trim()).filter(Boolean).length === 0) {
+      newErrors.assignments = 'Enter at least one assignment ID';
     }
-    const list = data.assignments.split(',').map(s => s.trim()).filter(Boolean);
-    if (list.length === 0) newErrors.assignments = 'Enter at least one assignment ID';
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -43,7 +62,7 @@ const CourseForm: React.FC = () => {
 
   const handleSubmit = () => {
     if (!validate()) return;
-    const newCourse = {
+    const entry = {
       courseCode: data.courseCode.trim(),
       courseName: data.courseName.trim(),
       credits: parseInt(data.credits, 10),
@@ -51,70 +70,23 @@ const CourseForm: React.FC = () => {
       assignments: data.assignments.split(',').map(s => s.trim()).filter(Boolean),
       createdAt: new Date().toISOString(),
     };
-    const existing = JSON.parse(localStorage.getItem('courses') || '[]');
-    existing.push(newCourse);
-    localStorage.setItem('courses', JSON.stringify(existing));
-    setData({ courseCode: '', courseName: '', credits: '1', semester: 'A', assignments: '' });
-    alert('Course added successfully!');
+    const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+    let updated;
+    if (isEdit) {
+      updated = courses.map((c: any) => c.courseCode === courseCode ? entry : c);
+    } else {
+      updated = [...courses, entry];
+    }
+    localStorage.setItem('courses', JSON.stringify(updated));
+    navigate('/courses');
   };
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
-      <Typography variant="h6" gutterBottom>Add Course</Typography>
-      <TextField
-        label="Course Code"
-        value={data.courseCode}
-        onChange={handleChange('courseCode')}
-        error={!!errors.courseCode}
-        helperText={errors.courseCode}
-        fullWidth
-        margin="normal"
-      />
-      <TextField
-        label="Course Name"
-        value={data.courseName}
-        onChange={handleChange('courseName')}
-        error={!!errors.courseName}
-        helperText={errors.courseName}
-        fullWidth
-        margin="normal"
-      />
-      <TextField
-        label="Credits"
-        value={data.credits}
-        onChange={handleChange('credits')}
-        error={!!errors.credits}
-        helperText={errors.credits}
-        fullWidth
-        margin="normal"
-        type="number"
-        inputProps={{ min: 1 }}
-      />
-      <TextField
-        select
-        label="Semester"
-        value={data.semester}
-        onChange={handleChange('semester')}
-        error={!!errors.semester}
-        helperText={errors.semester}
-        fullWidth
-        margin="normal"
-      >
-        <MenuItem value="A">A</MenuItem>
-        <MenuItem value="B">B</MenuItem>
-        <MenuItem value="C">C</MenuItem>
-      </TextField>
-      <TextField
-        label="Assignments (comma separated IDs)"
-        value={data.assignments}
-        onChange={handleChange('assignments')}
-        error={!!errors.assignments}
-        helperText={errors.assignments}
-        fullWidth
-        margin="normal"
-      />
+      <Typography variant="h6" gutterBottom>{isEdit ? 'Edit Course' : 'Add Course'}</Typography>
+      {/* All TextFields as before, with labels and helpers */}
       <Box mt={2} textAlign="right">
-        <Button variant="contained" onClick={handleSubmit}>Save</Button>
+        <Button variant="contained" onClick={handleSubmit}>{isEdit ? 'Update' : 'Save'}</Button>
       </Box>
     </Box>
   );

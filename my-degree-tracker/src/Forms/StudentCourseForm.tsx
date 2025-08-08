@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
 
 // Interface for student-course form data
 interface StudentCourseFormData {
@@ -12,6 +13,10 @@ interface StudentCourseFormData {
 }
 
 const StudentCourseForm: React.FC = () => {
+  const { index } = useParams<{ index: string }>();
+  const navigate = useNavigate();
+  const isEdit = index !== undefined;
+
   const [data, setData] = useState<StudentCourseFormData>({
     studentId: '',
     courseCode: '',
@@ -22,9 +27,26 @@ const StudentCourseForm: React.FC = () => {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof StudentCourseFormData, string>>>({});
 
+  useEffect(() => {
+    if (isEdit) {
+      const records: any[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
+      const idx = parseInt(index as string, 10);
+      const record = records[idx];
+      if (record) {
+        setData({
+          studentId: record.studentId,
+          courseCode: record.courseCode,
+          grade: record.grade.toString(),
+          semester: record.semester,
+          year: record.year.toString(),
+          retaken: record.retaken,
+        });
+      }
+    }
+  }, [index]);
+
   const validate = (): boolean => {
     const newErrors: typeof errors = {};
-
     if (!/^\d{9}$/.test(data.studentId)) newErrors.studentId = 'Student ID must be exactly 9 digits';
     if (!data.courseCode.trim()) newErrors.courseCode = 'Course code is required';
     if (!/^\d+(\.\d+)?$/.test(data.grade) || Number(data.grade) < 0 || Number(data.grade) > 100) {
@@ -34,7 +56,6 @@ const StudentCourseForm: React.FC = () => {
     if (!/^\d{4}$/.test(data.year) || Number(data.year) < 2000) {
       newErrors.year = 'Enter a valid 4-digit year';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -48,7 +69,7 @@ const StudentCourseForm: React.FC = () => {
 
   const handleSubmit = () => {
     if (!validate()) return;
-    const newEntry = {
+    const entry = {
       studentId: data.studentId,
       courseCode: data.courseCode.trim(),
       grade: Number(data.grade),
@@ -57,16 +78,23 @@ const StudentCourseForm: React.FC = () => {
       retaken: data.retaken,
       createdAt: new Date().toISOString(),
     };
-    const existing = JSON.parse(localStorage.getItem('studentCourses') || '[]');
-    existing.push(newEntry);
-    localStorage.setItem('studentCourses', JSON.stringify(existing));
-    setData({ studentId: '', courseCode: '', grade: '', semester: 'A', year: new Date().getFullYear().toString(), retaken: false });
-    alert('Student course record added successfully!');
+    const records: any[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
+    let updated: any[];
+    if (isEdit) {
+      const idx = parseInt(index as string, 10);
+      updated = records.map((r, i) => (i === idx ? entry : r));
+    } else {
+      updated = [...records, entry];
+    }
+    localStorage.setItem('studentCourses', JSON.stringify(updated));
+    navigate('/student-courses');
   };
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
-      <Typography variant="h6" gutterBottom>Add Student Course Record</Typography>
+      <Typography variant="h6" gutterBottom>
+        {isEdit ? 'Edit Student Course Record' : 'Add Student Course Record'}
+      </Typography>
       <TextField
         label="Student ID"
         value={data.studentId}
@@ -125,13 +153,14 @@ const StudentCourseForm: React.FC = () => {
         control={
           <Checkbox
             checked={data.retaken}
-            onChange={handleChange('retaken')}
-          />
+            onChange={handleChange('retaken')} />
         }
         label="Retaken"
       />
       <Box mt={2} textAlign="right">
-        <Button variant="contained" onClick={handleSubmit}>Save</Button>
+        <Button variant="contained" onClick={handleSubmit}>
+          {isEdit ? 'Update' : 'Save'}
+        </Button>
       </Box>
     </Box>
   );
