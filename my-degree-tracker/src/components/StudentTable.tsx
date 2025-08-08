@@ -1,18 +1,3 @@
-// Student.ts
-export interface Student {
-  id: string;
-  fullName: string;
-  email: string;
-  courses: string[];         // array of course codes
-  assignments: string[];     // array of assignment IDs
-  gradeSheet: Record<string, number>;
-  program: string;
-  semester: 'A' | 'B' | 'C';
-  completedCredits: number;
-  createdAt: string;         // ISO timestamp
-}
-
-// StudentTable.tsx
 import React from 'react';
 import type { Student } from '../components/Student';
 
