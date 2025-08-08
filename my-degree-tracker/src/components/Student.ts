@@ -1,8 +1,12 @@
 export interface Student {
-  fullName: string;
   id: string;
+  fullName: string;
   email: string;
-  courses: string[];    
-  assignments: string[]; 
-  gradeSheet: Record<string, number>; 
+  courses: string[];         // array of course codes
+  assignments: string[];     // array of assignment IDs
+  gradeSheet: Record<string, number>;
+  program: string;
+  semester: 'A' | 'B' | 'C';
+  completedCredits: number;
+  createdAt: string;         // ISO timestamp
 }
