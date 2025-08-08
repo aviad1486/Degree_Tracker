@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
 
 interface ProgramFormData {
   name: string;
@@ -8,6 +9,10 @@ interface ProgramFormData {
 }
 
 const ProgramForm: React.FC = () => {
+  const { name } = useParams<{ name?: string }>();
+  const navigate = useNavigate();
+  const isEdit = Boolean(name);
+
   const [data, setData] = useState<ProgramFormData>({
     name: '',
     totalCreditsRequired: '0',
@@ -15,43 +20,60 @@ const ProgramForm: React.FC = () => {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ProgramFormData, string>>>({});
 
+  // Prefill in edit mode
+  useEffect(() => {
+    if (isEdit && name) {
+      const programs: any[] = JSON.parse(localStorage.getItem('programs') || '[]');
+      const decoded = decodeURIComponent(name);
+      const program = programs.find(p => p.name === decoded);
+      if (program) {
+        setData({
+          name: program.name,
+          totalCreditsRequired: program.totalCreditsRequired.toString(),
+          courses: program.courses.join(', '),
+        });
+      }
+    }
+  }, [name]);
+
   const validate = (): boolean => {
     const newErrors: typeof errors = {};
     if (!data.name.trim()) newErrors.name = 'Program name is required';
     if (!/^\d+$/.test(data.totalCreditsRequired) || parseInt(data.totalCreditsRequired, 10) < 0) {
       newErrors.totalCreditsRequired = 'Total credits must be a non-negative integer';
     }
-    const list = data.courses.split(',').map(s => s.trim()).filter(Boolean);
-    if (list.length === 0) newErrors.courses = 'Enter at least one course code';
-
+    if (data.courses.split(',').map(s => s.trim()).filter(Boolean).length === 0) {
+      newErrors.courses = 'Enter at least one course code';
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (field: keyof ProgramFormData) => (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (field: keyof ProgramFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setData(prev => ({ ...prev, [field]: e.target.value }));
   };
 
   const handleSubmit = () => {
     if (!validate()) return;
-    const newProgram = {
+    const entry = {
       name: data.name.trim(),
       totalCreditsRequired: parseInt(data.totalCreditsRequired, 10),
-      courses: data.courses.split(',').map(s => s.trim()).filter(Boolean),
+      courses: data.courses.split(',').map(s => s.trim()),
       createdAt: new Date().toISOString(),
     };
-    const existing = JSON.parse(localStorage.getItem('programs') || '[]');
-    existing.push(newProgram);
-    localStorage.setItem('programs', JSON.stringify(existing));
-    setData({ name: '', totalCreditsRequired: '0', courses: '' });
-    alert('Program added successfully!');
+    const programs: any[] = JSON.parse(localStorage.getItem('programs') || '[]');
+    const updated = isEdit
+      ? programs.map(p => (p.name === entry.name ? entry : p))
+      : [...programs, entry];
+    localStorage.setItem('programs', JSON.stringify(updated));
+    navigate('/programs');
   };
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
-      <Typography variant="h6" gutterBottom>Add Study Program</Typography>
+      <Typography variant="h6" gutterBottom>
+        {isEdit ? 'Edit Study Program' : 'Add Study Program'}
+      </Typography>
       <TextField
         label="Program Name"
         value={data.name}
@@ -62,6 +84,8 @@ const ProgramForm: React.FC = () => {
         margin="normal"
       />
       <TextField
+        type="number"
+        inputProps={{ min: 0 }}
         label="Total Credits Required"
         value={data.totalCreditsRequired}
         onChange={handleChange('totalCreditsRequired')}
@@ -69,8 +93,6 @@ const ProgramForm: React.FC = () => {
         helperText={errors.totalCreditsRequired}
         fullWidth
         margin="normal"
-        type="number"
-        inputProps={{ min: 0 }}
       />
       <TextField
         label="Courses (comma separated codes)"
@@ -82,7 +104,9 @@ const ProgramForm: React.FC = () => {
         margin="normal"
       />
       <Box mt={2} textAlign="right">
-        <Button variant="contained" onClick={handleSubmit}>Save</Button>
+        <Button variant="contained" onClick={handleSubmit}>
+          {isEdit ? 'Update' : 'Save'}
+        </Button>
       </Box>
     </Box>
   );

@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useNavigate } from 'react-router-dom';
 
 interface StudyProgram {
   name: string;
@@ -15,6 +16,7 @@ interface StudyProgram {
 
 const ProgramList: React.FC = () => {
   const [programs, setPrograms] = useState<StudyProgram[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('programs') || '[]');
@@ -28,8 +30,7 @@ const ProgramList: React.FC = () => {
   };
 
   const handleEdit = (name: string) => {
-    console.log(`Edit program ${name}`);
-    // TODO: implement edit functionality
+    navigate(`/programs/edit/${encodeURIComponent(name)}`);
   };
 
   return (

@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Paper, IconButton, Box, Typography
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Box,
+  Typography
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-
-interface StudentCourse {
-  studentId: string;
-  courseCode: string;
-  grade: number;
-  semester: 'A' | 'B' | 'C';
-  year: number;
-  retaken: boolean;
-  createdAt: string;
-}
+import { useNavigate } from 'react-router-dom';
+import type { StudentCourse } from '../components/StudentCourse';
 
 const StudentCourseList: React.FC = () => {
   const [records, setRecords] = useState<StudentCourse[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('studentCourses') || '[]');
@@ -31,8 +32,7 @@ const StudentCourseList: React.FC = () => {
   };
 
   const handleEdit = (index: number) => {
-    console.log(`Edit record at index ${index}`);
-    // TODO: implement edit functionality
+    navigate(`/student-courses/edit/${index}`);
   };
 
   return (

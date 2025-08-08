@@ -13,7 +13,7 @@ interface StudentCourseFormData {
 }
 
 const StudentCourseForm: React.FC = () => {
-  const { index } = useParams<{ index: string }>();
+  const { index } = useParams<{ index?: string }>();
   const navigate = useNavigate();
   const isEdit = index !== undefined;
 
@@ -27,10 +27,11 @@ const StudentCourseForm: React.FC = () => {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof StudentCourseFormData, string>>>({});
 
+  // Prefill data in edit mode
   useEffect(() => {
-    if (isEdit) {
+    if (isEdit && index !== undefined) {
       const records: any[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
-      const idx = parseInt(index as string, 10);
+      const idx = parseInt(index, 10);
       const record = records[idx];
       if (record) {
         setData({
@@ -45,11 +46,12 @@ const StudentCourseForm: React.FC = () => {
     }
   }, [index]);
 
+  // Validation logic
   const validate = (): boolean => {
     const newErrors: typeof errors = {};
     if (!/^\d{9}$/.test(data.studentId)) newErrors.studentId = 'Student ID must be exactly 9 digits';
     if (!data.courseCode.trim()) newErrors.courseCode = 'Course code is required';
-    if (!/^\d+(\.\d+)?$/.test(data.grade) || Number(data.grade) < 0 || Number(data.grade) > 100) {
+    if (!/^\d+(?:\.\d+)?$/.test(data.grade) || Number(data.grade) < 0 || Number(data.grade) > 100) {
       newErrors.grade = 'Grade must be a number between 0 and 100';
     }
     if (!/^[ABC]$/.test(data.semester)) newErrors.semester = 'Select a valid semester (A, B, or C)';
@@ -60,6 +62,7 @@ const StudentCourseForm: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle input changes
   const handleChange = (field: keyof StudentCourseFormData) => (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -67,6 +70,7 @@ const StudentCourseForm: React.FC = () => {
     setData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Submit handler
   const handleSubmit = () => {
     if (!validate()) return;
     const entry = {
@@ -79,13 +83,9 @@ const StudentCourseForm: React.FC = () => {
       createdAt: new Date().toISOString(),
     };
     const records: any[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
-    let updated: any[];
-    if (isEdit) {
-      const idx = parseInt(index as string, 10);
-      updated = records.map((r, i) => (i === idx ? entry : r));
-    } else {
-      updated = [...records, entry];
-    }
+    const updated = isEdit
+      ? records.map((r, i) => (i === parseInt(index!, 10) ? entry : r))
+      : [...records, entry];
     localStorage.setItem('studentCourses', JSON.stringify(updated));
     navigate('/student-courses');
   };
@@ -150,11 +150,7 @@ const StudentCourseForm: React.FC = () => {
         inputProps={{ min: 2000, max: new Date().getFullYear() }}
       />
       <FormControlLabel
-        control={
-          <Checkbox
-            checked={data.retaken}
-            onChange={handleChange('retaken')} />
-        }
+        control={<Checkbox checked={data.retaken} onChange={handleChange('retaken')} />}
         label="Retaken"
       />
       <Box mt={2} textAlign="right">
