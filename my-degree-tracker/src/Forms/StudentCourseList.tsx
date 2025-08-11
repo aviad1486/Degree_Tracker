@@ -1,20 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Box,
-  Typography
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  Paper, IconButton, Box, Typography, Button
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
 import type { StudentCourse } from '../models/StudentCourse';
+import { makeStudentCourses } from '../models/seed';
 
 const StudentCourseList: React.FC = () => {
   const [records, setRecords] = useState<StudentCourse[]>([]);
@@ -27,17 +20,32 @@ const StudentCourseList: React.FC = () => {
 
   const handleDelete = (index: number) => {
     const updated = records.filter((_, i) => i !== index);
-    setRecords(updated);
     localStorage.setItem('studentCourses', JSON.stringify(updated));
+    setRecords(updated);
   };
 
   const handleEdit = (index: number) => {
     navigate(`/student-courses/edit/${index}`);
   };
 
+  const handleLoadDummy = () => {
+    const existing = JSON.parse(localStorage.getItem('studentCourses') || '[]');
+    if (Array.isArray(existing) && existing.length > 0) {
+      alert('Student course records already exist.');
+      return;
+    }
+    const dummy = makeStudentCourses();
+    localStorage.setItem('studentCourses', JSON.stringify(dummy));
+    setRecords(dummy);
+    alert('Dummy student course records loaded!');
+  };
+
   return (
     <Box sx={{ mt: 4, mx: 'auto', maxWidth: 900 }}>
-      <Typography variant="h6" gutterBottom>Student Course Records</Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h6">Student Course Records</Typography>
+        <Button variant="outlined" onClick={handleLoadDummy}>Load Dummy Student Courses</Button>
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -53,25 +61,26 @@ const StudentCourseList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {records.map((rec, idx) => (
-              <TableRow key={idx}>
-                <TableCell>{rec.studentId}</TableCell>
-                <TableCell>{rec.courseCode}</TableCell>
-                <TableCell>{rec.grade}</TableCell>
-                <TableCell>{rec.semester}</TableCell>
-                <TableCell>{rec.year}</TableCell>
-                <TableCell>{rec.retaken ? 'Yes' : 'No'}</TableCell>
-                <TableCell>{new Date(rec.createdAt).toLocaleString()}</TableCell>
+            {records.map((record, index) => (
+              <TableRow key={index}>
+                <TableCell>{record.studentId}</TableCell>
+                <TableCell>{record.courseCode}</TableCell>
+                <TableCell>{record.grade}</TableCell>
+                <TableCell>{record.semester}</TableCell>
+                <TableCell>{record.year}</TableCell>
+                <TableCell>{record.retaken ? 'Yes' : 'No'}</TableCell>
+                <TableCell>{new Date(record.createdAt).toLocaleString()}</TableCell>
                 <TableCell align="right">
-                  <IconButton onClick={() => handleEdit(idx)}>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton onClick={() => handleDelete(idx)}>
-                    <DeleteIcon />
-                  </IconButton>
+                  <IconButton onClick={() => handleEdit(index)}><EditIcon /></IconButton>
+                  <IconButton onClick={() => handleDelete(index)}><DeleteIcon /></IconButton>
                 </TableCell>
               </TableRow>
             ))}
+            {records.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} align="center">No student course records found.</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
