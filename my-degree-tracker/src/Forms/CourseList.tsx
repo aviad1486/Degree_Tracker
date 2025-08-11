@@ -14,7 +14,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
-import type { Course } from '../components/Course';
+import type { Course } from '../models/Course';
 
 const CourseList: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
