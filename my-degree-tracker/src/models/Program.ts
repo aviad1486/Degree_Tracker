@@ -1,5 +1,5 @@
 // StudyProgram entity interface
-export interface StudyProgram {
+export interface Program {
   name: string;                          // unique program name
   totalCreditsRequired: number;          // required credit threshold
   courses: string[];                     // list of course codes in program
