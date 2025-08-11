@@ -3,7 +3,6 @@ import type { Course } from "../models/Course";
 import type { StudentCourse } from "../models/StudentCourse";
 import type { Program } from "../models/Program";
 
-const SEED_VERSION = "v1";
 const COURSE_CODES = Array.from({ length: 10 }, (_, i) => `CS10${i + 1}`);
 
 export function makeCourses(): Course[] {
