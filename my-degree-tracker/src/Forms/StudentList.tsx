@@ -27,8 +27,6 @@ const StudentList: React.FC = () => {
     navigate(`/students/edit/${id}`);
   };
 
-
-
   return (
     <Box sx={{ mt: 4, mx: 'auto', maxWidth: 800 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>

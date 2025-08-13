@@ -4,7 +4,7 @@ import type { Course } from "../models/Course";
 import type { StudentCourse } from "../models/StudentCourse";
 import type { Program } from "../models/Program";
 
-const SEED_VERSION = "v1"; // עדכן אם תשנה את מבנה הדאטה
+const SEED_VERSION = "v1"; 
 
 const COURSE_CODES = Array.from({ length: 10 }, (_, i) => `CS10${i + 1}`);
 
@@ -48,7 +48,6 @@ function makeStudents(): Student[] {
 }
 
 function makeStudentCourses(): StudentCourse[] {
-  // רשומה אחת לכל סטודנט, על קורס אחר
   return Array.from({ length: 10 }, (_, i) => ({
     studentId: `10000000${i}`,
     courseCode: COURSE_CODES[(i + 2) % COURSE_CODES.length],
@@ -64,7 +63,7 @@ function makePrograms(): Program[] {
   return Array.from({ length: 10 }, (_, i) => ({
     name: `Program ${i + 1}`,
     totalCreditsRequired: 120,
-    courses: COURSE_CODES.slice(0, 5 + (i % 3)), // 5–7 קורסים לכל מסלול
+    courses: COURSE_CODES.slice(0, 5 + (i % 3)), 
     createdAt: new Date().toISOString(),
   }));
 }
@@ -81,7 +80,6 @@ function seedKey<T>(key: string, factory: () => T[]): void {
   }
 }
 
-/** מריץ טעינה ראשונית פעם אחת (אלא אם force=true) */
 export function bootstrapLocalStorage(force = false): void {
   const seededVer = localStorage.getItem("__seed_version");
   if (!force && seededVer === SEED_VERSION) return;
