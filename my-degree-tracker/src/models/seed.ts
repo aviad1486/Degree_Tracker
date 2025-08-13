@@ -1,29 +1,33 @@
+// src/models/seed.ts
 import type { Student } from "../models/Student";
 import type { Course } from "../models/Course";
 import type { StudentCourse } from "../models/StudentCourse";
 import type { Program } from "../models/Program";
 
+const SEED_VERSION = "v1"; // עדכן אם תשנה את מבנה הדאטה
+
 const COURSE_CODES = Array.from({ length: 10 }, (_, i) => `CS10${i + 1}`);
 
-export function makeCourses(): Course[] {
+function makeCourses(): Course[] {
   const semesters: Array<Course["semester"]> = ["A", "B", "C"];
   return COURSE_CODES.map((code, i) => ({
     courseCode: code,
     courseName: `Intro Topic ${i + 1}`,
-    credits: (i % 3) + 2,
+    credits: (i % 3) + 2, // 2–4
     semester: semesters[i % semesters.length],
     assignments: [`A${i + 1}`, `B${i + 1}`],
     createdAt: new Date().toISOString(),
   }));
 }
 
-export function makeStudents(): Student[] {
+function makeStudents(): Student[] {
   const semesters: Array<Student["semester"]> = ["A", "B", "C"];
   return Array.from({ length: 10 }, (_, i) => {
-    const id = `10000000${i}`;
-    const courses = COURSE_CODES.slice(0, 3 + (i % 3));
+    const id = `10000000${i}`; // 9 ספרות ייחודיות
+    const courses = COURSE_CODES.slice(0, 3 + (i % 3)); // 3–5 קורסים
     const gradeSheet = Object.fromEntries(
       courses.map((c, idx) => {
+        // ציון דטרמיניסטי 60–100
         const grade = 60 + ((i * 7 + idx * 13) % 41);
         return [c, grade];
       })
@@ -37,13 +41,14 @@ export function makeStudents(): Student[] {
       gradeSheet,
       program: `Program ${((i % 10) + 1)}`,
       semester: semesters[i % semesters.length],
-      completedCredits: (i % 8) * 5,
+      completedCredits: (i % 8) * 5, // 0,5,10...
       createdAt: new Date().toISOString(),
     };
   });
 }
 
-export function makeStudentCourses(): StudentCourse[] {
+function makeStudentCourses(): StudentCourse[] {
+  // רשומה אחת לכל סטודנט, על קורס אחר
   return Array.from({ length: 10 }, (_, i) => ({
     studentId: `10000000${i}`,
     courseCode: COURSE_CODES[(i + 2) % COURSE_CODES.length],
@@ -55,11 +60,36 @@ export function makeStudentCourses(): StudentCourse[] {
   }));
 }
 
-export function makePrograms(): Program[] {
+function makePrograms(): Program[] {
   return Array.from({ length: 10 }, (_, i) => ({
     name: `Program ${i + 1}`,
     totalCreditsRequired: 120,
-    courses: COURSE_CODES.slice(0, 5 + (i % 3)),
+    courses: COURSE_CODES.slice(0, 5 + (i % 3)), // 5–7 קורסים לכל מסלול
     createdAt: new Date().toISOString(),
   }));
+}
+
+function seedKey<T>(key: string, factory: () => T[]): void {
+  try {
+    const raw = localStorage.getItem(key);
+    const withData = raw && JSON.parse(raw);
+    if (!Array.isArray(withData) || withData.length === 0) {
+      localStorage.setItem(key, JSON.stringify(factory()));
+    }
+  } catch {
+    localStorage.setItem(key, JSON.stringify(factory()));
+  }
+}
+
+/** מריץ טעינה ראשונית פעם אחת (אלא אם force=true) */
+export function bootstrapLocalStorage(force = false): void {
+  const seededVer = localStorage.getItem("__seed_version");
+  if (!force && seededVer === SEED_VERSION) return;
+
+  seedKey<Student>("students", makeStudents);
+  seedKey<Course>("courses", makeCourses);
+  seedKey<StudentCourse>("studentCourses", makeStudentCourses);
+  seedKey<Program>("programs", makePrograms);
+
+  localStorage.setItem("__seed_version", SEED_VERSION);
 }
