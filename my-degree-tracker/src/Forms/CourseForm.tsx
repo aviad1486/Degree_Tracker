@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
+import { TextField, Button, Box, Typography, MenuItem, Snackbar, Alert } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 
 // Interface for course form data
@@ -23,7 +23,12 @@ const CourseForm: React.FC = () => {
     semester: 'A',
     assignments: '',
   });
+
   const [errors, setErrors] = useState<Partial<Record<keyof CourseFormData, string>>>({});
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackMsg, setSnackMsg] = useState('');
+  const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
+
 
   // Prefill form for edit
   useEffect(() => {
@@ -65,7 +70,12 @@ const CourseForm: React.FC = () => {
 
   // Submit handler
   const handleSubmit = () => {
-    if (!validate()) return;
+    if (!validate()) {
+      setSnackMsg('Please fix the form errors');
+      setSnackSeverity('error');
+      setSnackOpen(true);
+      return;
+    }
     const entry = {
       courseCode: data.courseCode.trim(),
       courseName: data.courseName.trim(),
@@ -79,7 +89,11 @@ const CourseForm: React.FC = () => {
       ? courses.map(c => (c.courseCode === courseCode ? entry : c))
       : [...courses, entry];
     localStorage.setItem('courses', JSON.stringify(updated));
-    navigate('/courses');
+    setData({courseCode: '', courseName: '', credits: '1', semester: 'A', assignments: ''});
+    setSnackMsg(isEdit ? 'Course updated successfully' : 'Course added successfully');
+    setSnackSeverity('success');
+    setSnackOpen(true);
+    setTimeout(() => navigate('/courses'), 2000);
   };
 
   return (
@@ -148,6 +162,16 @@ const CourseForm: React.FC = () => {
       <Box mt={2} textAlign="right">
         <Button variant="contained" onClick={handleSubmit}>{isEdit ? 'Update' : 'Save'}</Button>
       </Box>
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={1500}
+        onClose={() => setSnackOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSnackOpen(false)} severity={snackSeverity} variant="filled" sx={{ width: '100%' }}>
+          {snackMsg}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

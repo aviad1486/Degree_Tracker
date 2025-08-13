@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, Snackbar, Alert } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 
 interface ProgramFormData {
@@ -18,7 +18,11 @@ const ProgramForm: React.FC = () => {
     totalCreditsRequired: '0',
     courses: '',
   });
+
   const [errors, setErrors] = useState<Partial<Record<keyof ProgramFormData, string>>>({});
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackMsg, setSnackMsg] = useState('');
+  const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
   // Prefill in edit mode
   useEffect(() => {
@@ -54,7 +58,12 @@ const ProgramForm: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    if (!validate()) return;
+    if (!validate()) {
+      setSnackMsg('Please fix the form errors');
+      setSnackSeverity('error');
+      setSnackOpen(true);
+      return;
+    }
     const entry = {
       name: data.name.trim(),
       totalCreditsRequired: parseInt(data.totalCreditsRequired, 10),
@@ -66,7 +75,10 @@ const ProgramForm: React.FC = () => {
       ? programs.map(p => (p.name === entry.name ? entry : p))
       : [...programs, entry];
     localStorage.setItem('programs', JSON.stringify(updated));
-    navigate('/programs');
+    setSnackMsg(isEdit ? 'Program updated successfully' : 'Program added successfully');
+    setSnackSeverity('success');
+    setSnackOpen(true);
+    setTimeout(() =>navigate('/programs'), 2000);
   };
 
   return (
@@ -108,6 +120,16 @@ const ProgramForm: React.FC = () => {
           {isEdit ? 'Update' : 'Save'}
         </Button>
       </Box>
+      <Snackbar
+              open={snackOpen}
+              autoHideDuration={1500}
+              onClose={() => setSnackOpen(false)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+              <Alert onClose={() => setSnackOpen(false)} severity={snackSeverity} variant="filled" sx={{ width: '100%' }}>
+                {snackMsg}
+              </Alert>
+            </Snackbar>
     </Box>
   );
 };
