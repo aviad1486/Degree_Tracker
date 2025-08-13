@@ -6,7 +6,6 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import type { Program } from '../models/Program';
-import { makePrograms } from '../models/seed';
 import { useNavigate } from 'react-router-dom';
 
 const ProgramList: React.FC = () => {
@@ -28,23 +27,10 @@ const ProgramList: React.FC = () => {
     navigate(`/programs/edit/${name}`);
   };
 
-  const handleLoadDummy = () => {
-    const existing = JSON.parse(localStorage.getItem('programs') || '[]');
-    if (Array.isArray(existing) && existing.length > 0) {
-      alert('Programs already exist in localStorage.');
-      return;
-    }
-    const dummy = makePrograms();
-    localStorage.setItem('programs', JSON.stringify(dummy));
-    setPrograms(dummy);
-    alert('Dummy programs loaded!');
-  };
-
   return (
     <Box sx={{ mt: 4, mx: 'auto', maxWidth: 800 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h6">Study Programs</Typography>
-        <Button variant="outlined" onClick={handleLoadDummy}>Load Dummy Programs</Button>
       </Box>
       <TableContainer component={Paper}>
         <Table>
