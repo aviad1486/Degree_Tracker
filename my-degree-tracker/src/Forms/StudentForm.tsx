@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
+import { TextField, Button, Box, Typography, MenuItem, Snackbar, Alert } from '@mui/material';
 
 // Interface for form data
 interface StudentFormData {
@@ -26,7 +26,11 @@ const StudentForm: React.FC = () => {
     semester: 'A',
     completedCredits: '0',
   });
+
   const [errors, setErrors] = useState<Partial<Record<keyof StudentFormData, string>>>({});
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackMsg, setSnackMsg] = useState('');
+  const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
   // Validation logic
   const validate = (): boolean => {
@@ -86,7 +90,9 @@ const StudentForm: React.FC = () => {
     existing.push(newStudent);
     localStorage.setItem('students', JSON.stringify(existing));
     setData({ id: '', fullName: '', email: '', courses: '', assignments: '', gradeSheet: '', program: '', semester: 'A', completedCredits: '0' });
-    alert('Student added successfully!');
+    setSnackMsg('Student added successfully!');
+    setSnackSeverity('success');
+    setSnackOpen(true);
   };
 
   return (
@@ -183,6 +189,17 @@ const StudentForm: React.FC = () => {
       <Box mt={2} textAlign="right">
         <Button variant="contained" onClick={handleSubmit}>Save</Button>
       </Box>
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={2500}
+        onClose={() => setSnackOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSnackOpen(false)} severity={snackSeverity} variant="filled" sx={{ width: '100%' }}>
+          {snackMsg}
+        </Alert>
+      </Snackbar>
+
     </Box>
   );
 };
