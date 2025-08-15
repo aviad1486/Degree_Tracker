@@ -55,7 +55,7 @@ const StudentForm: React.FC = () => {
         }
       }
     } catch {
-      newErrors.gradeSheet = 'Enter valid JSON for grade sheet (e.g. {"CS101": 85})';
+      newErrors.gradeSheet = 'Enter valid JSON for grade sheet (e.g. {"CS101": 85, "Java": 90})';
     }
 
     if (!data.program.trim()) newErrors.program = 'Please select a program';
