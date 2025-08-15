@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Box, Typography, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
+import { TextField, Button, Box, Typography, MenuItem, ButtonGroup, Autocomplete } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import SnackbarNotification from '../components/SnackbarNotification';
 
@@ -9,8 +9,13 @@ interface StudentCourseFormData {
   grade: string;
   semester: 'A' | 'B' | 'C';
   year: string;
-  retaken: boolean;
+  // NOTE: previously was boolean; now numeric count (minimum 1)
+  retaken: number;
 }
+
+type AnyRecord = Record<string, any>;
+
+const uniq = (arr: string[]) => Array.from(new Set(arr.filter(Boolean)));
 
 const StudentCourseForm: React.FC = () => {
   const { index } = useParams<{ index?: string }>();
@@ -23,26 +28,52 @@ const StudentCourseForm: React.FC = () => {
     grade: '',
     semester: 'A',
     year: new Date().getFullYear().toString(),
-    retaken: false,
+    retaken: 1, // minimum is 1 (first attempt)
   });
   const [errors, setErrors] = useState<Partial<Record<keyof StudentCourseFormData, string>>>({});
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackMsg, setSnackMsg] = useState('');
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
+  // options for selects/autocomplete
+  const [existingStudentIds, setExistingStudentIds] = useState<string[]>([]);
+  const [existingCourseCodes, setExistingCourseCodes] = useState<string[]>([]);
+
+  // Load options from localStorage
+  useEffect(() => {
+    const students: AnyRecord[] = JSON.parse(localStorage.getItem('students') || '[]');
+    const courses: AnyRecord[] = JSON.parse(localStorage.getItem('courses') || '[]');
+    const studentCourses: AnyRecord[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
+
+    const idsFromStudents = students.map(s => s.id);
+    const idsFromStudentCourses = studentCourses.map(sc => sc.studentId);
+    setExistingStudentIds(uniq([...idsFromStudents, ...idsFromStudentCourses]).sort());
+
+    const codesFromCourses = courses.map(c => c.courseCode);
+    const codesFromStudentCourses = studentCourses.map(sc => sc.courseCode);
+    setExistingCourseCodes(uniq([...codesFromCourses, ...codesFromStudentCourses]).sort());
+  }, []);
+
+  // Prefill in edit mode
   useEffect(() => {
     if (isEdit && index !== undefined) {
       const records: any[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
       const idx = parseInt(index, 10);
       const record = records[idx];
       if (record) {
+        // Backward-compat: if old boolean exists -> map true=>2, false=>1
+        const retakenCount =
+          typeof record.retaken === 'number'
+            ? Math.max(1, Math.floor(record.retaken))
+            : (record.retaken ? 2 : 1);
+
         setData({
-          studentId: record.studentId,
-          courseCode: record.courseCode,
-          grade: record.grade.toString(),
-          semester: record.semester,
-          year: record.year.toString(),
-          retaken: record.retaken,
+          studentId: record.studentId ?? '',
+          courseCode: record.courseCode ?? '',
+          grade: (record.grade ?? '').toString(),
+          semester: record.semester ?? 'A',
+          year: (record.year ?? new Date().getFullYear()).toString(),
+          retaken: retakenCount,
         });
       }
     }
@@ -56,17 +87,26 @@ const StudentCourseForm: React.FC = () => {
       newErrors.grade = 'Grade must be a number between 0 and 100';
     }
     if (!/^[ABC]$/.test(data.semester)) newErrors.semester = 'Select a valid semester (A, B, or C)';
-    if (!/^\d{4}$/.test(data.year) || Number(data.year) < 2000) {
-      newErrors.year = 'Enter a valid 4-digit year';
+    if (!/^\d{4}$/.test(data.year) || Number(data.year) < 1960) {
+      newErrors.year = 'Enter a valid 4-digit year (>= 1960)';
+    }
+    if (!Number.isInteger(data.retaken) || data.retaken < 1) {
+      newErrors.retaken = 'Attempts must be an integer ≥ 1';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (field: keyof StudentCourseFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = field === 'retaken' ? (e.target as HTMLInputElement).checked : e.target.value;
-    setData(prev => ({ ...prev, [field]: value }));
+    const value = e.target.value;
+    setData(prev => ({ ...prev, [field]: value as any }));
   };
+
+  const decAttempts = () =>
+    setData(prev => ({ ...prev, retaken: Math.max(1, (prev.retaken ?? 1) - 1) }));
+
+  const incAttempts = () =>
+    setData(prev => ({ ...prev, retaken: Math.max(1, (prev.retaken ?? 1) + 1) }));
 
   const handleSubmit = () => {
     if (!validate()) {
@@ -76,28 +116,58 @@ const StudentCourseForm: React.FC = () => {
       return;
     }
 
-    const entry = {
-      studentId: data.studentId,
-      courseCode: data.courseCode.trim(),
-      grade: Number(data.grade),
-      semester: data.semester,
-      year: Number(data.year),
-      retaken: data.retaken,
-      createdAt: new Date().toISOString(),
-    };
+    const trimmedCourse = data.courseCode.trim();
 
-    const records: any[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
-    const updated = isEdit
-      ? records.map((r, i) => (i === parseInt(index!, 10) ? entry : r))
-      : [...records, entry];
+    const records: AnyRecord[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
 
-    localStorage.setItem('studentCourses', JSON.stringify(updated));
+    // Find existing by (studentId, courseCode)
+    const matchIdx = records.findIndex(
+      r => r.studentId === data.studentId && r.courseCode === trimmedCourse
+    );
 
-    setSnackMsg(isEdit ? 'Record updated successfully' : 'Record saved successfully');
-    setSnackSeverity('success');
-    setSnackOpen(true);
+    if (matchIdx !== -1) {
+      // Existing: increment retaken and update with latest grade/semester/year
+      const existing = records[matchIdx];
+      const existingAttempts =
+        typeof existing.retaken === 'number' ? existing.retaken : (existing.retaken ? 2 : 1);
 
-    setTimeout(() => navigate('/student-courses'), 2000);
+      const updated = {
+        ...existing,
+        grade: Number(data.grade),
+        semester: data.semester,
+        year: Number(data.year),
+        retaken: Math.max(1, existingAttempts + 1),
+        // keep createdAt as is; optional: add updatedAt
+        updatedAt: new Date().toISOString(),
+      };
+
+      records[matchIdx] = updated;
+      localStorage.setItem('studentCourses', JSON.stringify(records));
+
+      setSnackMsg('Existing record found — attempts incremented by 1');
+      setSnackSeverity('success');
+      setSnackOpen(true);
+    } else {
+      // New record
+      const entry = {
+        studentId: data.studentId,
+        courseCode: trimmedCourse,
+        grade: Number(data.grade),
+        semester: data.semester,
+        year: Number(data.year),
+        retaken: data.retaken, // numeric attempts
+        createdAt: new Date().toISOString(),
+      };
+
+      const updated = [...records, entry];
+      localStorage.setItem('studentCourses', JSON.stringify(updated));
+
+      setSnackMsg('Record saved successfully');
+      setSnackSeverity('success');
+      setSnackOpen(true);
+    }
+
+    setTimeout(() => navigate('/student-courses'), 1500);
   };
 
   return (
@@ -106,26 +176,43 @@ const StudentCourseForm: React.FC = () => {
         {isEdit ? 'Edit Student Course Record' : 'Add Student Course Record'}
       </Typography>
 
-      <TextField
-        label="Student ID"
+      {/* Student ID with autocomplete (free text allowed) */}
+      <Autocomplete
+        freeSolo
+        options={existingStudentIds}
         value={data.studentId}
-        onChange={handleChange('studentId')}
-        error={!!errors.studentId}
-        helperText={errors.studentId}
-        required
-        fullWidth
-        margin="normal"
+        onInputChange={(_, newValue) => setData(prev => ({ ...prev, studentId: newValue }))}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Student ID"
+            error={!!errors.studentId}
+            helperText={errors.studentId}
+            required
+            fullWidth
+            margin="normal"
+            inputProps={{ ...params.inputProps, maxLength: 9 }}
+          />
+        )}
       />
 
-      <TextField
-        label="Course Code"
+      {/* Course Code with autocomplete (free text allowed) */}
+      <Autocomplete
+        freeSolo
+        options={existingCourseCodes}
         value={data.courseCode}
-        onChange={handleChange('courseCode')}
-        error={!!errors.courseCode}
-        helperText={errors.courseCode}
-        required
-        fullWidth
-        margin="normal"
+        onInputChange={(_, newValue) => setData(prev => ({ ...prev, courseCode: newValue }))}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Course Code"
+            error={!!errors.courseCode}
+            helperText={errors.courseCode}
+            required
+            fullWidth
+            margin="normal"
+          />
+        )}
       />
 
       <TextField
@@ -170,10 +257,24 @@ const StudentCourseForm: React.FC = () => {
         inputProps={{ min: 1960, max: new Date().getFullYear() }}
       />
 
-      <FormControlLabel
-        control={<Checkbox checked={data.retaken} onChange={handleChange('retaken')} />}
-        label="Retaken"
-      />
+      {/* Attempts counter */}
+      <Box mt={2}>
+        <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+          Attempts (times taken)
+        </Typography>
+        <Box display="flex" alignItems="center" gap={1}>
+          <ButtonGroup variant="outlined" aria-label="retaken attempts controls">
+            <Button onClick={decAttempts} aria-label="decrease attempts"></Button>
+            <Button disabled aria-label="current attempts">{data.retaken}</Button>
+            <Button onClick={incAttempts} aria-label="increase attempts">+</Button>
+          </ButtonGroup>
+          {errors.retaken && (
+            <Typography variant="caption" color="error" sx={{ ml: 1 }}>
+              {errors.retaken}
+            </Typography>
+          )}
+        </Box>
+      </Box>
 
       <Box mt={2} textAlign="right">
         <Button variant="contained" onClick={handleSubmit}>

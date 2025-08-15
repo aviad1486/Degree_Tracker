@@ -27,7 +27,6 @@ const StudentCourseList: React.FC = () => {
     navigate(`/student-courses/edit/${index}`);
   };
 
-
   return (
     <Box sx={{ mt: 4, mx: 'auto', maxWidth: 900 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -55,7 +54,8 @@ const StudentCourseList: React.FC = () => {
                 <TableCell>{record.grade}</TableCell>
                 <TableCell>{record.semester}</TableCell>
                 <TableCell>{record.year}</TableCell>
-                <TableCell>{record.retaken ? 'Yes' : 'No'}</TableCell>
+                {/* Show numeric attempts, default to 1 if undefined */}
+                <TableCell>{typeof record.retaken === 'number' ? record.retaken : (record.retaken ? 2 : 1)}</TableCell>
                 <TableCell>{new Date(record.createdAt).toLocaleString()}</TableCell>
                 <TableCell align="right">
                   <IconButton onClick={() => handleEdit(index)}><EditIcon /></IconButton>

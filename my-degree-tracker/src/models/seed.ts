@@ -54,7 +54,7 @@ function makeStudentCourses(): StudentCourse[] {
     grade: 60 + ((i * 11) % 41),
     semester: (["A", "B", "C"] as const)[i % 3],
     year: 2021 + (i % 4),
-    retaken: i % 4 === 0,
+    retaken: false,
     createdAt: new Date().toISOString(),
   }));
 }
