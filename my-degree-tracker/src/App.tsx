@@ -1,17 +1,16 @@
-
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import {
-  AppBar,
-  Toolbar,
-  Typography,
   Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
-  Box
+  Box,
+  Toolbar,
 } from '@mui/material';
+
+import Header from './components/Header'; 
 
 import StudentForm from './Forms/StudentForm';
 import StudentList from './Forms/StudentList';
@@ -28,13 +27,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Box sx={{ display: 'flex' }}>
-        <AppBar position="fixed" sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
-          <Toolbar>
-            <Typography variant="h6" noWrap>
-              Degree Tracker System
-            </Typography>
-          </Toolbar>
-        </AppBar>
+        <Header /> {/* ✅ AppBar במקום הקודם */}
 
         <Drawer
           variant="permanent"
@@ -90,7 +83,7 @@ export default function App() {
         </Drawer>
 
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Toolbar />
+          <Toolbar /> {/* מרווח מתחת ל-Header */}
           <Routes>
             {/* Student routes */}
             <Route path="/students/new" element={<StudentForm />} />
