@@ -108,6 +108,24 @@ const StudentCourseForm: React.FC = () => {
   const incAttempts = () =>
     setData(prev => ({ ...prev, retaken: Math.max(1, (prev.retaken ?? 1) + 1) }));
 
+  // --- NEW: update the student's gradeSheet so StudentList average stays fresh ---
+  const upsertStudentGrade = (studentId: string, courseCode: string, grade: number) => {
+    const students: AnyRecord[] = JSON.parse(localStorage.getItem('students') || '[]');
+    const idx = students.findIndex((s) => s.id === studentId);
+    if (idx === -1) return; // student not found -> nothing to update
+
+    const s = students[idx];
+    const sheet =
+      s.gradeSheet && typeof s.gradeSheet === 'object' && !Array.isArray(s.gradeSheet)
+        ? { ...s.gradeSheet }
+        : {};
+    sheet[courseCode] = grade;
+
+    students[idx] = { ...s, gradeSheet: sheet };
+    localStorage.setItem('students', JSON.stringify(students));
+  };
+  // ------------------------------------------------------------------------------
+
   const handleSubmit = () => {
     if (!validate()) {
       setSnackMsg('Please fix the form errors');
@@ -144,6 +162,9 @@ const StudentCourseForm: React.FC = () => {
       records[matchIdx] = updated;
       localStorage.setItem('studentCourses', JSON.stringify(records));
 
+      // NEW: keep students.gradeSheet in sync
+      upsertStudentGrade(data.studentId, trimmedCourse, Number(data.grade));
+
       setSnackMsg('Existing record found — attempts incremented by 1');
       setSnackSeverity('success');
       setSnackOpen(true);
@@ -161,6 +182,9 @@ const StudentCourseForm: React.FC = () => {
 
       const updated = [...records, entry];
       localStorage.setItem('studentCourses', JSON.stringify(updated));
+
+      // NEW: keep students.gradeSheet in sync
+      upsertStudentGrade(data.studentId, trimmedCourse, Number(data.grade));
 
       setSnackMsg('Record saved successfully');
       setSnackSeverity('success');
@@ -264,7 +288,7 @@ const StudentCourseForm: React.FC = () => {
         </Typography>
         <Box display="flex" alignItems="center" gap={1}>
           <ButtonGroup variant="outlined" aria-label="retaken attempts controls">
-            <Button onClick={decAttempts} aria-label="decrease attempts"></Button>
+            <Button onClick={decAttempts} aria-label="decrease attempts">-</Button>
             <Button disabled aria-label="current attempts">{data.retaken}</Button>
             <Button onClick={incAttempts} aria-label="increase attempts">+</Button>
           </ButtonGroup>

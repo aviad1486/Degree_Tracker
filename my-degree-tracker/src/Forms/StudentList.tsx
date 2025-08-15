@@ -8,6 +8,16 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
 import type { Student } from '../models/Student';
 
+const avgFromGradeSheet = (gradeSheet: Record<string, number> | undefined | null) => {
+  if (!gradeSheet || typeof gradeSheet !== 'object' || Array.isArray(gradeSheet)) return null;
+  const grades = Object.values(gradeSheet).filter(
+    (g) => typeof g === 'number' && !Number.isNaN(g)
+  );
+  if (grades.length === 0) return null;
+  const sum = grades.reduce((a, b) => a + b, 0);
+  return sum / grades.length;
+};
+
 const StudentList: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const navigate = useNavigate();
@@ -41,6 +51,7 @@ const StudentList: React.FC = () => {
               <TableCell>Email</TableCell>
               <TableCell>Courses</TableCell>
               <TableCell>Program</TableCell>
+              <TableCell>Average</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -50,8 +61,14 @@ const StudentList: React.FC = () => {
                 <TableCell>{student.fullName}</TableCell>
                 <TableCell>{student.id}</TableCell>
                 <TableCell>{student.email}</TableCell>
-                <TableCell>{student.courses.join(', ')}</TableCell>
+                <TableCell>{(student.courses || []).join(', ')}</TableCell>
                 <TableCell>{student.program}</TableCell>
+                <TableCell>
+                  {(() => {
+                    const avg = avgFromGradeSheet((student as any).gradeSheet);
+                    return avg === null ? '—' : avg.toFixed(1);
+                  })()}
+                </TableCell>
                 <TableCell align="right">
                   <IconButton onClick={() => handleEdit(student.id)}><EditIcon /></IconButton>
                   <IconButton onClick={() => handleDelete(student.id)}><DeleteIcon /></IconButton>
@@ -60,7 +77,7 @@ const StudentList: React.FC = () => {
             ))}
             {students.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} align="center">
+                <TableCell colSpan={7} align="center">
                   No students found.
                 </TableCell>
               </TableRow>
