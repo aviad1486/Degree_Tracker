@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import SnackbarNotification from '../components/SnackbarNotification'; // עדכן נתיב לפי הפרויקט שלך
+import SnackbarNotification from '../components/SnackbarNotification';
 
 interface StudentFormData {
   id: string;
   fullName: string;
   email: string;
-  courses: string; 
+  courses: string;
   assignments: string;
   gradeSheet: string;
   program: string;
   semester: 'A' | 'B' | 'C';
   completedCredits: string;
 }
+
+type AnyRec = Record<string, any>;
+
+const norm = (s: string) => (s || '').trim().toLowerCase();
 
 const StudentForm: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
@@ -37,11 +41,10 @@ const StudentForm: React.FC = () => {
   const [snackMsg, setSnackMsg] = useState('');
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
-  // Prefill on edit
   useEffect(() => {
     if (isEdit && id) {
-      const students = JSON.parse(localStorage.getItem('students') || '[]');
-      const student = students.find((s: any) => s.id === id);
+      const students: AnyRec[] = JSON.parse(localStorage.getItem('students') || '[]');
+      const student = students.find((s) => s.id === id);
       if (student) {
         setData({
           id: student.id,
@@ -84,12 +87,53 @@ const StudentForm: React.FC = () => {
       newErrors.completedCredits = 'Enter a non-negative integer for completed credits';
     }
 
+    // --- Uniqueness checks ---
+    const students: AnyRec[] = JSON.parse(localStorage.getItem('students') || '[]');
+    const idNorm = data.id;
+    const emailNorm = norm(data.email);
+    const programNorm = norm(data.program);
+
+    // Email unique ACROSS DIFFERENT IDs (allow same email for same ID across programs)
+    const emailClash = students.some(s => norm(s.email) === emailNorm && s.id !== idNorm);
+    if (emailClash) newErrors.email = 'Email already exists for a different student ID';
+
+    // (id, program) must be unique; allowed: same id with different program
+    const sameIdProgram = students.some(s =>
+      s.id === idNorm && norm(s.program) === programNorm && (!isEdit || s.id !== id)
+    );
+    if (sameIdProgram) newErrors.program = 'This ID is already registered to the same program';
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (field: keyof StudentFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setData(prev => ({ ...prev, [field]: e.target.value }));
+  };
+
+  // Create StudentCourse records (once) for each listed course on create
+  const ensureStudentCourseRecordsOnCreate = (studentId: string, semester: 'A'|'B'|'C') => {
+    const nowYear = new Date().getFullYear();
+    const coursesArr = data.courses.split(',').map(s => s.trim()).filter(Boolean);
+    if (coursesArr.length === 0) return;
+
+    const records: AnyRec[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
+
+    for (const code of coursesArr) {
+      const exists = records.some(r => r.studentId === studentId && r.courseCode === code);
+      if (!exists) {
+        records.push({
+          studentId,
+          courseCode: code,
+          grade: 0,              // placeholder
+          semester,              // use current student semester
+          year: nowYear,
+          retaken: 1,
+          createdAt: new Date().toISOString(),
+        });
+      }
+    }
+    localStorage.setItem('studentCourses', JSON.stringify(records));
   };
 
   const handleSubmit = () => {
@@ -113,24 +157,73 @@ const StudentForm: React.FC = () => {
       createdAt: new Date().toISOString(),
     };
 
-    const existing: any[] = JSON.parse(localStorage.getItem('students') || '[]');
+    const existing: AnyRec[] = JSON.parse(localStorage.getItem('students') || '[]');
 
     if (isEdit) {
       const idx = existing.findIndex(s => s.id === id);
       if (idx !== -1) {
-        existing[idx] = { ...existing[idx], ...newStudent }; // update
+        // prevent changing to a (program) that would clash with same (id, program)
+        const programNorm = norm(newStudent.program);
+        const clash = existing.some((s, i) =>
+          i !== idx && s.id === newStudent.id && norm(s.program) === programNorm
+        );
+        if (clash) {
+          setSnackMsg('This ID is already registered to the same program');
+          setSnackSeverity('error');
+          setSnackOpen(true);
+          return;
+        }
+        // email may duplicate across same ID; block only if email belongs to a different ID
+        const emailClash = existing.some((s, i) =>
+          i !== idx && norm(s.email) === norm(newStudent.email) && s.id !== newStudent.id
+        );
+        if (emailClash) {
+          setSnackMsg('Email already exists for a different student ID');
+          setSnackSeverity('error');
+          setSnackOpen(true);
+          return;
+        }
+
+        existing[idx] = { ...existing[idx], ...newStudent };
       } else {
-        existing.push(newStudent); // fallback
+        // fallback: treat as create with same rules
+        const clash = existing.some(s => s.id === newStudent.id && norm(s.program) === norm(newStudent.program));
+        if (clash) {
+          setSnackMsg('This ID is already registered to the same program');
+          setSnackSeverity('error');
+          setSnackOpen(true);
+          return;
+        }
+        const emailClash = existing.some(s => norm(s.email) === norm(newStudent.email) && s.id !== newStudent.id);
+        if (emailClash) {
+          setSnackMsg('Email already exists for a different student ID');
+          setSnackSeverity('error');
+          setSnackOpen(true);
+          return;
+        }
+        existing.push(newStudent);
+        ensureStudentCourseRecordsOnCreate(newStudent.id, newStudent.semester);
       }
     } else {
-      // prevent duplicate id on create (optional: show error instead)
-      if (existing.some(s => s.id === newStudent.id)) {
-        setSnackMsg('A student with this ID already exists.');
+      // create: block duplicate id+program
+      const clash = existing.some(s => s.id === newStudent.id && norm(s.program) === norm(newStudent.program));
+      if (clash) {
+        setSnackMsg('Student with this ID is already registered to this program');
         setSnackSeverity('error');
         setSnackOpen(true);
         return;
       }
+      // email uniqueness across different IDs only
+      const emailClash = existing.some(s => norm(s.email) === norm(newStudent.email) && s.id !== newStudent.id);
+      if (emailClash) {
+        setSnackMsg('Email already exists for a different student ID');
+        setSnackSeverity('error');
+        setSnackOpen(true);
+        return;
+      }
+
       existing.push(newStudent);
+      ensureStudentCourseRecordsOnCreate(newStudent.id, newStudent.semester);
     }
 
     localStorage.setItem('students', JSON.stringify(existing));
@@ -148,7 +241,6 @@ const StudentForm: React.FC = () => {
         {isEdit ? 'Edit Student' : 'Add Student'}
       </Typography>
 
-      {/* Locked on edit: ID, Full Name, Email, Completed Credits */}
       <TextField
         label="ID"
         value={data.id}
