@@ -1,24 +1,7 @@
+// my-degree-tracker/src/App.tsx
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import {
-  Box,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar
-} from '@mui/material';
-
-import HomeIcon from '@mui/icons-material/Home';
-import SchoolIcon from '@mui/icons-material/School';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import TableChartIcon from '@mui/icons-material/TableChart';
-import PeopleIcon from '@mui/icons-material/People';
-import HelpIcon from '@mui/icons-material/Help';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Box, Drawer, Toolbar } from '@mui/material';
 
 import Header from './components/Header';
 import HomePage from './pages/homepage';
@@ -31,131 +14,24 @@ import StudentCourseList from './Forms/StudentCourseList';
 import ProgramForm from './Forms/ProgramForm';
 import ProgramList from './Forms/ProgramList';
 
+import MainDrawer from './components/MainDrawer';
+import HamburgerDrawer from './components/HamburgerDrawer';
+
 const drawerWidth = 240;
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleMenuToggle = () => {
-    setMenuOpen(!menuOpen);
-  };
-
-  // Drawer הקבוע - התפריט הקיים
-  const mainDrawer = (
-    <div>
-      <Toolbar />
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/students/new">
-            <ListItemText primary="Add Student" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/students">
-            <ListItemText primary="Student List" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/courses/new">
-            <ListItemText primary="Add Course" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/courses">
-            <ListItemText primary="Course List" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/student-courses/new">
-            <ListItemText primary="Add Student Course" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/student-courses">
-            <ListItemText primary="Student Course Records" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/programs/new">
-            <ListItemText primary="Add Program" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/programs">
-            <ListItemText primary="Program List" />
-          </ListItemButton>
-        </ListItem>
-      </List>
-    </div>
-  );
-
-  // Drawer של ההמבורגר - התפריט בעברית עם אייקונים
-  const hamburgerDrawer = (
-  <div>
-    <Toolbar />
-    <List>
-      <ListItem disablePadding>
-        <ListItemButton
-          component={Link}
-          to="/"
-          onClick={handleMenuToggle} // נסגור את התפריט אחרי מעבר
-        >
-          <ListItemIcon><HomeIcon /></ListItemIcon>
-          <ListItemText primary="עמוד הבית" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem disablePadding>
-        <ListItemButton>
-          <ListItemIcon><SchoolIcon /></ListItemIcon>
-          <ListItemText primary="ההתקדמות שלי" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem disablePadding>
-        <ListItemButton>
-          <ListItemIcon><AssessmentIcon /></ListItemIcon>
-          <ListItemText primary="דו״ח ציונים" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem disablePadding>
-        <ListItemButton>
-          <ListItemIcon><MenuBookIcon /></ListItemIcon>
-          <ListItemText primary="קורסים" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem disablePadding>
-        <ListItemButton>
-          <ListItemIcon><TableChartIcon /></ListItemIcon>
-          <ListItemText primary="מסלול לימוד" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem disablePadding>
-        <ListItemButton>
-          <ListItemIcon><PeopleIcon /></ListItemIcon>
-          <ListItemText primary="משתמשים" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem disablePadding>
-        <ListItemButton>
-          <ListItemIcon><HelpIcon /></ListItemIcon>
-          <ListItemText primary="עזרה והדרכה" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem disablePadding>
-        <ListItemButton>
-          <ListItemIcon><ExitToAppIcon /></ListItemIcon>
-          <ListItemText primary="התנתקות" />
-        </ListItemButton>
-      </ListItem>
-    </List>
-  </div>
-);
+  const handleMenuToggle = () => setMenuOpen((v) => !v);
+  const handleMenuClose = () => setMenuOpen(false);
 
   return (
     <BrowserRouter>
       <Box sx={{ display: 'flex' }}>
+        {/* כותרת עליונה עם כפתור ההמבורגר */}
         <Header onMenuClick={handleMenuToggle} />
 
-        {/* Drawer הקבוע בצד שמאל */}
+        {/* Drawer קבוע (שמאלי) למסכים גדולים */}
         <Drawer
           variant="permanent"
           sx={{
@@ -164,23 +40,22 @@ export default function App() {
           }}
           open
         >
-          {mainDrawer}
+          <MainDrawer />
         </Drawer>
 
-        {/* Drawer זמני של ההמבורגר */}
+        {/* Drawer זמני (המבורגר) לנייד / מסכים קטנים */}
         <Drawer
           anchor="left"
           variant="temporary"
           open={menuOpen}
-          onClose={handleMenuToggle}
+          onClose={handleMenuClose}
           ModalProps={{ keepMounted: true }}
-          sx={{
-            '& .MuiDrawer-paper': { width: drawerWidth },
-          }}
+          sx={{ '& .MuiDrawer-paper': { width: drawerWidth } }}
         >
-          {hamburgerDrawer}
+          <HamburgerDrawer onClose={handleMenuClose} />
         </Drawer>
 
+        {/* תוכן מרכזי והנתיבים */}
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
           <Routes>
