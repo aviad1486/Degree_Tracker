@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Box, Typography, Snackbar, Alert } from '@mui/material';
+import { TextField, Button, Box, Typography } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
+import SnackbarNotification from '../components/SnackbarNotification';
 
 interface ProgramFormData {
   name: string;
@@ -38,7 +39,7 @@ const ProgramForm: React.FC = () => {
         });
       }
     }
-  }, [name]);
+  }, [name, isEdit]);
 
   const validate = (): boolean => {
     const newErrors: typeof errors = {};
@@ -78,7 +79,7 @@ const ProgramForm: React.FC = () => {
     setSnackMsg(isEdit ? 'Program updated successfully' : 'Program added successfully');
     setSnackSeverity('success');
     setSnackOpen(true);
-    setTimeout(() =>navigate('/programs'), 2000);
+    setTimeout(() => navigate('/programs'), 2000);
   };
 
   return (
@@ -86,6 +87,7 @@ const ProgramForm: React.FC = () => {
       <Typography variant="h6" gutterBottom>
         {isEdit ? 'Edit Study Program' : 'Add Study Program'}
       </Typography>
+
       <TextField
         label="Program Name"
         value={data.name}
@@ -120,16 +122,13 @@ const ProgramForm: React.FC = () => {
           {isEdit ? 'Update' : 'Save'}
         </Button>
       </Box>
-      <Snackbar
-              open={snackOpen}
-              autoHideDuration={1500}
-              onClose={() => setSnackOpen(false)}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            >
-              <Alert onClose={() => setSnackOpen(false)} severity={snackSeverity} variant="filled" sx={{ width: '100%' }}>
-                {snackMsg}
-              </Alert>
-            </Snackbar>
+
+      <SnackbarNotification
+        open={snackOpen}
+        severity={snackSeverity}
+        message={snackMsg}
+        onClose={() => setSnackOpen(false)}
+      />
     </Box>
   );
 };

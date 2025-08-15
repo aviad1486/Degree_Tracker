@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, MenuItem, Snackbar, Alert } from '@mui/material';
+import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
+import SnackbarNotification from '../components/SnackbarNotification'; // עדכן נתיב לפי הפרויקט שלך
 
-// Interface for form data
 interface StudentFormData {
   id: string;
   fullName: string;
   email: string;
-  courses: string; // comma-separated course codes
-  assignments: string; // comma-separated assignment IDs
-  gradeSheet: string; // JSON string: { courseCode: grade }
+  courses: string; 
+  assignments: string;
+  gradeSheet: string;
   program: string;
   semester: 'A' | 'B' | 'C';
   completedCredits: string;
@@ -32,7 +32,6 @@ const StudentForm: React.FC = () => {
   const [snackMsg, setSnackMsg] = useState('');
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
-  // Validation logic
   const validate = (): boolean => {
     const newErrors: typeof errors = {};
 
@@ -43,19 +42,14 @@ const StudentForm: React.FC = () => {
     const courseList = data.courses.split(',').map(s => s.trim()).filter(Boolean);
     if (courseList.length === 0) newErrors.courses = 'Enter at least one course, separated by commas';
 
-    const assignmentList = data.assignments.split(',').map(s => s.trim()).filter(Boolean);
-    // assignments can be empty, no validation error
-
     try {
       const sheet = JSON.parse(data.gradeSheet);
       if (typeof sheet !== 'object' || Array.isArray(sheet)) throw new Error();
       for (const [course, grade] of Object.entries(sheet)) {
-        if (typeof grade !== 'number' || grade < 0 || grade > 100) {
-          throw new Error();
-        }
+        if (typeof grade !== 'number' || grade < 0 || grade > 100) throw new Error();
       }
     } catch {
-      newErrors.gradeSheet = 'Enter valid JSON for grade sheet (e.g. {"CS101": 85, "Java": 90})';
+      newErrors.gradeSheet = 'Enter valid JSON for grade sheet (e.g. {"CS101": 85})';
     }
 
     if (!data.program.trim()) newErrors.program = 'Please select a program';
@@ -74,6 +68,7 @@ const StudentForm: React.FC = () => {
 
   const handleSubmit = () => {
     if (!validate()) return;
+
     const newStudent = {
       id: data.id,
       fullName: data.fullName,
@@ -86,10 +81,23 @@ const StudentForm: React.FC = () => {
       completedCredits: parseInt(data.completedCredits, 10),
       createdAt: new Date().toISOString(),
     };
+
     const existing = JSON.parse(localStorage.getItem('students') || '[]');
     existing.push(newStudent);
     localStorage.setItem('students', JSON.stringify(existing));
-    setData({ id: '', fullName: '', email: '', courses: '', assignments: '', gradeSheet: '', program: '', semester: 'A', completedCredits: '0' });
+
+    setData({
+      id: '',
+      fullName: '',
+      email: '',
+      courses: '',
+      assignments: '',
+      gradeSheet: '',
+      program: '',
+      semester: 'A',
+      completedCredits: '0'
+    });
+
     setSnackMsg('Student added successfully!');
     setSnackSeverity('success');
     setSnackOpen(true);
@@ -98,108 +106,30 @@ const StudentForm: React.FC = () => {
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
       <Typography variant="h6" gutterBottom>Student Form</Typography>
-      <TextField
-        label="ID"
-        value={data.id}
-        onChange={handleChange('id')}
-        error={!!errors.id}
-        helperText={errors.id}
-        fullWidth
-        margin="normal"
-      />
-      <TextField
-        label="Full Name"
-        value={data.fullName}
-        onChange={handleChange('fullName')}
-        error={!!errors.fullName}
-        helperText={errors.fullName}
-        fullWidth
-        margin="normal"
-      />
-      <TextField
-        label="Email"
-        value={data.email}
-        onChange={handleChange('email')}
-        error={!!errors.email}
-        helperText={errors.email}
-        fullWidth
-        margin="normal"
-      />
-      <TextField
-        label="Courses (comma separated)"
-        value={data.courses}
-        onChange={handleChange('courses')}
-        error={!!errors.courses}
-        helperText={errors.courses}
-        fullWidth
-        margin="normal"
-      />
-      <TextField
-        label="Assignments (comma separated)"
-        value={data.assignments}
-        onChange={handleChange('assignments')}
-        error={!!errors.assignments}
-        helperText={errors.assignments}
-        fullWidth
-        margin="normal"
-      />
-      <TextField
-        label="Grade Sheet (JSON)"
-        value={data.gradeSheet}
-        onChange={handleChange('gradeSheet')}
-        error={!!errors.gradeSheet}
-        helperText={errors.gradeSheet}
-        fullWidth
-        margin="normal"
-        multiline
-        minRows={3}
-      />
-      <TextField
-        label="Program"
-        value={data.program}
-        onChange={handleChange('program')}
-        error={!!errors.program}
-        helperText={errors.program}
-        fullWidth
-        margin="normal"
-      />
-      <TextField
-        select
-        label="Current Semester"
-        value={data.semester}
-        onChange={handleChange('semester')}
-        error={!!errors.semester}
-        helperText={errors.semester}
-        fullWidth
-        margin="normal"
-      >
+      <TextField label="ID" value={data.id} onChange={handleChange('id')} error={!!errors.id} helperText={errors.id} fullWidth margin="normal" />
+      <TextField label="Full Name" value={data.fullName} onChange={handleChange('fullName')} error={!!errors.fullName} helperText={errors.fullName} fullWidth margin="normal" />
+      <TextField label="Email" value={data.email} onChange={handleChange('email')} error={!!errors.email} helperText={errors.email} fullWidth margin="normal" />
+      <TextField label="Courses (comma separated)" value={data.courses} onChange={handleChange('courses')} error={!!errors.courses} helperText={errors.courses} fullWidth margin="normal" />
+      <TextField label="Assignments (comma separated)" value={data.assignments} onChange={handleChange('assignments')} error={!!errors.assignments} helperText={errors.assignments} fullWidth margin="normal" />
+      <TextField label="Grade Sheet (JSON)" value={data.gradeSheet} onChange={handleChange('gradeSheet')} error={!!errors.gradeSheet} helperText={errors.gradeSheet} fullWidth margin="normal" multiline minRows={3} />
+      <TextField label="Program" value={data.program} onChange={handleChange('program')} error={!!errors.program} helperText={errors.program} fullWidth margin="normal" />
+      <TextField select label="Current Semester" value={data.semester} onChange={handleChange('semester')} error={!!errors.semester} helperText={errors.semester} fullWidth margin="normal">
         <MenuItem value="A">A</MenuItem>
         <MenuItem value="B">B</MenuItem>
         <MenuItem value="C">C</MenuItem>
       </TextField>
-      <TextField
-        label="Completed Credits"
-        value={data.completedCredits}
-        onChange={handleChange('completedCredits')}
-        error={!!errors.completedCredits}
-        helperText={errors.completedCredits}
-        fullWidth
-        margin="normal"
-      />
+      <TextField label="Completed Credits" value={data.completedCredits} onChange={handleChange('completedCredits')} error={!!errors.completedCredits} helperText={errors.completedCredits} fullWidth margin="normal" />
       <Box mt={2} textAlign="right">
         <Button variant="contained" onClick={handleSubmit}>Save</Button>
       </Box>
-      <Snackbar
-        open={snackOpen}
-        autoHideDuration={2500}
-        onClose={() => setSnackOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setSnackOpen(false)} severity={snackSeverity} variant="filled" sx={{ width: '100%' }}>
-          {snackMsg}
-        </Alert>
-      </Snackbar>
 
+      {/* קומפוננטת Snackbar מופרדת */}
+      <SnackbarNotification
+        open={snackOpen}
+        severity={snackSeverity}
+        message={snackMsg}
+        onClose={() => setSnackOpen(false)}
+      />
     </Box>
   );
 };

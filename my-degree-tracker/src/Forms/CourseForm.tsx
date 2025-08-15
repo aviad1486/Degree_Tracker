@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Box, Typography, MenuItem, Snackbar, Alert } from '@mui/material';
+import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
+import SnackbarNotification from '../components/SnackbarNotification'; // עדכן נתיב אם צריך
 
-// Interface for course form data
 interface CourseFormData {
   courseCode: string;
   courseName: string;
@@ -29,8 +29,6 @@ const CourseForm: React.FC = () => {
   const [snackMsg, setSnackMsg] = useState('');
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
-
-  // Prefill form for edit
   useEffect(() => {
     if (isEdit && courseCode) {
       const courses: any[] = JSON.parse(localStorage.getItem('courses') || '[]');
@@ -45,9 +43,8 @@ const CourseForm: React.FC = () => {
         });
       }
     }
-  }, [courseCode]);
+  }, [courseCode, isEdit]);
 
-  // Validation logic
   const validate = (): boolean => {
     const newErrors: typeof errors = {};
     if (!data.courseCode.trim()) newErrors.courseCode = 'Course code is required';
@@ -63,12 +60,10 @@ const CourseForm: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle input changes
   const handleChange = (field: keyof CourseFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setData(prev => ({ ...prev, [field]: e.target.value }));
   };
 
-  // Submit handler
   const handleSubmit = () => {
     if (!validate()) {
       setSnackMsg('Please fix the form errors');
@@ -76,6 +71,7 @@ const CourseForm: React.FC = () => {
       setSnackOpen(true);
       return;
     }
+
     const entry = {
       courseCode: data.courseCode.trim(),
       courseName: data.courseName.trim(),
@@ -84,15 +80,18 @@ const CourseForm: React.FC = () => {
       assignments: data.assignments.split(',').map(s => s.trim()),
       createdAt: new Date().toISOString(),
     };
+
     const courses: any[] = JSON.parse(localStorage.getItem('courses') || '[]');
     const updated = isEdit
       ? courses.map(c => (c.courseCode === courseCode ? entry : c))
       : [...courses, entry];
     localStorage.setItem('courses', JSON.stringify(updated));
-    setData({courseCode: '', courseName: '', credits: '1', semester: 'A', assignments: ''});
+
+    setData({ courseCode: '', courseName: '', credits: '1', semester: 'A', assignments: '' });
     setSnackMsg(isEdit ? 'Course updated successfully' : 'Course added successfully');
     setSnackSeverity('success');
     setSnackOpen(true);
+
     setTimeout(() => navigate('/courses'), 2000);
   };
 
@@ -160,18 +159,17 @@ const CourseForm: React.FC = () => {
       />
 
       <Box mt={2} textAlign="right">
-        <Button variant="contained" onClick={handleSubmit}>{isEdit ? 'Update' : 'Save'}</Button>
+        <Button variant="contained" onClick={handleSubmit}>
+          {isEdit ? 'Update' : 'Save'}
+        </Button>
       </Box>
-      <Snackbar
+
+      <SnackbarNotification
         open={snackOpen}
-        autoHideDuration={1500}
+        severity={snackSeverity}
+        message={snackMsg}
         onClose={() => setSnackOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setSnackOpen(false)} severity={snackSeverity} variant="filled" sx={{ width: '100%' }}>
-          {snackMsg}
-        </Alert>
-      </Snackbar>
+      />
     </Box>
   );
 };

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Box, Typography, MenuItem, Snackbar, Alert, FormControlLabel, Checkbox } from '@mui/material';
+import { TextField, Button, Box, Typography, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
+import SnackbarNotification from '../components/SnackbarNotification';
 
-// Interface for student-course form data
 interface StudentCourseFormData {
   studentId: string;
   courseCode: string;
@@ -30,8 +30,6 @@ const StudentCourseForm: React.FC = () => {
   const [snackMsg, setSnackMsg] = useState('');
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
-
-  // Prefill data in edit mode
   useEffect(() => {
     if (isEdit && index !== undefined) {
       const records: any[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
@@ -48,9 +46,8 @@ const StudentCourseForm: React.FC = () => {
         });
       }
     }
-  }, [index]);
+  }, [index, isEdit]);
 
-  // Validation logic
   const validate = (): boolean => {
     const newErrors: typeof errors = {};
     if (!/^\d{9}$/.test(data.studentId)) newErrors.studentId = 'Student ID must be exactly 9 digits';
@@ -66,15 +63,11 @@ const StudentCourseForm: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle input changes
-  const handleChange = (field: keyof StudentCourseFormData) => (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (field: keyof StudentCourseFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = field === 'retaken' ? (e.target as HTMLInputElement).checked : e.target.value;
     setData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Submit handler
   const handleSubmit = () => {
     if (!validate()) {
       setSnackMsg('Please fix the form errors');
@@ -82,6 +75,7 @@ const StudentCourseForm: React.FC = () => {
       setSnackOpen(true);
       return;
     }
+
     const entry = {
       studentId: data.studentId,
       courseCode: data.courseCode.trim(),
@@ -91,16 +85,18 @@ const StudentCourseForm: React.FC = () => {
       retaken: data.retaken,
       createdAt: new Date().toISOString(),
     };
+
     const records: any[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
     const updated = isEdit
       ? records.map((r, i) => (i === parseInt(index!, 10) ? entry : r))
       : [...records, entry];
+
     localStorage.setItem('studentCourses', JSON.stringify(updated));
+
     setSnackMsg(isEdit ? 'Record updated successfully' : 'Record saved successfully');
     setSnackSeverity('success');
     setSnackOpen(true);
 
-    // לתת להודעה להופיע ואז לנווט
     setTimeout(() => navigate('/student-courses'), 2000);
   };
 
@@ -109,6 +105,7 @@ const StudentCourseForm: React.FC = () => {
       <Typography variant="h6" gutterBottom>
         {isEdit ? 'Edit Student Course Record' : 'Add Student Course Record'}
       </Typography>
+
       <TextField
         label="Student ID"
         value={data.studentId}
@@ -118,6 +115,7 @@ const StudentCourseForm: React.FC = () => {
         fullWidth
         margin="normal"
       />
+
       <TextField
         label="Course Code"
         value={data.courseCode}
@@ -127,6 +125,7 @@ const StudentCourseForm: React.FC = () => {
         fullWidth
         margin="normal"
       />
+
       <TextField
         label="Grade"
         value={data.grade}
@@ -138,6 +137,7 @@ const StudentCourseForm: React.FC = () => {
         type="number"
         inputProps={{ min: 0, max: 100 }}
       />
+
       <TextField
         select
         label="Semester"
@@ -152,6 +152,7 @@ const StudentCourseForm: React.FC = () => {
         <MenuItem value="B">B</MenuItem>
         <MenuItem value="C">C</MenuItem>
       </TextField>
+
       <TextField
         label="Year"
         value={data.year}
@@ -163,25 +164,24 @@ const StudentCourseForm: React.FC = () => {
         type="number"
         inputProps={{ min: 2000, max: new Date().getFullYear() }}
       />
+
       <FormControlLabel
         control={<Checkbox checked={data.retaken} onChange={handleChange('retaken')} />}
         label="Retaken"
       />
+
       <Box mt={2} textAlign="right">
         <Button variant="contained" onClick={handleSubmit}>
           {isEdit ? 'Update' : 'Save'}
         </Button>
       </Box>
-      <Snackbar
+
+      <SnackbarNotification
         open={snackOpen}
-        autoHideDuration={2500}
+        severity={snackSeverity}
+        message={snackMsg}
         onClose={() => setSnackOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-      <Alert onClose={() => setSnackOpen(false)} severity={snackSeverity} variant="filled" sx={{ width: '100%' }}>
-        {snackMsg}
-        </Alert>
-      </Snackbar>
+      />
     </Box>
   );
 };
