@@ -94,6 +94,7 @@ const ProgramForm: React.FC = () => {
         onChange={handleChange('name')}
         error={!!errors.name}
         helperText={errors.name}
+        required
         fullWidth
         margin="normal"
       />
@@ -105,6 +106,7 @@ const ProgramForm: React.FC = () => {
         onChange={handleChange('totalCreditsRequired')}
         error={!!errors.totalCreditsRequired}
         helperText={errors.totalCreditsRequired}
+        required
         fullWidth
         margin="normal"
       />
@@ -114,6 +116,7 @@ const ProgramForm: React.FC = () => {
         onChange={handleChange('courses')}
         error={!!errors.courses}
         helperText={errors.courses}
+        required
         fullWidth
         margin="normal"
       />

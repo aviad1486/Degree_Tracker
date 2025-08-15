@@ -112,6 +112,7 @@ const StudentCourseForm: React.FC = () => {
         onChange={handleChange('studentId')}
         error={!!errors.studentId}
         helperText={errors.studentId}
+        required
         fullWidth
         margin="normal"
       />
@@ -122,6 +123,7 @@ const StudentCourseForm: React.FC = () => {
         onChange={handleChange('courseCode')}
         error={!!errors.courseCode}
         helperText={errors.courseCode}
+        required
         fullWidth
         margin="normal"
       />
@@ -132,6 +134,7 @@ const StudentCourseForm: React.FC = () => {
         onChange={handleChange('grade')}
         error={!!errors.grade}
         helperText={errors.grade}
+        required
         fullWidth
         margin="normal"
         type="number"
@@ -145,6 +148,7 @@ const StudentCourseForm: React.FC = () => {
         onChange={handleChange('semester')}
         error={!!errors.semester}
         helperText={errors.semester}
+        required
         fullWidth
         margin="normal"
       >
@@ -159,10 +163,11 @@ const StudentCourseForm: React.FC = () => {
         onChange={handleChange('year')}
         error={!!errors.year}
         helperText={errors.year}
+        required
         fullWidth
         margin="normal"
         type="number"
-        inputProps={{ min: 2000, max: new Date().getFullYear() }}
+        inputProps={{ min: 1960, max: new Date().getFullYear() }}
       />
 
       <FormControlLabel

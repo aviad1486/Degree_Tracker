@@ -105,6 +105,7 @@ const CourseForm: React.FC = () => {
         onChange={handleChange('courseCode')}
         error={!!errors.courseCode}
         helperText={errors.courseCode}
+        required
         fullWidth
         margin="normal"
       />
@@ -115,6 +116,7 @@ const CourseForm: React.FC = () => {
         onChange={handleChange('courseName')}
         error={!!errors.courseName}
         helperText={errors.courseName}
+        required
         fullWidth
         margin="normal"
       />
@@ -127,6 +129,7 @@ const CourseForm: React.FC = () => {
         onChange={handleChange('credits')}
         error={!!errors.credits}
         helperText={errors.credits}
+        required
         fullWidth
         margin="normal"
       />
@@ -138,6 +141,7 @@ const CourseForm: React.FC = () => {
         onChange={handleChange('semester')}
         error={!!errors.semester}
         helperText={errors.semester}
+        required
         fullWidth
         margin="normal"
       >
@@ -152,6 +156,7 @@ const CourseForm: React.FC = () => {
         onChange={handleChange('assignments')}
         error={!!errors.assignments}
         helperText={errors.assignments}
+        required
         fullWidth
         margin="normal"
         multiline

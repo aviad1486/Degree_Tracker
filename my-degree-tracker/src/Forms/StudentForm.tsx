@@ -67,8 +67,12 @@ const StudentForm: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    if (!validate()) return;
-
+  if (!validate()) {
+    setSnackMsg('Please fix the form errors');
+    setSnackSeverity('error');
+    setSnackOpen(true);
+    return;
+  }
     const newStudent = {
       id: data.id,
       fullName: data.fullName,
@@ -106,19 +110,19 @@ const StudentForm: React.FC = () => {
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
       <Typography variant="h6" gutterBottom>Student Form</Typography>
-      <TextField label="ID" value={data.id} onChange={handleChange('id')} error={!!errors.id} helperText={errors.id} fullWidth margin="normal" />
-      <TextField label="Full Name" value={data.fullName} onChange={handleChange('fullName')} error={!!errors.fullName} helperText={errors.fullName} fullWidth margin="normal" />
-      <TextField label="Email" value={data.email} onChange={handleChange('email')} error={!!errors.email} helperText={errors.email} fullWidth margin="normal" />
-      <TextField label="Courses (comma separated)" value={data.courses} onChange={handleChange('courses')} error={!!errors.courses} helperText={errors.courses} fullWidth margin="normal" />
+      <TextField label="ID" value={data.id} onChange={handleChange('id')} error={!!errors.id} helperText={errors.id} required fullWidth margin="normal" />
+      <TextField label="Full Name" value={data.fullName} onChange={handleChange('fullName')} error={!!errors.fullName} helperText={errors.fullName} required fullWidth margin="normal" />
+      <TextField label="Email" value={data.email} onChange={handleChange('email')} error={!!errors.email} helperText={errors.email} required fullWidth margin="normal" />
+      <TextField label="Courses (comma separated)" value={data.courses} onChange={handleChange('courses')} error={!!errors.courses} helperText={errors.courses} required fullWidth margin="normal" />
       <TextField label="Assignments (comma separated)" value={data.assignments} onChange={handleChange('assignments')} error={!!errors.assignments} helperText={errors.assignments} fullWidth margin="normal" />
-      <TextField label="Grade Sheet (JSON)" value={data.gradeSheet} onChange={handleChange('gradeSheet')} error={!!errors.gradeSheet} helperText={errors.gradeSheet} fullWidth margin="normal" multiline minRows={3} />
-      <TextField label="Program" value={data.program} onChange={handleChange('program')} error={!!errors.program} helperText={errors.program} fullWidth margin="normal" />
-      <TextField select label="Current Semester" value={data.semester} onChange={handleChange('semester')} error={!!errors.semester} helperText={errors.semester} fullWidth margin="normal">
+      <TextField label="Grade Sheet (JSON)" value={data.gradeSheet} onChange={handleChange('gradeSheet')} error={!!errors.gradeSheet} helperText={errors.gradeSheet} required fullWidth margin="normal" multiline minRows={3} />
+      <TextField label="Program" value={data.program} onChange={handleChange('program')} error={!!errors.program} helperText={errors.program} required fullWidth margin="normal" />
+      <TextField select label="Current Semester" value={data.semester} onChange={handleChange('semester')} error={!!errors.semester} helperText={errors.semester} required fullWidth margin="normal">
         <MenuItem value="A">A</MenuItem>
         <MenuItem value="B">B</MenuItem>
         <MenuItem value="C">C</MenuItem>
       </TextField>
-      <TextField label="Completed Credits" value={data.completedCredits} onChange={handleChange('completedCredits')} error={!!errors.completedCredits} helperText={errors.completedCredits} fullWidth margin="normal" />
+      <TextField label="Completed Credits" value={data.completedCredits} onChange={handleChange('completedCredits')} error={!!errors.completedCredits} helperText={errors.completedCredits} required fullWidth margin="normal" />
       <Box mt={2} textAlign="right">
         <Button variant="contained" onClick={handleSubmit}>Save</Button>
       </Box>
