@@ -11,8 +11,7 @@ import {
 } from '@mui/material';
 
 import Header from './components/Header';
-
-import HomePage from './Pages/HomePage'; // ודא שהקובץ קיים ושהנתיב נכון
+import HomePage from './pages/homepage';
 import StudentForm from './Forms/StudentForm';
 import StudentList from './Forms/StudentList';
 import CourseForm from './Forms/CourseForm';
@@ -86,9 +85,8 @@ export default function App() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
           <Routes>
-            {/* Home */}
+            {/* Home page */}
             <Route path="/" element={<HomePage />} />
-            <Route path="*" element={<HomePage />} />
 
             {/* Student routes */}
             <Route path="/students/new" element={<StudentForm />} />
@@ -109,6 +107,9 @@ export default function App() {
             <Route path="/programs/new" element={<ProgramForm />} />
             <Route path="/programs/edit/:name" element={<ProgramForm />} />
             <Route path="/programs" element={<ProgramList />} />
+
+            {/* Catch-all route (optional) */}
+            <Route path="*" element={<HomePage />} />
           </Routes>
         </Box>
       </Box>
