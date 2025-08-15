@@ -12,7 +12,7 @@ import {
 
 import Header from './components/Header';
 
-import HomePage from './pages/HomePage'; // ודא שהקובץ קיים ושהנתיב נכון
+import HomePage from './Pages/HomePage'; // ודא שהקובץ קיים ושהנתיב נכון
 import StudentForm from './Forms/StudentForm';
 import StudentList from './Forms/StudentList';
 import CourseForm from './Forms/CourseForm';
