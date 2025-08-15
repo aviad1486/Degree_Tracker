@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onMenuClick?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [dateTime, setDateTime] = useState(new Date());
 
   useEffect(() => {
@@ -11,21 +16,31 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <AppBar position="fixed" sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
+    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Typography
-          variant="h6"
-          component={Link}
-          to="/"
-          sx={{ color: 'inherit', textDecoration: 'none', fontWeight: 'bold' }}
-        >
-          Degree Tracker System
-        </Typography>
-
+        {/* צד שמאל - כפתור המבורגר + שם האפליקציה */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography variant="body2">
-            {dateTime.toLocaleString()}
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={onMenuClick}
+            aria-label="menu"
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{ color: 'inherit', textDecoration: 'none', fontWeight: 'bold' }}
+          >
+            Degree Tracker System
           </Typography>
+        </Box>
+
+        {/* צד ימין - תאריך ושעה + כפתור התחברות */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Typography variant="body2">{dateTime.toLocaleString()}</Typography>
           <Button variant="outlined" color="inherit" size="small">
             Login
           </Button>
