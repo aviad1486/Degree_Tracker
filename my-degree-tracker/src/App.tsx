@@ -6,9 +6,18 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  ListItemIcon,
   Box,
   Toolbar,
 } from '@mui/material';
+
+import HomeIcon from '@mui/icons-material/Home';
+import SchoolIcon from '@mui/icons-material/School';
+import GradeIcon from '@mui/icons-material/Grade';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import TimelineIcon from '@mui/icons-material/Timeline';
+import HelpIcon from '@mui/icons-material/Help';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import Header from './components/Header';
 import HomePage from './pages/homepage';
@@ -39,44 +48,63 @@ export default function App() {
         >
           <Toolbar />
           <List>
+
             <ListItem disablePadding>
-              <ListItemButton component={Link} to="/students/new">
-                <ListItemText primary="Add Student" />
+              <ListItemButton component={Link} to="/">
+                <ListItemIcon><HomeIcon /></ListItemIcon>
+                <ListItemText primary="עמוד הבית" />
               </ListItemButton>
             </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton component={Link} to="/students">
-                <ListItemText primary="Student List" />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton component={Link} to="/courses/new">
-                <ListItemText primary="Add Course" />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton component={Link} to="/courses">
-                <ListItemText primary="Course List" />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton component={Link} to="/student-courses/new">
-                <ListItemText primary="Add Student Course" />
-              </ListItemButton>
-            </ListItem>
+
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/student-courses">
-                <ListItemText primary="Student Course Records" />
+                <ListItemIcon><SchoolIcon /></ListItemIcon>
+                <ListItemText primary="ההתקדמות שלי" />
               </ListItemButton>
             </ListItem>
+
             <ListItem disablePadding>
-              <ListItemButton component={Link} to="/programs/new">
-                <ListItemText primary="Add Program" />
+              <ListItemButton component={Link} to="/student-courses">
+                <ListItemIcon><GradeIcon /></ListItemIcon>
+                <ListItemText primary="דו״ח ציונים" />
               </ListItemButton>
             </ListItem>
+
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/courses">
+                <ListItemIcon><MenuBookIcon /></ListItemIcon>
+                <ListItemText primary="קורסים" />
+              </ListItemButton>
+            </ListItem>
+
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/programs">
-                <ListItemText primary="Program List" />
+                <ListItemIcon><TimelineIcon /></ListItemIcon>
+                <ListItemText primary="מסלול לימוד" />
+              </ListItemButton>
+            </ListItem>
+
+            {/* מוסתר לעת עתה */}
+            {/* 
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/students">
+                <ListItemIcon><PeopleIcon /></ListItemIcon>
+                <ListItemText primary="משתמשים" />
+              </ListItemButton>
+            </ListItem>
+            */}
+
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/">
+                <ListItemIcon><HelpIcon /></ListItemIcon>
+                <ListItemText primary="עזרה והדרכה" />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/student-courses">
+                <ListItemIcon><AssignmentIcon /></ListItemIcon>
+                <ListItemText primary="ההתנוקות" />
               </ListItemButton>
             </ListItem>
           </List>
@@ -108,7 +136,7 @@ export default function App() {
             <Route path="/programs/edit/:name" element={<ProgramForm />} />
             <Route path="/programs" element={<ProgramList />} />
 
-            {/* Catch-all route (optional) */}
+            {/* Catch-all route */}
             <Route path="*" element={<HomePage />} />
           </Routes>
         </Box>
