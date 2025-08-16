@@ -93,7 +93,7 @@ const StudentForm: React.FC = () => {
     const emailNorm = norm(data.email);
     const programNorm = norm(data.program);
 
-    // Email unique ACROSS DIFFERENT IDs (allow same email for same ID across programs)
+    // Email uniqueness across DIFFERENT IDs (allow same email for same ID across programs)
     const emailClash = students.some(s => norm(s.email) === emailNorm && s.id !== idNorm);
     if (emailClash) newErrors.email = 'Email already exists for a different student ID';
 
@@ -109,31 +109,6 @@ const StudentForm: React.FC = () => {
 
   const handleChange = (field: keyof StudentFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setData(prev => ({ ...prev, [field]: e.target.value }));
-  };
-
-  // Create StudentCourse records (once) for each listed course on create
-  const ensureStudentCourseRecordsOnCreate = (studentId: string, semester: 'A'|'B'|'C') => {
-    const nowYear = new Date().getFullYear();
-    const coursesArr = data.courses.split(',').map(s => s.trim()).filter(Boolean);
-    if (coursesArr.length === 0) return;
-
-    const records: AnyRec[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
-
-    for (const code of coursesArr) {
-      const exists = records.some(r => r.studentId === studentId && r.courseCode === code);
-      if (!exists) {
-        records.push({
-          studentId,
-          courseCode: code,
-          grade: 0,              // placeholder
-          semester,              // use current student semester
-          year: nowYear,
-          retaken: 1,
-          createdAt: new Date().toISOString(),
-        });
-      }
-    }
-    localStorage.setItem('studentCourses', JSON.stringify(records));
   };
 
   const handleSubmit = () => {
@@ -202,7 +177,6 @@ const StudentForm: React.FC = () => {
           return;
         }
         existing.push(newStudent);
-        ensureStudentCourseRecordsOnCreate(newStudent.id, newStudent.semester);
       }
     } else {
       // create: block duplicate id+program
@@ -223,7 +197,7 @@ const StudentForm: React.FC = () => {
       }
 
       existing.push(newStudent);
-      ensureStudentCourseRecordsOnCreate(newStudent.id, newStudent.semester);
+      // NOTE: intentionally NOT creating studentCourses records here
     }
 
     localStorage.setItem('students', JSON.stringify(existing));
