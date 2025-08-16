@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import SnackbarNotification from '../components/SnackbarNotification'; // עדכן נתיב אם צריך
+import SnackbarNotification from '../components/SnackbarNotification';
 
 interface CourseFormData {
   courseCode: string;
@@ -10,6 +10,9 @@ interface CourseFormData {
   semester: 'A' | 'B' | 'C';
   assignments: string;
 }
+
+type AnyRec = Record<string, any>;
+const norm = (s: string) => (s || '').trim().toLowerCase();
 
 const CourseForm: React.FC = () => {
   const { courseCode } = useParams<{ courseCode?: string }>();
@@ -31,7 +34,7 @@ const CourseForm: React.FC = () => {
 
   useEffect(() => {
     if (isEdit && courseCode) {
-      const courses: any[] = JSON.parse(localStorage.getItem('courses') || '[]');
+      const courses: AnyRec[] = JSON.parse(localStorage.getItem('courses') || '[]');
       const course = courses.find(c => c.courseCode === courseCode);
       if (course) {
         setData({
@@ -56,6 +59,15 @@ const CourseForm: React.FC = () => {
     if (data.assignments.split(',').map(s => s.trim()).filter(Boolean).length === 0) {
       newErrors.assignments = 'Enter at least one assignment';
     }
+
+    // Unique course code (case-insensitive)
+    const all: AnyRec[] = JSON.parse(localStorage.getItem('courses') || '[]');
+    const codeNorm = norm(data.courseCode);
+    const clash = all.some(c =>
+      norm(c.courseCode) === codeNorm && (!isEdit || c.courseCode !== courseCode)
+    );
+    if (clash) newErrors.courseCode = 'Course code already exists';
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -81,10 +93,12 @@ const CourseForm: React.FC = () => {
       createdAt: new Date().toISOString(),
     };
 
-    const courses: any[] = JSON.parse(localStorage.getItem('courses') || '[]');
+    const courses: AnyRec[] = JSON.parse(localStorage.getItem('courses') || '[]');
+
     const updated = isEdit
       ? courses.map(c => (c.courseCode === courseCode ? entry : c))
       : [...courses, entry];
+
     localStorage.setItem('courses', JSON.stringify(updated));
 
     setData({ courseCode: '', courseName: '', credits: '1', semester: 'A', assignments: '' });
@@ -92,7 +106,7 @@ const CourseForm: React.FC = () => {
     setSnackSeverity('success');
     setSnackOpen(true);
 
-    setTimeout(() => navigate('/courses'), 2000);
+    setTimeout(() => navigate('/courses'), 1200);
   };
 
   return (

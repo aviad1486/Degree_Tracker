@@ -9,6 +9,9 @@ interface ProgramFormData {
   courses: string;
 }
 
+type AnyRec = Record<string, any>;
+const norm = (s: string) => (s || '').trim().toLowerCase();
+
 const ProgramForm: React.FC = () => {
   const { name } = useParams<{ name?: string }>();
   const navigate = useNavigate();
@@ -25,10 +28,9 @@ const ProgramForm: React.FC = () => {
   const [snackMsg, setSnackMsg] = useState('');
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
-  // Prefill in edit mode
   useEffect(() => {
     if (isEdit && name) {
-      const programs: any[] = JSON.parse(localStorage.getItem('programs') || '[]');
+      const programs: AnyRec[] = JSON.parse(localStorage.getItem('programs') || '[]');
       const decoded = decodeURIComponent(name);
       const program = programs.find(p => p.name === decoded);
       if (program) {
@@ -50,6 +52,15 @@ const ProgramForm: React.FC = () => {
     if (data.courses.split(',').map(s => s.trim()).filter(Boolean).length === 0) {
       newErrors.courses = 'Enter at least one course code';
     }
+
+    // Unique by name (case-insensitive)
+    const all: AnyRec[] = JSON.parse(localStorage.getItem('programs') || '[]');
+    const nm = norm(data.name);
+    const clash = all.some(p =>
+      norm(p.name) === nm && (!isEdit || p.name !== name)
+    );
+    if (clash) newErrors.name = 'Program name already exists';
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -71,15 +82,15 @@ const ProgramForm: React.FC = () => {
       courses: data.courses.split(',').map(s => s.trim()),
       createdAt: new Date().toISOString(),
     };
-    const programs: any[] = JSON.parse(localStorage.getItem('programs') || '[]');
+    const programs: AnyRec[] = JSON.parse(localStorage.getItem('programs') || '[]');
     const updated = isEdit
-      ? programs.map(p => (p.name === entry.name ? entry : p))
+      ? programs.map(p => (p.name === (name as string) ? entry : p))
       : [...programs, entry];
     localStorage.setItem('programs', JSON.stringify(updated));
     setSnackMsg(isEdit ? 'Program updated successfully' : 'Program added successfully');
     setSnackSeverity('success');
     setSnackOpen(true);
-    setTimeout(() => navigate('/programs'), 2000);
+    setTimeout(() => navigate('/programs'), 1200);
   };
 
   return (
