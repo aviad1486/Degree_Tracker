@@ -8,12 +8,12 @@ import {
 } from '@mui/material';
 import {
   Home as HomeIcon,
-  School as SchoolIcon,
   Assessment as AssessmentIcon,
   MenuBook as MenuBookIcon,
   TableChart as TableChartIcon,
   Help as HelpIcon,
   ExitToApp as ExitToAppIcon,
+  Timeline as TimelineIcon,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
@@ -32,38 +32,46 @@ export default function HamburgerDrawer({ onClose }: HamburgerDrawerProps) {
             <ListItemText primary="Home Page" />
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon><SchoolIcon /></ListItemIcon>
+          <ListItemButton component={Link} to="/progress" onClick={onClose}>
+            <ListItemIcon><TimelineIcon /></ListItemIcon>
             <ListItemText primary="My Progress" />
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton component={Link} to="/grade-report" onClick={onClose}>
             <ListItemIcon><AssessmentIcon /></ListItemIcon>
             <ListItemText primary="Grade Report" />
           </ListItemButton>
         </ListItem>
+
+        {/* שינוי יעד: למסך המשתמש "My Courses" */}
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton component={Link} to="/my-courses" onClick={onClose}>
             <ListItemIcon><MenuBookIcon /></ListItemIcon>
-            <ListItemText primary="Courses" />
+            <ListItemText primary="My Courses" />
           </ListItemButton>
         </ListItem>
+
+        {/* שינוי יעד: למסך המשתמש "My Study Program" */}
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton component={Link} to="/my-program" onClick={onClose}>
             <ListItemIcon><TableChartIcon /></ListItemIcon>
-            <ListItemText primary="Programs" />
+            <ListItemText primary="My Programs" />
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton component={Link} to="/help" onClick={onClose}>
             <ListItemIcon><HelpIcon /></ListItemIcon>
             <ListItemText primary="Help & Support" />
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton component={Link} to="/logout" onClick={onClose}>
             <ListItemIcon><ExitToAppIcon /></ListItemIcon>
             <ListItemText primary="Logout" />
           </ListItemButton>

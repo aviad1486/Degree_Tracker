@@ -17,6 +17,13 @@ import ProgramList from './Forms/ProgramList';
 import MainDrawer from './components/MainDrawer';
 import HamburgerDrawer from './components/HamburgerDrawer';
 
+import MyProgress from './pages/myprogress';
+import GradeReport from './pages/gradereport';
+import HelpSupport from './pages/helpsupport';
+import Logout from './pages/logout';
+import MyCourses from './pages/mycourses';
+import MyProgram from './pages/myprogram';
+
 const drawerWidth = 240;
 
 export default function App() {
@@ -73,6 +80,12 @@ export default function App() {
             <Route path="/programs/edit/:name" element={<ProgramForm />} />
             <Route path="/programs" element={<ProgramList />} />
             <Route path="*" element={<HomePage />} />
+            <Route path="/progress" element={<MyProgress />} />
+            <Route path="/grade-report" element={<GradeReport />} />
+            <Route path="/help" element={<HelpSupport />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/my-courses" element={<MyCourses />} />
+            <Route path="/my-program" element={<MyProgram />} />
           </Routes>
         </Box>
       </Box>
