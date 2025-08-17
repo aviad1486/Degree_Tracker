@@ -18,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   return (
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
-        {/* צד שמאל - כפתור המבורגר + שם האפליקציה */}
+        {/* Left side - hamburger menu + app name */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <IconButton
             color="inherit"
@@ -38,10 +38,16 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           </Typography>
         </Box>
 
-        {/* צד ימין - תאריך ושעה + כפתור התחברות */}
+        {/* Right side - date/time + login button */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Typography variant="body2">{dateTime.toLocaleString()}</Typography>
-          <Button variant="outlined" color="inherit" size="small">
+          <Button
+            variant="outlined"
+            color="inherit"
+            size="small"
+            component={Link}
+            to="/login"
+          >
             Login
           </Button>
         </Box>

@@ -23,6 +23,7 @@ import HelpSupport from './pages/helpsupport';
 import Logout from './pages/logout';
 import MyCourses from './pages/mycourses';
 import MyProgram from './pages/myprogram';
+import Login from './pages/login';
 
 const drawerWidth = 240;
 
@@ -86,6 +87,8 @@ export default function App() {
             <Route path="/logout" element={<Logout />} />
             <Route path="/my-courses" element={<MyCourses />} />
             <Route path="/my-program" element={<MyProgram />} />
+            <Route path="/login" element={<Login />} />
+
           </Routes>
         </Box>
       </Box>
