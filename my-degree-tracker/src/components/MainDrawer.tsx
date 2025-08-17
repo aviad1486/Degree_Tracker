@@ -7,13 +7,13 @@ import {
   Toolbar 
 } from '@mui/material';
 import { 
-  PersonAdd as PersonAddIcon,
+  //PersonAdd as PersonAddIcon,
   People as PeopleIcon,
-  MenuBook as MenuBookIcon,
+  //MenuBook as MenuBookIcon,
   LibraryBooks as LibraryBooksIcon,
-  AddTask as AddTaskIcon,
+  //AddTask as AddTaskIcon,
   Assignment as AssignmentIcon,
-  School as SchoolIcon,
+  //School as SchoolIcon,
   TableChart as TableChartIcon
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
@@ -23,12 +23,12 @@ export default function MainDrawer() {
     <div>
       <Toolbar />
       <List>
-        <ListItem disablePadding>
+        {/* <ListItem disablePadding>
           <ListItemButton component={Link} to="/students/new">
             <ListItemIcon><PersonAddIcon /></ListItemIcon>
             <ListItemText primary="Add Student" />
           </ListItemButton>
-        </ListItem>
+        </ListItem> */}
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/students">
@@ -37,12 +37,12 @@ export default function MainDrawer() {
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding>
+        {/* <ListItem disablePadding>
           <ListItemButton component={Link} to="/courses/new">
             <ListItemIcon><MenuBookIcon /></ListItemIcon>
             <ListItemText primary="Add Course" />
           </ListItemButton>
-        </ListItem>
+        </ListItem> */}
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/courses">
@@ -51,12 +51,12 @@ export default function MainDrawer() {
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding>
+        {/* <ListItem disablePadding>
           <ListItemButton component={Link} to="/student-courses/new">
             <ListItemIcon><AddTaskIcon /></ListItemIcon>
             <ListItemText primary="Add Student Course" />
           </ListItemButton>
-        </ListItem>
+        </ListItem> */}
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/student-courses">
@@ -65,12 +65,12 @@ export default function MainDrawer() {
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding>
+        {/* <ListItem disablePadding>
           <ListItemButton component={Link} to="/programs/new">
             <ListItemIcon><SchoolIcon /></ListItemIcon>
             <ListItemText primary="Add Program" />
           </ListItemButton>
-        </ListItem>
+        </ListItem> */}
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/programs">

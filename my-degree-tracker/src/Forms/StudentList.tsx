@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   Table, TableHead, TableBody, TableRow, TableCell,
-  Paper, TableContainer, IconButton, Box, Typography,
+  Paper, TableContainer, IconButton, Box, Typography, Button
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -85,6 +85,14 @@ const StudentList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      {/* Add Student button under the table */}
+      <Box display="flex" justifyContent="flex-end" mt={2}>
+        <Button
+          variant="contained"
+          onClick={() => navigate('/students/new')}        >
+          Add Student
+        </Button>
+      </Box>
     </Box>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Paper, IconButton, Box, Typography
+  TableHead, TableRow, Paper, IconButton, Box, Typography, Button
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -66,6 +66,14 @@ const ProgramList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      {/* Add Program button under the table */}
+      <Box display="flex" justifyContent="flex-end" mt={2}>
+        <Button
+          variant="contained"
+          onClick={() => navigate('/programs/new')}        >
+          Add Program
+        </Button>
+      </Box>
     </Box>
   );
 };
