@@ -25,6 +25,9 @@ import MyCourses from './pages/mycourses';
 import MyProgram from './pages/myprogram';
 import Login from './pages/login';
 
+// NEW: import Footer
+import Footer from './components/Footer';
+
 const drawerWidth = 240;
 
 export default function App() {
@@ -63,33 +66,48 @@ export default function App() {
           <HamburgerDrawer onClose={handleMenuClose} />
         </Drawer>
 
-        {/* תוכן מרכזי והנתיבים */}
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        {/* תוכן מרכזי + פוטר דביק */}
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+          }}
+        >
+          {/* Spacer height for fixed AppBar */}
           <Toolbar />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/students/new" element={<StudentForm />} />
-            <Route path="/students/edit/:id" element={<StudentForm />} />
-            <Route path="/students" element={<StudentList />} />
-            <Route path="/courses/new" element={<CourseForm />} />
-            <Route path="/courses/edit/:courseCode" element={<CourseForm />} />
-            <Route path="/courses" element={<CourseList />} />
-            <Route path="/student-courses/new" element={<StudentCourseForm />} />
-            <Route path="/student-courses/edit/:index" element={<StudentCourseForm />} />
-            <Route path="/student-courses" element={<StudentCourseList />} />
-            <Route path="/programs/new" element={<ProgramForm />} />
-            <Route path="/programs/edit/:name" element={<ProgramForm />} />
-            <Route path="/programs" element={<ProgramList />} />
-            <Route path="*" element={<HomePage />} />
-            <Route path="/progress" element={<MyProgress />} />
-            <Route path="/grade-report" element={<GradeReport />} />
-            <Route path="/help" element={<HelpSupport />} />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/my-courses" element={<MyCourses />} />
-            <Route path="/my-program" element={<MyProgram />} />
-            <Route path="/login" element={<Login />} />
 
-          </Routes>
+          {/* ה־Routes תופסות את כל הגובה הפנוי */}
+          <Box sx={{ flexGrow: 1, p: 3 }}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/students/new" element={<StudentForm />} />
+              <Route path="/students/edit/:id" element={<StudentForm />} />
+              <Route path="/students" element={<StudentList />} />
+              <Route path="/courses/new" element={<CourseForm />} />
+              <Route path="/courses/edit/:courseCode" element={<CourseForm />} />
+              <Route path="/courses" element={<CourseList />} />
+              <Route path="/student-courses/new" element={<StudentCourseForm />} />
+              <Route path="/student-courses/edit/:index" element={<StudentCourseForm />} />
+              <Route path="/student-courses" element={<StudentCourseList />} />
+              <Route path="/programs/new" element={<ProgramForm />} />
+              <Route path="/programs/edit/:name" element={<ProgramForm />} />
+              <Route path="/programs" element={<ProgramList />} />
+              <Route path="/progress" element={<MyProgress />} />
+              <Route path="/grade-report" element={<GradeReport />} />
+              <Route path="/help" element={<HelpSupport />} />
+              <Route path="/logout" element={<Logout />} />
+              <Route path="/my-courses" element={<MyCourses />} />
+              <Route path="/my-program" element={<MyProgram />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="*" element={<HomePage />} />
+            </Routes>
+          </Box>
+
+          {/* Footer תמיד למטה */}
+          <Footer />
         </Box>
       </Box>
     </BrowserRouter>
