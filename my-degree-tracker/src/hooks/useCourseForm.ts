@@ -105,7 +105,7 @@ export function useCourseForm() {
     setSnackSeverity("success");
     setSnackOpen(true);
 
-    setTimeout(() => navigate("/courses"), 1200);
+    setTimeout(() => navigate("/courses"), 2500);
   };
 
   return {

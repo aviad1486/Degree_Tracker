@@ -88,7 +88,7 @@ export const useProgramForm = () => {
     setSnackMsg(isEdit ? 'Program updated successfully' : 'Program added successfully');
     setSnackSeverity('success');
     setSnackOpen(true);
-    setTimeout(() => navigate('/programs'), 1200);
+    setTimeout(() => navigate('/programs'), 2500);
   };
 
   return {

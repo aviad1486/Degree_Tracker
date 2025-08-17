@@ -188,7 +188,7 @@ export const useStudentCourseForm = () => {
       setSnackOpen(true);
     }
 
-    setTimeout(() => navigate('/student-courses'), 1500);
+    setTimeout(() => navigate('/student-courses'), 2500);
   };
 
   return {

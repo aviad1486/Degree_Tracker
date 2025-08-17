@@ -141,7 +141,7 @@ export function useStudentForm() {
     setSnackMsg(isEdit ? "Student updated successfully!" : "Student added successfully!");
     setSnackSeverity("success");
     setSnackOpen(true);
-    setTimeout(() => navigate("/students"), 700);
+    setTimeout(() => navigate("/students"), 2500);
   };
 
   return {
