@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Box, Drawer, Toolbar } from '@mui/material';
+import { Box, Drawer, Toolbar, Container } from '@mui/material';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -25,12 +25,12 @@ import MyCourses from './pages/mycourses';
 import MyProgram from './pages/myprogram';
 import Login from './pages/login';
 
-const drawerWidth = 240;
+const sidebarWidth = 'clamp(200px, 18vw, 320px)';
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleMenuToggle = () => setMenuOpen((v) => !v);
+  const handleMenuToggle = () => setMenuOpen(v => !v);
   const handleMenuClose = () => setMenuOpen(false);
 
   return (
@@ -42,7 +42,11 @@ export default function App() {
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' },
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: sidebarWidth,
+              boxSizing: 'border-box',
+            },
           }}
           open
         >
@@ -55,11 +59,14 @@ export default function App() {
           open={menuOpen}
           onClose={handleMenuClose}
           ModalProps={{ keepMounted: true }}
-          sx={{ '& .MuiDrawer-paper': { width: drawerWidth } }}
+          sx={{
+            '& .MuiDrawer-paper': {
+              width: sidebarWidth,
+            },
+          }}
         >
           <HamburgerDrawer onClose={handleMenuClose} />
         </Drawer>
-
         <Box
           component="main"
           sx={{
@@ -67,12 +74,18 @@ export default function App() {
             display: 'flex',
             flexDirection: 'column',
             minHeight: '100vh',
+            ml: { sm: sidebarWidth },
           }}
         >
-         
           <Toolbar />
 
-          <Box sx={{ flexGrow: 1, p: 3 }}>
+          <Container
+            maxWidth="xl"
+            sx={{
+              flexGrow: 1,
+              py: { xs: 2, sm: 3 },
+            }}
+          >
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/students/new" element={<StudentForm />} />
@@ -96,8 +109,8 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="*" element={<HomePage />} />
             </Routes>
-          </Box>
-
+          </Container>
+          
           <Footer />
         </Box>
       </Box>
