@@ -4,6 +4,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Box, Drawer, Toolbar } from '@mui/material';
 
 import Header from './components/Header';
+import Footer from './components/Footer';
+import MainDrawer from './components/MainDrawer';
+import HamburgerDrawer from './components/HamburgerDrawer';
+
 import HomePage from './pages/homepage';
 import StudentForm from './Forms/StudentForm';
 import StudentList from './Forms/StudentList';
@@ -14,9 +18,6 @@ import StudentCourseList from './Forms/StudentCourseList';
 import ProgramForm from './Forms/ProgramForm';
 import ProgramList from './Forms/ProgramList';
 
-import MainDrawer from './components/MainDrawer';
-import HamburgerDrawer from './components/HamburgerDrawer';
-
 import MyProgress from './pages/myprogress';
 import GradeReport from './pages/gradereport';
 import HelpSupport from './pages/helpsupport';
@@ -24,9 +25,6 @@ import Logout from './pages/logout';
 import MyCourses from './pages/mycourses';
 import MyProgram from './pages/myprogram';
 import Login from './pages/login';
-
-// NEW: import Footer
-import Footer from './components/Footer';
 
 const drawerWidth = 240;
 
@@ -39,10 +37,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <Box sx={{ display: 'flex' }}>
-        {/* כותרת עליונה עם כפתור ההמבורגר */}
         <Header onMenuClick={handleMenuToggle} />
 
-        {/* Drawer קבוע (שמאלי) למסכים גדולים */}
         <Drawer
           variant="permanent"
           sx={{
@@ -54,7 +50,6 @@ export default function App() {
           <MainDrawer />
         </Drawer>
 
-        {/* Drawer זמני (המבורגר) לנייד / מסכים קטנים */}
         <Drawer
           anchor="left"
           variant="temporary"
@@ -66,7 +61,6 @@ export default function App() {
           <HamburgerDrawer onClose={handleMenuClose} />
         </Drawer>
 
-        {/* תוכן מרכזי + פוטר דביק */}
         <Box
           component="main"
           sx={{
@@ -76,10 +70,9 @@ export default function App() {
             minHeight: '100vh',
           }}
         >
-          {/* Spacer height for fixed AppBar */}
+         
           <Toolbar />
 
-          {/* ה־Routes תופסות את כל הגובה הפנוי */}
           <Box sx={{ flexGrow: 1, p: 3 }}>
             <Routes>
               <Route path="/" element={<HomePage />} />
@@ -106,7 +99,6 @@ export default function App() {
             </Routes>
           </Box>
 
-          {/* Footer תמיד למטה */}
           <Footer />
         </Box>
       </Box>

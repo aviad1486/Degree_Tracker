@@ -23,11 +23,11 @@ function makeCourses(): Course[] {
 function makeStudents(): Student[] {
   const semesters: Array<Student["semester"]> = ["A", "B", "C"];
   return Array.from({ length: 10 }, (_, i) => {
-    const id = `10000000${i}`; // 9 ספרות ייחודיות
-    const courses = COURSE_CODES.slice(0, 3 + (i % 3)); // 3–5 קורסים
+    const id = `10000000${i}`; 
+    const courses = COURSE_CODES.slice(0, 3 + (i % 3)); 
     const gradeSheet = Object.fromEntries(
       courses.map((c, idx) => {
-        // ציון דטרמיניסטי 60–100
+        // grades: 60-100
         const grade = 60 + ((i * 7 + idx * 13) % 41);
         return [c, grade];
       })

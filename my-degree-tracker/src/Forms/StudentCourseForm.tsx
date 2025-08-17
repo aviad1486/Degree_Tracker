@@ -138,7 +138,7 @@ const StudentCourseForm: React.FC = () => {
         inputProps={{ min: 1960, max: new Date().getFullYear() }}
       />
 
-      {/* Attempts counter */}
+      {/* Course Attempts counter */}
       <Box mt={2}>
         <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
           Attempts (times taken)

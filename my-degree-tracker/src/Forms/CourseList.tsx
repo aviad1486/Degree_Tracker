@@ -69,7 +69,7 @@ const CourseList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* Add Course button under the table */}
+      
       <Box display="flex" justifyContent="flex-end" mt={2}>
         <Button
           variant="contained"

@@ -47,7 +47,6 @@ export default function HamburgerDrawer({ onClose }: HamburgerDrawerProps) {
           </ListItemButton>
         </ListItem>
 
-        {/* שינוי יעד: למסך המשתמש "My Courses" */}
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/my-courses" onClick={onClose}>
             <ListItemIcon><MenuBookIcon /></ListItemIcon>
@@ -55,7 +54,6 @@ export default function HamburgerDrawer({ onClose }: HamburgerDrawerProps) {
           </ListItemButton>
         </ListItem>
 
-        {/* שינוי יעד: למסך המשתמש "My Study Program" */}
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/my-program" onClick={onClose}>
             <ListItemIcon><TableChartIcon /></ListItemIcon>
