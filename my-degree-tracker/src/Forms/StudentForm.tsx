@@ -1,311 +1,94 @@
-import React, { useState, useEffect } from 'react';
-import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
-import { useParams, useNavigate } from 'react-router-dom';
-import SnackbarNotification from '../components/SnackbarNotification';
-
-interface StudentFormData {
-  id: string;
-  fullName: string;
-  email: string;
-  courses: string;
-  assignments: string;
-  gradeSheet: string;
-  program: string;
-  semester: 'A' | 'B' | 'C';
-  completedCredits: string;
-}
-
-type AnyRec = Record<string, any>;
-
-const norm = (s: string) => (s || '').trim().toLowerCase();
+import React from "react";
+import { TextField, Button, Box, Typography, MenuItem } from "@mui/material";
+import SnackbarNotification from "../components/SnackbarNotification";
+import { useStudentForm } from "../hooks/useStudentForm";
 
 const StudentForm: React.FC = () => {
-  const { id } = useParams<{ id?: string }>();
-  const isEdit = Boolean(id);
-  const navigate = useNavigate();
-
-  const [data, setData] = useState<StudentFormData>({
-    id: '',
-    fullName: '',
-    email: '',
-    courses: '',
-    assignments: '',
-    gradeSheet: '',
-    program: '',
-    semester: 'A',
-    completedCredits: '0',
-  });
-
-  const [errors, setErrors] = useState<Partial<Record<keyof StudentFormData, string>>>({});
-  const [snackOpen, setSnackOpen] = useState(false);
-  const [snackMsg, setSnackMsg] = useState('');
-  const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
-
-  useEffect(() => {
-    if (isEdit && id) {
-      const students: AnyRec[] = JSON.parse(localStorage.getItem('students') || '[]');
-      const student = students.find((s) => s.id === id);
-      if (student) {
-        setData({
-          id: student.id,
-          fullName: student.fullName,
-          email: student.email,
-          courses: (student.courses || []).join(', '),
-          assignments: (student.assignments || []).join(', '),
-          gradeSheet: JSON.stringify(student.gradeSheet || {}),
-          program: student.program,
-          semester: student.semester,
-          completedCredits: String(student.completedCredits ?? '0'),
-        });
-      }
-    }
-  }, [id, isEdit]);
-
-  const validate = (): boolean => {
-    const newErrors: typeof errors = {};
-
-    if (!/^\d{9}$/.test(data.id)) newErrors.id = 'ID must be exactly 9 digits';
-    if (!/\S+\s+\S+/.test(data.fullName)) newErrors.fullName = 'Please enter a full name (at least two words)';
-    if (!/^[\w-.]+@[\w-]+\.[a-z]{2,}$/i.test(data.email)) newErrors.email = 'Invalid email address';
-
-    const courseList = data.courses.split(',').map(s => s.trim()).filter(Boolean);
-    if (courseList.length === 0) newErrors.courses = 'Enter at least one course, separated by commas';
-
-    try {
-      const sheet = JSON.parse(data.gradeSheet);
-      if (typeof sheet !== 'object' || Array.isArray(sheet)) throw new Error();
-      for (const [, grade] of Object.entries(sheet)) {
-        if (typeof grade !== 'number' || grade < 0 || grade > 100) throw new Error();
-      }
-    } catch {
-      newErrors.gradeSheet = 'Enter valid JSON for grade sheet (e.g. {"CS101": 85})';
-    }
-
-    if (!data.program.trim()) newErrors.program = 'Please select a program';
-    if (!/^[ABC]$/.test(data.semester)) newErrors.semester = 'Select a valid semester (A, B, or C)';
-    if (!/^\d+$/.test(data.completedCredits) || parseInt(data.completedCredits, 10) < 0) {
-      newErrors.completedCredits = 'Enter a non-negative integer for completed credits';
-    }
-
-    // --- Uniqueness checks ---
-    const students: AnyRec[] = JSON.parse(localStorage.getItem('students') || '[]');
-    const idNorm = data.id;
-    const emailNorm = norm(data.email);
-    const programNorm = norm(data.program);
-
-    // Email uniqueness across DIFFERENT IDs (allow same email for same ID across programs)
-    const emailClash = students.some(s => norm(s.email) === emailNorm && s.id !== idNorm);
-    if (emailClash) newErrors.email = 'Email already exists for a different student ID';
-
-    // (id, program) must be unique; allowed: same id with different program
-    const sameIdProgram = students.some(s =>
-      s.id === idNorm && norm(s.program) === programNorm && (!isEdit || s.id !== id)
-    );
-    if (sameIdProgram) newErrors.program = 'This ID is already registered to the same program';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (field: keyof StudentFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData(prev => ({ ...prev, [field]: e.target.value }));
-  };
-
-  const handleSubmit = () => {
-    if (!validate()) {
-      setSnackMsg('Please fix the form errors');
-      setSnackSeverity('error');
-      setSnackOpen(true);
-      return;
-    }
-
-    const newStudent = {
-      id: data.id,
-      fullName: data.fullName,
-      email: data.email,
-      courses: data.courses.split(',').map(s => s.trim()).filter(Boolean),
-      assignments: data.assignments.split(',').map(s => s.trim()).filter(Boolean),
-      gradeSheet: JSON.parse(data.gradeSheet),
-      program: data.program,
-      semester: data.semester,
-      completedCredits: parseInt(data.completedCredits, 10),
-      createdAt: new Date().toISOString(),
-    };
-
-    const existing: AnyRec[] = JSON.parse(localStorage.getItem('students') || '[]');
-
-    if (isEdit) {
-      const idx = existing.findIndex(s => s.id === id);
-      if (idx !== -1) {
-        // prevent changing to a (program) that would clash with same (id, program)
-        const programNorm = norm(newStudent.program);
-        const clash = existing.some((s, i) =>
-          i !== idx && s.id === newStudent.id && norm(s.program) === programNorm
-        );
-        if (clash) {
-          setSnackMsg('This ID is already registered to the same program');
-          setSnackSeverity('error');
-          setSnackOpen(true);
-          return;
-        }
-        // email may duplicate across same ID; block only if email belongs to a different ID
-        const emailClash = existing.some((s, i) =>
-          i !== idx && norm(s.email) === norm(newStudent.email) && s.id !== newStudent.id
-        );
-        if (emailClash) {
-          setSnackMsg('Email already exists for a different student ID');
-          setSnackSeverity('error');
-          setSnackOpen(true);
-          return;
-        }
-
-        existing[idx] = { ...existing[idx], ...newStudent };
-      } else {
-        // fallback: treat as create with same rules
-        const clash = existing.some(s => s.id === newStudent.id && norm(s.program) === norm(newStudent.program));
-        if (clash) {
-          setSnackMsg('This ID is already registered to the same program');
-          setSnackSeverity('error');
-          setSnackOpen(true);
-          return;
-        }
-        const emailClash = existing.some(s => norm(s.email) === norm(newStudent.email) && s.id !== newStudent.id);
-        if (emailClash) {
-          setSnackMsg('Email already exists for a different student ID');
-          setSnackSeverity('error');
-          setSnackOpen(true);
-          return;
-        }
-        existing.push(newStudent);
-      }
-    } else {
-      // create: block duplicate id+program
-      const clash = existing.some(s => s.id === newStudent.id && norm(s.program) === norm(newStudent.program));
-      if (clash) {
-        setSnackMsg('Student with this ID is already registered to this program');
-        setSnackSeverity('error');
-        setSnackOpen(true);
-        return;
-      }
-      // email uniqueness across different IDs only
-      const emailClash = existing.some(s => norm(s.email) === norm(newStudent.email) && s.id !== newStudent.id);
-      if (emailClash) {
-        setSnackMsg('Email already exists for a different student ID');
-        setSnackSeverity('error');
-        setSnackOpen(true);
-        return;
-      }
-
-      existing.push(newStudent);
-      // NOTE: intentionally NOT creating studentCourses records here
-    }
-
-    localStorage.setItem('students', JSON.stringify(existing));
-
-    setSnackMsg(isEdit ? 'Student updated successfully!' : 'Student added successfully!');
-    setSnackSeverity('success');
-    setSnackOpen(true);
-
-    setTimeout(() => navigate('/students'), 700);
-  };
+  const {
+    data, errors, snackOpen, snackMsg, snackSeverity,
+    setSnackOpen, handleChange, handleSubmit, isEdit
+  } = useStudentForm();
 
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
+    <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
       <Typography variant="h6" gutterBottom>
-        {isEdit ? 'Edit Student' : 'Add Student'}
+        {isEdit ? "Edit Student" : "Add Student"}
       </Typography>
 
       <TextField
         label="ID"
         value={data.id}
-        onChange={handleChange('id')}
+        onChange={handleChange("id")}
         error={!!errors.id}
         helperText={errors.id}
-        required
-        fullWidth
-        margin="normal"
+        required fullWidth margin="normal"
         disabled={isEdit}
       />
 
       <TextField
         label="Full Name"
         value={data.fullName}
-        onChange={handleChange('fullName')}
+        onChange={handleChange("fullName")}
         error={!!errors.fullName}
         helperText={errors.fullName}
-        required
-        fullWidth
-        margin="normal"
+        required fullWidth margin="normal"
         disabled={isEdit}
       />
 
       <TextField
         label="Email"
         value={data.email}
-        onChange={handleChange('email')}
+        onChange={handleChange("email")}
         error={!!errors.email}
         helperText={errors.email}
-        required
-        fullWidth
-        margin="normal"
+        required fullWidth margin="normal"
         disabled={isEdit}
       />
 
       <TextField
         label="Courses (comma separated)"
         value={data.courses}
-        onChange={handleChange('courses')}
+        onChange={handleChange("courses")}
         error={!!errors.courses}
         helperText={errors.courses}
-        required
-        fullWidth
-        margin="normal"
+        required fullWidth margin="normal"
       />
 
       <TextField
         label="Assignments (comma separated)"
         value={data.assignments}
-        onChange={handleChange('assignments')}
+        onChange={handleChange("assignments")}
         error={!!errors.assignments}
         helperText={errors.assignments}
-        fullWidth
-        margin="normal"
+        fullWidth margin="normal"
       />
 
       <TextField
         label="Grade Sheet (JSON)"
         value={data.gradeSheet}
-        onChange={handleChange('gradeSheet')}
+        onChange={handleChange("gradeSheet")}
         error={!!errors.gradeSheet}
         helperText={errors.gradeSheet}
-        required
-        fullWidth
-        margin="normal"
-        multiline
-        minRows={3}
+        required fullWidth margin="normal"
+        multiline minRows={3}
       />
 
       <TextField
         label="Program"
         value={data.program}
-        onChange={handleChange('program')}
+        onChange={handleChange("program")}
         error={!!errors.program}
         helperText={errors.program}
-        required
-        fullWidth
-        margin="normal"
+        required fullWidth margin="normal"
       />
 
       <TextField
-        select
-        label="Current Semester"
+        select label="Current Semester"
         value={data.semester}
-        onChange={handleChange('semester')}
+        onChange={handleChange("semester")}
         error={!!errors.semester}
         helperText={errors.semester}
-        required
-        fullWidth
-        margin="normal"
+        required fullWidth margin="normal"
       >
         <MenuItem value="A">A</MenuItem>
         <MenuItem value="B">B</MenuItem>
@@ -315,18 +98,16 @@ const StudentForm: React.FC = () => {
       <TextField
         label="Completed Credits"
         value={data.completedCredits}
-        onChange={handleChange('completedCredits')}
+        onChange={handleChange("completedCredits")}
         error={!!errors.completedCredits}
         helperText={errors.completedCredits}
-        required
-        fullWidth
-        margin="normal"
+        required fullWidth margin="normal"
         disabled={isEdit}
       />
 
       <Box mt={2} textAlign="right">
         <Button variant="contained" onClick={handleSubmit}>
-          {isEdit ? 'Update' : 'Save'}
+          {isEdit ? "Update" : "Save"}
         </Button>
       </Box>
 
