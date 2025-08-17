@@ -9,11 +9,11 @@ interface StudentCourseFormData {
   grade: string;
   semester: 'A' | 'B' | 'C';
   year: string;
-  // NOTE: previously was boolean; now numeric count (minimum 1)
   retaken: number;
 }
 
 type AnyRecord = Record<string, any>;
+type StudentOption = { id: string; fullName: string };
 
 const uniq = (arr: string[]) => Array.from(new Set(arr.filter(Boolean)));
 
@@ -28,7 +28,7 @@ const StudentCourseForm: React.FC = () => {
     grade: '',
     semester: 'A',
     year: new Date().getFullYear().toString(),
-    retaken: 1, // minimum is 1 (first attempt)
+    retaken: 1,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof StudentCourseFormData, string>>>({});
   const [snackOpen, setSnackOpen] = useState(false);
@@ -36,21 +36,33 @@ const StudentCourseForm: React.FC = () => {
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
   // options for selects/autocomplete
-  const [existingStudentIds, setExistingStudentIds] = useState<string[]>([]);
+  const [existingStudentOptions, setExistingStudentOptions] = useState<StudentOption[]>([]);
   const [existingCourseCodes, setExistingCourseCodes] = useState<string[]>([]);
 
-  // Load options from localStorage
+  // Load options from localStorage (ONLY from "students"; filter out missing/invalid names)
   useEffect(() => {
     const students: AnyRecord[] = JSON.parse(localStorage.getItem('students') || '[]');
     const courses: AnyRecord[] = JSON.parse(localStorage.getItem('courses') || '[]');
     const studentCourses: AnyRecord[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
 
-    const idsFromStudents = students.map(s => s.id);
-    const idsFromStudentCourses = studentCourses.map(sc => sc.studentId);
-    setExistingStudentIds(uniq([...idsFromStudents, ...idsFromStudentCourses]).sort());
+    const studentOptions: StudentOption[] = students
+      .map((s) => {
+        const id = String(s.id ?? '').trim();
+        // take any of the possible name fields; normalize and trim
+        const rawName = (s.fullName ?? s.name ?? s.displayName ?? '').toString().trim();
+        const lower = rawName.toLowerCase();
+        const validName = rawName.length > 0 && lower !== 'undefined' && lower !== 'null';
+        return { id, fullName: validName ? rawName : '' };
+      })
+      // keep only: valid 9-digit id + non-empty name
+      .filter((o) => /^\d{9}$/.test(o.id) && o.fullName.length > 0)
+      .sort((a, b) => a.id.localeCompare(b.id));
 
-    const codesFromCourses = courses.map(c => c.courseCode);
-    const codesFromStudentCourses = studentCourses.map(sc => sc.courseCode);
+    setExistingStudentOptions(studentOptions);
+
+    // Course codes can be merged with studentCourses history (this is fine)
+    const codesFromCourses = courses.map((c) => c.courseCode);
+    const codesFromStudentCourses = studentCourses.map((sc) => sc.courseCode);
     setExistingCourseCodes(uniq([...codesFromCourses, ...codesFromStudentCourses]).sort());
   }, []);
 
@@ -61,11 +73,12 @@ const StudentCourseForm: React.FC = () => {
       const idx = parseInt(index, 10);
       const record = records[idx];
       if (record) {
-        // Backward-compat: if old boolean exists -> map true=>2, false=>1
         const retakenCount =
           typeof record.retaken === 'number'
             ? Math.max(1, Math.floor(record.retaken))
-            : (record.retaken ? 2 : 1);
+            : record.retaken
+            ? 2
+            : 1;
 
         setData({
           studentId: record.studentId ?? '',
@@ -99,32 +112,23 @@ const StudentCourseForm: React.FC = () => {
 
   const handleChange = (field: keyof StudentCourseFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setData(prev => ({ ...prev, [field]: value as any }));
+    setData((prev) => ({ ...prev, [field]: value as any }));
   };
 
-  const decAttempts = () =>
-    setData(prev => ({ ...prev, retaken: Math.max(1, (prev.retaken ?? 1) - 1) }));
+  const decAttempts = () => setData((prev) => ({ ...prev, retaken: Math.max(1, (prev.retaken ?? 1) - 1) }));
+  const incAttempts = () => setData((prev) => ({ ...prev, retaken: Math.max(1, (prev.retaken ?? 1) + 1) }));
 
-  const incAttempts = () =>
-    setData(prev => ({ ...prev, retaken: Math.max(1, (prev.retaken ?? 1) + 1) }));
-
-  // --- NEW: update the student's gradeSheet so StudentList average stays fresh ---
+  // keep students.gradeSheet in sync
   const upsertStudentGrade = (studentId: string, courseCode: string, grade: number) => {
     const students: AnyRecord[] = JSON.parse(localStorage.getItem('students') || '[]');
     const idx = students.findIndex((s) => s.id === studentId);
-    if (idx === -1) return; // student not found -> nothing to update
-
+    if (idx === -1) return;
     const s = students[idx];
-    const sheet =
-      s.gradeSheet && typeof s.gradeSheet === 'object' && !Array.isArray(s.gradeSheet)
-        ? { ...s.gradeSheet }
-        : {};
+    const sheet = s.gradeSheet && typeof s.gradeSheet === 'object' && !Array.isArray(s.gradeSheet) ? { ...s.gradeSheet } : {};
     sheet[courseCode] = grade;
-
     students[idx] = { ...s, gradeSheet: sheet };
     localStorage.setItem('students', JSON.stringify(students));
   };
-  // ------------------------------------------------------------------------------
 
   const handleSubmit = () => {
     if (!validate()) {
@@ -135,19 +139,13 @@ const StudentCourseForm: React.FC = () => {
     }
 
     const trimmedCourse = data.courseCode.trim();
-
     const records: AnyRecord[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
 
-    // Find existing by (studentId, courseCode)
-    const matchIdx = records.findIndex(
-      r => r.studentId === data.studentId && r.courseCode === trimmedCourse
-    );
+    const matchIdx = records.findIndex((r) => r.studentId === data.studentId && r.courseCode === trimmedCourse);
 
     if (matchIdx !== -1) {
-      // Existing: increment retaken and update with latest grade/semester/year
       const existing = records[matchIdx];
-      const existingAttempts =
-        typeof existing.retaken === 'number' ? existing.retaken : (existing.retaken ? 2 : 1);
+      const existingAttempts = typeof existing.retaken === 'number' ? existing.retaken : existing.retaken ? 2 : 1;
 
       const updated = {
         ...existing,
@@ -155,35 +153,29 @@ const StudentCourseForm: React.FC = () => {
         semester: data.semester,
         year: Number(data.year),
         retaken: Math.max(1, existingAttempts + 1),
-        // keep createdAt as is; optional: add updatedAt
         updatedAt: new Date().toISOString(),
       };
 
       records[matchIdx] = updated;
       localStorage.setItem('studentCourses', JSON.stringify(records));
-
-      // NEW: keep students.gradeSheet in sync
       upsertStudentGrade(data.studentId, trimmedCourse, Number(data.grade));
 
       setSnackMsg('Existing record found — attempts incremented by 1');
       setSnackSeverity('success');
       setSnackOpen(true);
     } else {
-      // New record
       const entry = {
         studentId: data.studentId,
         courseCode: trimmedCourse,
         grade: Number(data.grade),
         semester: data.semester,
         year: Number(data.year),
-        retaken: data.retaken, // numeric attempts
+        retaken: data.retaken,
         createdAt: new Date().toISOString(),
       };
 
       const updated = [...records, entry];
       localStorage.setItem('studentCourses', JSON.stringify(updated));
-
-      // NEW: keep students.gradeSheet in sync
       upsertStudentGrade(data.studentId, trimmedCourse, Number(data.grade));
 
       setSnackMsg('Record saved successfully');
@@ -200,12 +192,32 @@ const StudentCourseForm: React.FC = () => {
         {isEdit ? 'Edit Student Course Record' : 'Add Student Course Record'}
       </Typography>
 
-      {/* Student ID with autocomplete (free text allowed) */}
+      {/* Student ID with autocomplete (shows "ID — Name", saves only ID) */}
       <Autocomplete
         freeSolo
-        options={existingStudentIds}
-        value={data.studentId}
-        onInputChange={(_, newValue) => setData(prev => ({ ...prev, studentId: newValue }))}
+        options={existingStudentOptions}                       // רק סטודנטים עם שם תקין
+        value={existingStudentOptions.find(o => o.id === data.studentId) ?? null}
+        inputValue={data.studentId}                            // מציג בתיבה רק את ה-ID
+        onInputChange={(_, newInput) =>
+          setData(prev => ({ ...prev, studentId: newInput.slice(0, 9) }))
+        }
+        onChange={(_, newValue) => {
+          if (typeof newValue === 'string') {
+            setData(prev => ({ ...prev, studentId: newValue }));
+          } else if (newValue) {
+            setData(prev => ({ ...prev, studentId: newValue.id }));
+          } else {
+            setData(prev => ({ ...prev, studentId: '' }));
+          }
+        }}
+        getOptionLabel={(option) =>
+          typeof option === 'string'
+            ? option
+            : `${option.id} — ${option.fullName}`
+        }
+        isOptionEqualToValue={(opt, val) =>
+          typeof val === 'string' ? opt.id === val : opt.id === val?.id
+        }
         renderInput={(params) => (
           <TextField
             {...params}
@@ -225,7 +237,7 @@ const StudentCourseForm: React.FC = () => {
         freeSolo
         options={existingCourseCodes}
         value={data.courseCode}
-        onInputChange={(_, newValue) => setData(prev => ({ ...prev, courseCode: newValue }))}
+        onInputChange={(_, newValue) => setData((prev) => ({ ...prev, courseCode: newValue }))}
         renderInput={(params) => (
           <TextField
             {...params}
