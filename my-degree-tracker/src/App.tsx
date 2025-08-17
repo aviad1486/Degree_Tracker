@@ -1,4 +1,3 @@
-// my-degree-tracker/src/App.tsx
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Box, Drawer, Toolbar } from '@mui/material';
