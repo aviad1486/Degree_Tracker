@@ -35,16 +35,19 @@ const StudentCourseForm: React.FC = () => {
         {isEdit ? 'Edit Student Course Record' : 'Add Student Course Record'}
       </Typography>
 
-      {/* Student ID with autocomplete */}
+      {/* Student ID with autocomplete (LOCKED on edit) */}
       <Autocomplete
         freeSolo
         options={existingStudentOptions}
         value={existingStudentOptions.find((o) => o.id === data.studentId) ?? null}
         inputValue={data.studentId}
-        onInputChange={(_, newInput) =>
-          setData((prev) => ({ ...prev, studentId: newInput.slice(0, 9) }))
-        }
+        disabled={isEdit} // lock only when editing (same idea as StudentForm)
+        onInputChange={(_, newInput) => {
+          if (isEdit) return; // block edits in edit mode
+          setData((prev) => ({ ...prev, studentId: newInput.slice(0, 9) }));
+        }}
         onChange={(_, newValue) => {
+          if (isEdit) return; // block edits in edit mode
           if (typeof newValue === 'string') {
             setData((prev) => ({ ...prev, studentId: newValue }));
           } else if (newValue) {

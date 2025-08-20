@@ -28,7 +28,8 @@ export function useCourseForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof CourseFormData, string>>>({});
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackMsg, setSnackMsg] = useState("");
-  const [snackSeverity, setSnackSeverity] = useState<"success" | "error" | "info" | "warning">("success");
+  const [snackSeverity, setSnackSeverity] =
+    useState<"success" | "error" | "info" | "warning">("success");
 
   // Load existing course in edit mode
   useEffect(() => {
@@ -41,7 +42,9 @@ export function useCourseForm() {
           courseName: course.courseName,
           credits: course.credits.toString(),
           semester: course.semester,
-          assignments: course.assignments.join(", "),
+          assignments: Array.isArray(course.assignments)
+            ? course.assignments.join(", ")
+            : String(course.assignments || ""),
         });
       }
     }
@@ -55,11 +58,16 @@ export function useCourseForm() {
       newErrors.credits = "Credits must be a positive integer";
     }
     if (!/^[ABC]$/.test(data.semester)) newErrors.semester = "Select a valid semester";
-    if (data.assignments.split(",").map((s) => s.trim()).filter(Boolean).length === 0) {
+    if (
+      data.assignments
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean).length === 0
+    ) {
       newErrors.assignments = "Enter at least one assignment";
     }
 
-    // Unique course code
+    // Unique course code — ברירת מחדל: לא לאפשר כפילויות
     const all: AnyRec[] = JSON.parse(localStorage.getItem("courses") || "[]");
     const codeNorm = norm(data.courseCode);
     const clash = all.some(
@@ -71,9 +79,12 @@ export function useCourseForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (field: keyof CourseFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData((prev) => ({ ...prev, [field]: e.target.value }));
-  };
+  const handleChange =
+    (field: keyof CourseFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      // במצב עריכה לא מאפשרים לשנות Course Code גם לוגית
+      if (isEdit && field === "courseCode") return;
+      setData((prev) => ({ ...prev, [field]: e.target.value }));
+    };
 
   const handleSubmit = () => {
     if (!validate()) {
@@ -83,19 +94,21 @@ export function useCourseForm() {
       return;
     }
 
+    const effectiveCourseCode = isEdit && courseCode ? courseCode : data.courseCode.trim();
+
     const entry = {
-      courseCode: data.courseCode.trim(),
+      courseCode: effectiveCourseCode,
       courseName: data.courseName.trim(),
       credits: parseInt(data.credits, 10),
       semester: data.semester,
       assignments: data.assignments.split(",").map((s) => s.trim()),
-      createdAt: new Date().toISOString(),
+      ...(isEdit ? { updatedAt: new Date().toISOString() } : { createdAt: new Date().toISOString() }),
     };
 
     const courses: AnyRec[] = JSON.parse(localStorage.getItem("courses") || "[]");
 
     const updated = isEdit
-      ? courses.map((c) => (c.courseCode === courseCode ? entry : c))
+      ? courses.map((c) => (c.courseCode === effectiveCourseCode ? { ...c, ...entry } : c))
       : [...courses, entry];
 
     localStorage.setItem("courses", JSON.stringify(updated));

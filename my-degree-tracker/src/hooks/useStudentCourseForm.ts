@@ -1,4 +1,3 @@
-// hooks/useStudentCourseForm.ts
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -39,7 +38,7 @@ export const useStudentCourseForm = () => {
   const [existingStudentOptions, setExistingStudentOptions] = useState<StudentOption[]>([]);
   const [existingCourseCodes, setExistingCourseCodes] = useState<string[]>([]);
 
-  // --- load options from localStorage
+  // --- load options
   useEffect(() => {
     const students: AnyRecord[] = JSON.parse(localStorage.getItem('students') || '[]');
     const courses: AnyRecord[] = JSON.parse(localStorage.getItem('courses') || '[]');
@@ -63,7 +62,7 @@ export const useStudentCourseForm = () => {
     setExistingCourseCodes(uniq([...codesFromCourses, ...codesFromStudentCourses]).sort());
   }, []);
 
-  // --- edit mode prefill
+  // --- edit prefill
   useEffect(() => {
     if (isEdit && index !== undefined) {
       const records: any[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
@@ -143,6 +142,37 @@ export const useStudentCourseForm = () => {
     const trimmedCourse = data.courseCode.trim();
     const records: AnyRecord[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
 
+    // --- EDIT MODE: update specific index, preserve original studentId (same approach as StudentForm)
+    if (isEdit && index !== undefined) {
+      const idx = parseInt(index, 10);
+      const prev = records[idx];
+      if (prev) {
+        const originalStudentId = prev.studentId;
+        const updated = {
+          ...prev,
+          courseCode: trimmedCourse,
+          grade: Number(data.grade),
+          semester: data.semester,
+          year: Number(data.year),
+          retaken: Math.max(1, data.retaken ?? 1),
+          updatedAt: new Date().toISOString(),
+          studentId: originalStudentId, // lock student id logically
+        };
+
+        records[idx] = updated;
+        localStorage.setItem('studentCourses', JSON.stringify(records));
+        upsertStudentGrade(originalStudentId, trimmedCourse, Number(data.grade));
+
+        setSnackMsg('Record updated');
+        setSnackSeverity('success');
+        setSnackOpen(true);
+
+        setTimeout(() => navigate('/student-courses'), 2500);
+        return;
+      }
+    }
+
+    // --- CREATE MODE (unchanged)
     const matchIdx = records.findIndex(
       (r) => r.studentId === data.studentId && r.courseCode === trimmedCourse
     );

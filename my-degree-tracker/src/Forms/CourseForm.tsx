@@ -31,6 +31,7 @@ const CourseForm: React.FC = () => {
         required
         fullWidth
         margin="normal"
+        disabled={isEdit}
       />
 
       <TextField
