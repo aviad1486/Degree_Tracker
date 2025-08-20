@@ -67,7 +67,7 @@ export function useCourseForm() {
       newErrors.assignments = "Enter at least one assignment";
     }
 
-    // Unique course code — ברירת מחדל: לא לאפשר כפילויות
+    // Unique course code 
     const all: AnyRec[] = JSON.parse(localStorage.getItem("courses") || "[]");
     const codeNorm = norm(data.courseCode);
     const clash = all.some(
@@ -81,7 +81,6 @@ export function useCourseForm() {
 
   const handleChange =
     (field: keyof CourseFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      // במצב עריכה לא מאפשרים לשנות Course Code גם לוגית
       if (isEdit && field === "courseCode") return;
       setData((prev) => ({ ...prev, [field]: e.target.value }));
     };
