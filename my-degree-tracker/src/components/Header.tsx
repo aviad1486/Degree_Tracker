@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   onMenuClick?: () => void;
 }
+
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [dateTime, setDateTime] = useState(new Date());
+  const navigate = useNavigate();
+
   useEffect(() => {
     const timer = setInterval(() => setDateTime(new Date()), 1000);
     return () => clearInterval(timer);
@@ -22,13 +25,18 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             edge="start"
             onClick={onMenuClick}
             aria-label="menu"
-          ><MenuIcon />
+          >
+            <MenuIcon />
           </IconButton>
           <Typography
             variant="h6"
-            component={Link}
-            to="/"
-            sx={{ color: 'inherit', textDecoration: 'none', fontWeight: 'bold' }}
+            onClick={() => navigate('/')}
+            sx={{
+              color: 'inherit',
+              textDecoration: 'none',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+            }}
           >
             Degree Tracker System
           </Typography>
@@ -40,8 +48,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             variant="outlined"
             color="inherit"
             size="small"
-            component={Link}
-            to="/login"
+            onClick={() => navigate('/login')}
           >
             Login
           </Button>
