@@ -38,7 +38,6 @@ export const useStudentCourseForm = () => {
   const [existingStudentOptions, setExistingStudentOptions] = useState<StudentOption[]>([]);
   const [existingCourseCodes, setExistingCourseCodes] = useState<string[]>([]);
 
-  // --- load options
   useEffect(() => {
     const students: AnyRecord[] = JSON.parse(localStorage.getItem('students') || '[]');
     const courses: AnyRecord[] = JSON.parse(localStorage.getItem('courses') || '[]');
@@ -62,7 +61,6 @@ export const useStudentCourseForm = () => {
     setExistingCourseCodes(uniq([...codesFromCourses, ...codesFromStudentCourses]).sort());
   }, []);
 
-  // --- edit prefill
   useEffect(() => {
     if (isEdit && index !== undefined) {
       const records: any[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
@@ -142,7 +140,6 @@ export const useStudentCourseForm = () => {
     const trimmedCourse = data.courseCode.trim();
     const records: AnyRecord[] = JSON.parse(localStorage.getItem('studentCourses') || '[]');
 
-    // --- EDIT MODE: update specific index, preserve original studentId (same approach as StudentForm)
     if (isEdit && index !== undefined) {
       const idx = parseInt(index, 10);
       const prev = records[idx];
@@ -172,7 +169,6 @@ export const useStudentCourseForm = () => {
       }
     }
 
-    // --- CREATE MODE (unchanged)
     const matchIdx = records.findIndex(
       (r) => r.studentId === data.studentId && r.courseCode === trimmedCourse
     );
