@@ -10,6 +10,12 @@ import HamburgerDrawer from './components/HamburgerDrawer';
 import HomePage from './pages/homepage';
 import StudentForm from './Forms/StudentForm';
 import StudentList from './Forms/StudentList';
+import CourseForm from './Forms/CourseForm';
+import CourseList from './Forms/CourseList';
+import StudentCourseForm from './Forms/StudentCourseForm';
+import StudentCourseList from './Forms/StudentCourseList';
+import ProgramForm from './Forms/ProgramForm';
+import ProgramList from './Forms/ProgramList';
 
 import MyProgress from './pages/myprogress';
 import GradeReport from './pages/gradereport';
@@ -75,6 +81,15 @@ export default function App() {
             <Route path="/students/new" element={<StudentForm />} />
             <Route path="/students/edit/:id" element={<StudentForm />} />
             <Route path="/students" element={<StudentList />} />
+            <Route path="/courses/new" element={<CourseForm />} />
+            <Route path="/courses/edit/:courseCode" element={<CourseForm />} />
+            <Route path="/courses" element={<CourseList />} />
+            <Route path="/student-courses/new" element={<StudentCourseForm />} />
+            <Route path="/student-courses/edit/:index" element={<StudentCourseForm />} />
+            <Route path="/student-courses" element={<StudentCourseList />} />
+            <Route path="/programs/new" element={<ProgramForm />} />
+            <Route path="/programs/edit/:name" element={<ProgramForm />} />
+            <Route path="/programs" element={<ProgramList />} />
             <Route path="/progress" element={<MyProgress />} />
             <Route path="/grade-report" element={<GradeReport />} />
             <Route path="/help" element={<HelpSupport />} />
