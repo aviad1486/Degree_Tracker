@@ -1,24 +1,10 @@
 // src/models/seed.ts
 import type { Student } from "../models/Student";
-import type { Course } from "../models/Course";
-import type { StudentCourse } from "../models/StudentCourse";
-import type { Program } from "../models/Program";
+
 
 const SEED_VERSION = "v1"; 
 
 const COURSE_CODES = Array.from({ length: 10 }, (_, i) => `CS10${i + 1}`);
-
-function makeCourses(): Course[] {
-  const semesters: Array<Course["semester"]> = ["A", "B", "C"];
-  return COURSE_CODES.map((code, i) => ({
-    courseCode: code,
-    courseName: `Intro Topic ${i + 1}`,
-    credits: (i % 3) + 2, // 2–4
-    semester: semesters[i % semesters.length],
-    assignments: [`A${i + 1}`, `B${i + 1}`],
-    createdAt: new Date().toISOString(),
-  }));
-}
 
 function makeStudents(): Student[] {
   const semesters: Array<Student["semester"]> = ["A", "B", "C"];
@@ -47,27 +33,6 @@ function makeStudents(): Student[] {
   });
 }
 
-function makeStudentCourses(): StudentCourse[] {
-  return Array.from({ length: 10 }, (_, i) => ({
-    studentId: `10000000${i}`,
-    courseCode: COURSE_CODES[(i + 2) % COURSE_CODES.length],
-    grade: 60 + ((i * 11) % 41),
-    semester: (["A", "B", "C"] as const)[i % 3],
-    year: 2021 + (i % 4),
-    retaken: false,
-    createdAt: new Date().toISOString(),
-  }));
-}
-
-function makePrograms(): Program[] {
-  return Array.from({ length: 10 }, (_, i) => ({
-    name: `Program ${i + 1}`,
-    totalCreditsRequired: 120,
-    courses: COURSE_CODES.slice(0, 5 + (i % 3)), 
-    createdAt: new Date().toISOString(),
-  }));
-}
-
 function seedKey<T>(key: string, factory: () => T[]): void {
   try {
     const raw = localStorage.getItem(key);
@@ -85,9 +50,6 @@ export function bootstrapLocalStorage(force = false): void {
   if (!force && seededVer === SEED_VERSION) return;
 
   seedKey<Student>("students", makeStudents);
-  seedKey<Course>("courses", makeCourses);
-  seedKey<StudentCourse>("studentCourses", makeStudentCourses);
-  seedKey<Program>("programs", makePrograms);
 
   localStorage.setItem("__seed_version", SEED_VERSION);
 }

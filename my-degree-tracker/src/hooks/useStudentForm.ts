@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { addStudent } from "../firestore/studentservice";
 
 type AnyRec = Record<string, any>;
 const norm = (s: string) => (s || "").trim().toLowerCase();
@@ -138,13 +137,11 @@ export function useStudentForm() {
       existing.push(newStudent);
     }
 
-    //localStorage.setItem("students", JSON.stringify(existing));
-    addStudent(newStudent).then(() => {
-      setSnackMsg(isEdit ? "Student updated successfully!" : "Student added successfully!");
-      setSnackSeverity("success");
-      setSnackOpen(true);
-      setTimeout(() => navigate("/students"), 2500);
-    })
+    localStorage.setItem("students", JSON.stringify(existing));
+    setSnackMsg(isEdit ? "Student updated successfully!" : "Student added successfully!");
+    setSnackSeverity("success");
+    setSnackOpen(true);
+    setTimeout(() => navigate("/students"), 2500);
   };
 
   return {
