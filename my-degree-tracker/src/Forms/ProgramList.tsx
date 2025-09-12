@@ -1,34 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
-  Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Paper, IconButton, Box, Typography, Button
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import type { Program } from '../models/Program';
-import { useNavigate } from 'react-router-dom';
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Box,
+  Typography,
+  Button,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import type { Program } from "../models/Program";
+import { useNavigate } from "react-router-dom";
+
+import { firestore } from "../firestore/config";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 const ProgramList: React.FC = () => {
-  const [programs, setPrograms] = useState<Program[]>([]);
+  const [programs, setPrograms] = useState<(Program & { id: string })[]>([]);
   const navigate = useNavigate();
 
+  // טוען את כל ה-Programs מ-Firestore
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('programs') || '[]');
-    setPrograms(stored);
+    const fetchPrograms = async () => {
+      const snap = await getDocs(collection(firestore, "programs"));
+      const data = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Program) }));
+      setPrograms(data);
+    };
+    fetchPrograms();
   }, []);
 
-  const handleDelete = (name: string) => {
-    const filtered = programs.filter(p => p.name !== name);
-    localStorage.setItem('programs', JSON.stringify(filtered));
-    setPrograms(filtered);
+  // מוחק Program לפי ה-id שלו
+  const handleDelete = async (docId: string) => {
+    await deleteDoc(doc(firestore, "programs", docId));
+    setPrograms((prev) => prev.filter((p) => p.id !== docId));
   };
 
-  const handleEdit = (name: string) => {
-    navigate(`/programs/edit/${name}`);
+  const handleEdit = (docId: string) => {
+    navigate(`/programs/edit/${docId}`);
   };
 
   return (
-    <Box sx={{ mt: 4, mx: 'auto', maxWidth: 800 }}>
+    <Box sx={{ mt: 4, mx: "auto", maxWidth: 800 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h6">Study Programs</Typography>
       </Box>
@@ -44,15 +61,23 @@ const ProgramList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {programs.map(program => (
-              <TableRow key={program.name}>
+            {programs.map((program) => (
+              <TableRow key={program.id}>
                 <TableCell>{program.name}</TableCell>
                 <TableCell>{program.totalCreditsRequired}</TableCell>
-                <TableCell>{program.courses.join(', ')}</TableCell>
-                <TableCell>{new Date(program.createdAt).toLocaleString()}</TableCell>
+                <TableCell>{program.courses.join(", ")}</TableCell>
+                <TableCell>
+                  {program.createdAt
+                    ? new Date(program.createdAt).toLocaleString()
+                    : "—"}
+                </TableCell>
                 <TableCell align="right">
-                  <IconButton onClick={() => handleEdit(program.name)}><EditIcon /></IconButton>
-                  <IconButton onClick={() => handleDelete(program.name)}><DeleteIcon /></IconButton>
+                  <IconButton onClick={() => handleEdit(program.id)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(program.id)}>
+                    <DeleteIcon />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}
@@ -66,11 +91,9 @@ const ProgramList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      
+
       <Box display="flex" justifyContent="flex-end" mt={2}>
-        <Button
-          variant="contained"
-          onClick={() => navigate('/programs/new')}        >
+        <Button variant="contained" onClick={() => navigate("/programs/new")}>
           Add Program
         </Button>
       </Box>
