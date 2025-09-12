@@ -12,7 +12,7 @@ import {
 interface ProgramFormData {
   name: string;
   totalCreditsRequired: string;
-  courses: string;
+  courses: string[];
 }
 
 const norm = (s: string) => (s || "").trim().toLowerCase();
@@ -25,7 +25,7 @@ export const useProgramForm = () => {
   const [data, setData] = useState<ProgramFormData>({
     name: "",
     totalCreditsRequired: "0",
-    courses: "",
+    courses: [],
   });
 
   const [errors, setErrors] = useState<
@@ -49,7 +49,7 @@ export const useProgramForm = () => {
           setData({
             name: program.name,
             totalCreditsRequired: program.totalCreditsRequired.toString(),
-            courses: (program.courses || []).join(", "),
+            courses: program.courses || [],
           });
         }
       };
@@ -105,7 +105,7 @@ export const useProgramForm = () => {
     const entry = {
       name: data.name.trim(),
       totalCreditsRequired: parseInt(data.totalCreditsRequired, 10),
-      courses: data.courses.split(",").map((s) => s.trim()),
+      courses: data.courses,
       createdAt: new Date().toISOString(),
     };
 
