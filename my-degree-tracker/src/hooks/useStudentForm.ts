@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import type { Student } from "../models/Student";
 
-type AnyRec = Record<string, any>;
+import { firestore } from "../firestore/config";
+import { doc, getDoc, setDoc, getDocs, collection } from "firebase/firestore";
+
 const norm = (s: string) => (s || "").trim().toLowerCase();
 
 export interface StudentFormData {
@@ -36,30 +39,36 @@ export function useStudentForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof StudentFormData, string>>>({});
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackMsg, setSnackMsg] = useState("");
-  const [snackSeverity, setSnackSeverity] = useState<"success" | "error" | "info" | "warning">("success");
+  const [snackSeverity, setSnackSeverity] = useState<"success" | "error" | "info" | "warning">(
+    "success"
+  );
 
-  // preload if edit
+  // preload if edit → טעינת סטודנט לפי id מ-Firestore
   useEffect(() => {
     if (isEdit && id) {
-      const students: AnyRec[] = JSON.parse(localStorage.getItem("students") || "[]");
-      const student = students.find((s) => s.id === id);
-      if (student) {
-        setData({
-          id: student.id,
-          fullName: student.fullName,
-          email: student.email,
-          courses: (student.courses || []).join(", "),
-          assignments: (student.assignments || []).join(", "),
-          gradeSheet: JSON.stringify(student.gradeSheet || {}),
-          program: student.program,
-          semester: student.semester,
-          completedCredits: String(student.completedCredits ?? "0"),
-        });
-      }
+      const fetchStudent = async () => {
+        const ref = doc(firestore, "students", id);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          const student = snap.data() as Student;
+          setData({
+            id: student.id,
+            fullName: student.fullName,
+            email: student.email,
+            courses: (student.courses || []).join(", "),
+            assignments: (student.assignments || []).join(", "),
+            gradeSheet: JSON.stringify(student.gradeSheet || {}),
+            program: student.program,
+            semester: student.semester,
+            completedCredits: String(student.completedCredits ?? "0"),
+          });
+        }
+      };
+      fetchStudent();
     }
   }, [id, isEdit]);
 
-  const validate = (): boolean => {
+  const validate = async (): Promise<boolean> => {
     const newErrors: typeof errors = {};
     if (!/^\d{9}$/.test(data.id)) newErrors.id = "ID must be exactly 9 digits";
     if (!/\S+\s+\S+/.test(data.fullName)) newErrors.fullName = "Please enter a full name";
@@ -84,8 +93,10 @@ export function useStudentForm() {
       newErrors.completedCredits = "Completed credits must be non-negative";
     }
 
-    // uniqueness
-    const students: AnyRec[] = JSON.parse(localStorage.getItem("students") || "[]");
+    // uniqueness check מול Firestore
+    const snap = await getDocs(collection(firestore, "students"));
+    const students = snap.docs.map(d => d.data() as Student);
+
     const emailNorm = norm(data.email);
     const programNorm = norm(data.program);
 
@@ -105,15 +116,15 @@ export function useStudentForm() {
     (e: React.ChangeEvent<HTMLInputElement>) =>
       setData(prev => ({ ...prev, [field]: e.target.value }));
 
-  const handleSubmit = () => {
-    if (!validate()) {
+  const handleSubmit = async () => {
+    if (!(await validate())) {
       setSnackMsg("Please fix the form errors");
       setSnackSeverity("error");
       setSnackOpen(true);
       return;
     }
 
-    const newStudent = {
+    const newStudent: Student = {
       id: data.id,
       fullName: data.fullName,
       email: data.email,
@@ -126,18 +137,8 @@ export function useStudentForm() {
       createdAt: new Date().toISOString(),
     };
 
-    const existing: AnyRec[] = JSON.parse(localStorage.getItem("students") || "[]");
+    await setDoc(doc(firestore, "students", newStudent.id), newStudent);
 
-    if (isEdit) {
-      const idx = existing.findIndex(s => s.id === id);
-      if (idx !== -1) {
-        existing[idx] = { ...existing[idx], ...newStudent };
-      }
-    } else {
-      existing.push(newStudent);
-    }
-
-    localStorage.setItem("students", JSON.stringify(existing));
     setSnackMsg(isEdit ? "Student updated successfully!" : "Student added successfully!");
     setSnackSeverity("success");
     setSnackOpen(true);

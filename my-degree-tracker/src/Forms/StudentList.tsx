@@ -1,3 +1,4 @@
+// src/Forms/StudentList.tsx
 import React, { useEffect, useState } from 'react';
 import {
   Table, TableHead, TableBody, TableRow, TableCell,
@@ -7,6 +8,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
 import type { Student } from '../models/Student';
+
+import { firestore } from '../firestore/config';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 
 const avgFromGradeSheet = (gradeSheet: Record<string, number> | undefined | null) => {
   if (!gradeSheet || typeof gradeSheet !== 'object' || Array.isArray(gradeSheet)) return null;
@@ -22,15 +26,20 @@ const StudentList: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const navigate = useNavigate();
 
+  // טוען סטודנטים מ-Firestore
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('students') || '[]');
-    setStudents(stored);
+    const fetchStudents = async () => {
+      const snap = await getDocs(collection(firestore, 'students'));
+      const data = snap.docs.map(d => d.data() as Student);
+      setStudents(data);
+    };
+    fetchStudents();
   }, []);
 
-  const handleDelete = (id: string) => {
-    const updated = students.filter(s => s.id !== id);
-    localStorage.setItem('students', JSON.stringify(updated));
-    setStudents(updated);
+  // מוחק סטודנט מ-Firestore
+  const handleDelete = async (id: string) => {
+    await deleteDoc(doc(firestore, 'students', id));
+    setStudents(prev => prev.filter(s => s.id !== id));
   };
 
   const handleEdit = (id: string) => {
@@ -65,13 +74,17 @@ const StudentList: React.FC = () => {
                 <TableCell>{student.program}</TableCell>
                 <TableCell>
                   {(() => {
-                    const avg = avgFromGradeSheet((student as any).gradeSheet);
+                    const avg = avgFromGradeSheet(student.gradeSheet);
                     return avg === null ? '—' : avg.toFixed(1);
                   })()}
                 </TableCell>
                 <TableCell align="right">
-                  <IconButton onClick={() => handleEdit(student.id)}><EditIcon /></IconButton>
-                  <IconButton onClick={() => handleDelete(student.id)}><DeleteIcon /></IconButton>
+                  <IconButton onClick={() => handleEdit(student.id)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(student.id)}>
+                    <DeleteIcon />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}
@@ -85,11 +98,12 @@ const StudentList: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* Add Student button under the table */}
+      {/* כפתור להוספת סטודנט */}
       <Box display="flex" justifyContent="flex-end" mt={2}>
         <Button
           variant="contained"
-          onClick={() => navigate('/students/new')}        >
+          onClick={() => navigate('/students/new')}
+        >
           Add Student
         </Button>
       </Box>
