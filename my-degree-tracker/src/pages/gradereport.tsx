@@ -41,12 +41,13 @@ const GradeReport: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const columns: GridColDef[] = [
+  const columns = [
     { field: "courseName", headerName: "שם קורס", flex: 1 },
     { field: "grade", headerName: "ציון", width: 100 },
     { field: "year", headerName: "שנה", width: 100 },
     { field: "semester", headerName: "סמסטר", width: 100 },
   ];
+
 
   return (
     <Box sx={{ p: 3 }}>
