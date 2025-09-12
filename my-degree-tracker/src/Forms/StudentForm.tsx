@@ -1,13 +1,38 @@
-import React from "react";
-import { TextField, Button, Box, Typography, MenuItem } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { TextField, Button, Box, Typography, MenuItem, Autocomplete } from "@mui/material";
 import SnackbarNotification from "../components/SnackbarNotification";
 import { useStudentForm } from "../hooks/useStudentForm";
+import { collection, getDocs } from "firebase/firestore";
+import { firestore } from "../firestore/config";
 
 const StudentForm: React.FC = () => {
   const {
     data, errors, snackOpen, snackMsg, snackSeverity,
-    setSnackOpen, handleChange, handleSubmit, isEdit
+    setSnackOpen, handleChange, handleSubmit, isEdit, setData
   } = useStudentForm();
+
+  const [courseOptions, setCourseOptions] = useState<string[]>([]);
+  const [programOptions, setProgramOptions] = useState<string[]>([]);
+
+  // טוען קורסים מ-Firestore להצגת אפשרויות
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const snap = await getDocs(collection(firestore, "courses"));
+      const list = snap.docs.map(d => d.data().courseCode as string);
+      setCourseOptions(list);
+    };
+    fetchCourses();
+  }, []);
+
+  // טוען מסלולים מ-Firestore להצגת אפשרויות
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      const snap = await getDocs(collection(firestore, "programs"));
+      const list = snap.docs.map(d => d.data().name as string);
+      setProgramOptions(list);
+    };
+    fetchPrograms();
+  }, []);
 
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
@@ -45,13 +70,22 @@ const StudentForm: React.FC = () => {
         disabled={isEdit}
       />
 
-      <TextField
-        label="Courses (comma separated)"
+      {/* בחירת קורסים מרובים */}
+      <Autocomplete
+        multiple
+        options={courseOptions}
         value={data.courses}
-        onChange={handleChange("courses")}
-        error={!!errors.courses}
-        helperText={errors.courses}
-        required fullWidth margin="normal"
+        onChange={(_, newValue) => setData(prev => ({ ...prev, courses: newValue }))}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Courses"
+            error={!!errors.courses}
+            helperText={errors.courses}
+            required
+            margin="normal"
+          />
+        )}
       />
 
       <TextField
@@ -73,13 +107,21 @@ const StudentForm: React.FC = () => {
         multiline minRows={3}
       />
 
-      <TextField
-        label="Program"
-        value={data.program}
-        onChange={handleChange("program")}
-        error={!!errors.program}
-        helperText={errors.program}
-        required fullWidth margin="normal"
+      {/* בחירת מסלול יחיד */}
+      <Autocomplete
+        options={programOptions}
+        value={data.program || ""}
+        onChange={(_, newValue) => setData(prev => ({ ...prev, program: newValue || "" }))}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Program"
+            error={!!errors.program}
+            helperText={errors.program}
+            required
+            margin="normal"
+          />
+        )}
       />
 
       <TextField

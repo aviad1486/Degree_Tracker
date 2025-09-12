@@ -11,7 +11,7 @@ export interface StudentFormData {
   id: string;
   fullName: string;
   email: string;
-  courses: string;
+  courses: string[];
   assignments: string;
   gradeSheet: string;
   program: string;
@@ -55,10 +55,10 @@ export function useStudentForm() {
             id: student.id,
             fullName: student.fullName,
             email: student.email,
-            courses: (student.courses || []).join(", "),
+            courses: student.courses || [],
             assignments: (student.assignments || []).join(", "),
             gradeSheet: JSON.stringify(student.gradeSheet || {}),
-            program: student.program,
+            program: student.program || "",
             semester: student.semester,
             completedCredits: String(student.completedCredits ?? "0"),
           });
@@ -128,7 +128,7 @@ export function useStudentForm() {
       id: data.id,
       fullName: data.fullName,
       email: data.email,
-      courses: data.courses.split(",").map(s => s.trim()).filter(Boolean),
+      courses: data.courses, // כבר מערך
       assignments: data.assignments.split(",").map(s => s.trim()).filter(Boolean),
       gradeSheet: JSON.parse(data.gradeSheet),
       program: data.program,
