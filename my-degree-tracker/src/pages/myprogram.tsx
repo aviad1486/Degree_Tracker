@@ -18,7 +18,7 @@ const MyProgram: React.FC = () => {
 
   const columns = [
     { field: "courseName", headerName: "שם קורס", flex: 1 },
-    { field: "credits", headerName: "נק"ז", width: 100 },
+    { field: "credits", headerName: "נקז", width: 100 },
     { field: "semester", headerName: "סמסטר מוצע", width: 150 },
   ];
 
