@@ -4,8 +4,10 @@ import type { Course } from "../models/Course";
 import type { StudentCourse } from "../models/StudentCourse";
 import type { Program } from "../models/Program";
 
-const SEED_VERSION = "v1"; 
+import { firestore } from "../firestore/config";
+import { doc, setDoc, getDocs, collection } from "firebase/firestore";
 
+const SEED_VERSION = "v1";
 const COURSE_CODES = Array.from({ length: 10 }, (_, i) => `CS10${i + 1}`);
 
 function makeCourses(): Course[] {
@@ -13,7 +15,7 @@ function makeCourses(): Course[] {
   return COURSE_CODES.map((code, i) => ({
     courseCode: code,
     courseName: `Intro Topic ${i + 1}`,
-    credits: (i % 3) + 2, // 2–4
+    credits: (i % 3) + 2,
     semester: semesters[i % semesters.length],
     assignments: [`A${i + 1}`, `B${i + 1}`],
     createdAt: new Date().toISOString(),
@@ -23,11 +25,10 @@ function makeCourses(): Course[] {
 function makeStudents(): Student[] {
   const semesters: Array<Student["semester"]> = ["A", "B", "C"];
   return Array.from({ length: 10 }, (_, i) => {
-    const id = `10000000${i}`; 
-    const courses = COURSE_CODES.slice(0, 3 + (i % 3)); 
+    const id = `10000000${i}`;
+    const courses = COURSE_CODES.slice(0, 3 + (i % 3));
     const gradeSheet = Object.fromEntries(
       courses.map((c, idx) => {
-        // grades: 60-100
         const grade = 60 + ((i * 7 + idx * 13) % 41);
         return [c, grade];
       })
@@ -41,7 +42,7 @@ function makeStudents(): Student[] {
       gradeSheet,
       program: `Program ${((i % 10) + 1)}`,
       semester: semesters[i % semesters.length],
-      completedCredits: (i % 8) * 5, // 0,5,10...
+      completedCredits: (i % 8) * 5,
       createdAt: new Date().toISOString(),
     };
   });
@@ -63,31 +64,39 @@ function makePrograms(): Program[] {
   return Array.from({ length: 10 }, (_, i) => ({
     name: `Program ${i + 1}`,
     totalCreditsRequired: 120,
-    courses: COURSE_CODES.slice(0, 5 + (i % 3)), 
+    courses: COURSE_CODES.slice(0, 5 + (i % 3)),
     createdAt: new Date().toISOString(),
   }));
 }
 
-function seedKey<T>(key: string, factory: () => T[]): void {
-  try {
-    const raw = localStorage.getItem(key);
-    const withData = raw && JSON.parse(raw);
-    if (!Array.isArray(withData) || withData.length === 0) {
-      localStorage.setItem(key, JSON.stringify(factory()));
+// פונקציה שמכניסה נתונים ל־Firestore אם הקולקציה ריקה
+async function seedCollection<T>(
+  colName: string,
+  factory: () => T[],
+  idField: keyof T
+): Promise<void> {
+  const snap = await getDocs(collection(firestore, colName));
+  if (snap.empty) {
+    const items = factory();
+    for (const item of items) {
+      const id = String(item[idField]);
+      await setDoc(doc(firestore, colName, id), item as any);
     }
-  } catch {
-    localStorage.setItem(key, JSON.stringify(factory()));
   }
 }
 
-export function bootstrapLocalStorage(force = false): void {
-  const seededVer = localStorage.getItem("__seed_version");
-  if (!force && seededVer === SEED_VERSION) return;
+// פונקציית bootstrap – רק Firestore
+export async function bootstrapFirestore(force = false): Promise<void> {
+  const snap = await getDocs(collection(firestore, "__meta"));
+  const metaDoc = snap.docs.find((d) => d.id === "seed_version");
+  const currentVer = metaDoc?.data()?.value;
 
-  seedKey<Student>("students", makeStudents);
-  seedKey<Course>("courses", makeCourses);
-  seedKey<StudentCourse>("studentCourses", makeStudentCourses);
-  seedKey<Program>("programs", makePrograms);
+  if (!force && currentVer === SEED_VERSION) return;
 
-  localStorage.setItem("__seed_version", SEED_VERSION);
+  await seedCollection<Student>("students", makeStudents, "id");
+  await seedCollection<Course>("courses", makeCourses, "courseCode");
+  await seedCollection<StudentCourse>("studentCourses", makeStudentCourses, "courseCode");
+  await seedCollection<Program>("programs", makePrograms, "name");
+
+  await setDoc(doc(firestore, "__meta", "seed_version"), { value: SEED_VERSION });
 }
