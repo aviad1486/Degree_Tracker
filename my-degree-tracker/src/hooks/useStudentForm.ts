@@ -11,7 +11,7 @@ export interface StudentFormData {
   id: string;
   fullName: string;
   email: string;
-  courses: string[];
+  courses: string[];                   // now array
   assignments: string;
   gradeSheet: string;
   program: string;
@@ -28,7 +28,7 @@ export function useStudentForm() {
     id: "",
     fullName: "",
     email: "",
-    courses: "",
+    courses: [],                        // initialize as array
     assignments: "",
     gradeSheet: "",
     program: "",
@@ -43,7 +43,7 @@ export function useStudentForm() {
     "success"
   );
 
-  // preload if edit → טעינת סטודנט לפי id מ-Firestore
+  // preload if edit → load student by id from Firestore
   useEffect(() => {
     if (isEdit && id) {
       const fetchStudent = async () => {
@@ -74,8 +74,9 @@ export function useStudentForm() {
     if (!/\S+\s+\S+/.test(data.fullName)) newErrors.fullName = "Please enter a full name";
     if (!/^[\w-.]+@[\w-]+\.[a-z]{2,}$/i.test(data.email)) newErrors.email = "Invalid email";
 
-    const courseList = data.courses.split(",").map(s => s.trim()).filter(Boolean);
-    if (courseList.length === 0) newErrors.courses = "Enter at least one course";
+    if (!data.courses || data.courses.length === 0) {
+      newErrors.courses = "Select at least one course";
+    }
 
     try {
       const sheet = JSON.parse(data.gradeSheet);
@@ -93,7 +94,7 @@ export function useStudentForm() {
       newErrors.completedCredits = "Completed credits must be non-negative";
     }
 
-    // uniqueness check מול Firestore
+    // uniqueness check against Firestore
     const snap = await getDocs(collection(firestore, "students"));
     const students = snap.docs.map(d => d.data() as Student);
 
@@ -112,7 +113,8 @@ export function useStudentForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (field: keyof StudentFormData) =>
+  // generic handler (excludes courses, which is managed by Autocomplete)
+  const handleChange = (field: Exclude<keyof StudentFormData, "courses">) =>
     (e: React.ChangeEvent<HTMLInputElement>) =>
       setData(prev => ({ ...prev, [field]: e.target.value }));
 
@@ -128,7 +130,7 @@ export function useStudentForm() {
       id: data.id,
       fullName: data.fullName,
       email: data.email,
-      courses: data.courses, // כבר מערך
+      courses: data.courses, // array directly
       assignments: data.assignments.split(",").map(s => s.trim()).filter(Boolean),
       gradeSheet: JSON.parse(data.gradeSheet),
       program: data.program,
@@ -146,7 +148,15 @@ export function useStudentForm() {
   };
 
   return {
-    data, errors, snackOpen, snackMsg, snackSeverity,
-    setSnackOpen, handleChange, handleSubmit, isEdit
+    data,
+    setData,
+    errors,
+    snackOpen,
+    snackMsg,
+    snackSeverity,
+    setSnackOpen,
+    handleChange,
+    handleSubmit,
+    isEdit,
   };
 }
