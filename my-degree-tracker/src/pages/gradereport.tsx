@@ -16,47 +16,93 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { DataGrid } from "@mui/x-data-grid";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, firestore } from "../firestore/config";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import type { Student } from "../models/Student";
+import type { StudentCourse } from "../models/StudentCourse";
 
 const GradeReport: React.FC = () => {
   const [loading, setLoading] = useState(true);
-
-  // Mock data (בשלב מאוחר יותר יגיע מ-Firestore)
-  const gradesBySemester = [
-    { semester: "שנה א - סמס' א", avg: 85 },
-    { semester: "שנה א - סמס' ב", avg: 88 },
-    { semester: "שנה ב - סמס' א", avg: 91 },
-    { semester: "שנה ב - סמס' ב", avg: 89 },
-    { semester: "שנה ג - סמס' א", avg: 93 },
-  ];
-
-  const courses = [
-    { id: 1, courseName: "מבוא למדעי המחשב", grade: 90, year: 1, semester: "א" },
-    { id: 2, courseName: "מערכות הפעלה", grade: 87, year: 2, semester: "ב" },
-    { id: 3, courseName: "בינה מלאכותית", grade: 95, year: 3, semester: "א" },
-    { id: 4, courseName: "בסיסי נתונים", grade: 89, year: 2, semester: "א" },
-  ];
+  const [student, setStudent] = useState<Student | null>(null);
+  const [coursesRows, setCoursesRows] = useState<any[]>([]);
+  const [gradesBySemester, setGradesBySemester] = useState<any[]>([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (user?.email) {
+        try {
+          // שולף את הסטודנט לפי אימייל
+          const qStudent = query(
+            collection(firestore, "students"),
+            where("email", "==", user.email)
+          );
+          const snapStudent = await getDocs(qStudent);
+
+          if (!snapStudent.empty) {
+            const studentData = snapStudent.docs[0].data() as Student;
+            setStudent(studentData);
+
+            // שולף את רשומות הסטודנטCourses לפי studentId
+            const qCourses = query(
+              collection(firestore, "studentCourses"),
+              where("studentId", "==", studentData.id)
+            );
+            const snapCourses = await getDocs(qCourses);
+
+            const rows: any[] = snapCourses.docs.map((doc, idx) => {
+              const sc = doc.data() as StudentCourse;
+              return {
+                id: idx + 1,
+                courseName: sc.courseCode,
+                grade: sc.grade,
+                year: sc.year,
+                semester: sc.semester,
+              };
+            });
+            setCoursesRows(rows);
+
+            // מחשב ממוצעים לפי שנה+סמסטר
+            const grouped: Record<string, number[]> = {};
+            rows.forEach((r) => {
+              const key = `שנה ${r.year} - סמס' ${r.semester}`;
+              if (!grouped[key]) grouped[key] = [];
+              if (typeof r.grade === "number") grouped[key].push(r.grade);
+            });
+
+            const avgBySem = Object.entries(grouped).map(([semester, grades]) => ({
+              semester,
+              avg: grades.reduce((a, b) => a + b, 0) / grades.length,
+            }));
+            setGradesBySemester(avgBySem);
+          } else {
+            console.warn("⚠️ לא נמצא סטודנט עם המייל הזה");
+          }
+        } catch (err) {
+          console.error("❌ שגיאה בשליפת הנתונים:", err);
+        }
+      }
+      setLoading(false);
+    });
+
+    return () => unsub();
   }, []);
 
-  const columns = [
+  const columns: GridColDef[] = [
     { field: "courseName", headerName: "שם קורס", flex: 1 },
     { field: "grade", headerName: "ציון", width: 100 },
     { field: "year", headerName: "שנה", width: 100 },
     { field: "semester", headerName: "סמסטר", width: 100 },
   ];
 
-
   return (
     <Box sx={{ p: 3 }}>
       {loading && <LinearProgress sx={{ mb: 2 }} />}
 
-      {!loading && (
+      {!loading && student && (
         <>
           <Typography variant="h5" gutterBottom>
-            דו"ח ציונים 📈
+            דו"ח ציונים 📈 – שלום {student.fullName}
           </Typography>
 
           {/* גרף ממוצעים */}
@@ -69,7 +115,7 @@ const GradeReport: React.FC = () => {
                 <LineChart data={gradesBySemester}>
                   <CartesianGrid stroke="#ccc" />
                   <XAxis dataKey="semester" />
-                  <YAxis domain={[70, 100]} />
+                  <YAxis domain={[0, 100]} />
                   <Tooltip />
                   <Line type="monotone" dataKey="avg" stroke="#0077cc" />
                 </LineChart>
@@ -85,7 +131,7 @@ const GradeReport: React.FC = () => {
               </Typography>
               <div style={{ height: 400, width: "100%" }}>
                 <DataGrid
-                  rows={courses}
+                  rows={coursesRows}
                   columns={columns}
                   pageSizeOptions={[5]}
                   initialState={{
