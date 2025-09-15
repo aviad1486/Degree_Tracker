@@ -58,7 +58,7 @@ const StudentCourseList: React.FC = () => {
               <TableCell>Grade</TableCell>
               <TableCell>Semester</TableCell>
               <TableCell>Year</TableCell>
-              <TableCell>Retaken</TableCell>
+              <TableCell>Attempts</TableCell>
               <TableCell>Created At</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
