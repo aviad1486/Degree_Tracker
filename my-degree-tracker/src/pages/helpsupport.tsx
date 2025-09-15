@@ -50,10 +50,10 @@ const HelpSupport: React.FC = () => {
               </Typography>
               <List dense>
                 <ListItem>
-                  <ListItemText primary="להתחברות – התחבר עם תז וסיסמה כדי לקבל גישה אישית." />
+                  <ListItemText primary="להתחברות – התחבר עם אימייל ות״ז כסיסמה בכדי לקבל גישה אישית." />
                 </ListItem>
                 <ListItem>
-                  <ListItemText primary="ההתקדמות שלי – ראה את מצב נקודות הזכות, ממוצע הציונים ואירועים קרובים." />
+                  <ListItemText primary="ההתקדמות שלי – ראה את מצב נקודות הזכות, ממוצע הציונים ועוד." />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="דו״ח ציונים – צפה בגרף מגמות ובציונים מפורטים לכל קורס." />
