@@ -20,10 +20,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth, firestore } from "../firestore/config";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
 
-interface GradeSheet {
-  [courseCode: string]: number;
-}
-
 const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [studentName, setStudentName] = useState<string | null>(null);
@@ -31,7 +27,7 @@ const HomePage: React.FC = () => {
   const [totalCredits, setTotalCredits] = useState(0);
   const [completedCredits, setCompletedCredits] = useState(0);
   const [gpa, setGpa] = useState(0);
-  const [gradeSheet, setGradeSheet] = useState<GradeSheet>({});
+  const [assignments, setAssignments] = useState<string[]>([]);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
@@ -52,9 +48,8 @@ const HomePage: React.FC = () => {
             setCompletedCredits(Number(student.completedCredits ?? 0));
             setTotalCredits(Number(student.totalCredits ?? 120));
 
-            // חישוב ממוצע ציונים
-            const grades: GradeSheet = student.gradeSheet ?? {};
-            setGradeSheet(grades);
+            // ממוצע ציונים נשאר כמו קודם אם תרצה להשתמש ב-gradeSheet
+            const grades = student.gradeSheet ?? {};
             const values = Object.values(grades).filter((g) => typeof g === "number");
             if (values.length > 0) {
               const avg = values.reduce((a, b) => a + b, 0) / values.length;
@@ -62,6 +57,9 @@ const HomePage: React.FC = () => {
             } else {
               setGpa(0);
             }
+
+            // שמירה של כל ה-assignments מהסטודנט
+            setAssignments(student.assignments ?? []);
           } else {
             console.warn("⚠️ לא נמצא סטודנט עם המייל הזה");
             setStudentName(user.email);
@@ -120,30 +118,26 @@ const HomePage: React.FC = () => {
             </Grid>
           </Grid>
 
-          {/* טבלה של כל הקורסים והציונים */}
+          {/* טבלה של כל ה-assignments */}
           <Typography variant="h6" gutterBottom>
-            הקורסים שלי
+            משימות (Assignments)
           </Typography>
           <TableContainer component={Paper} sx={{ mb: 4 }}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>קורס</TableCell>
-                  <TableCell align="right">ציון</TableCell>
+                  <TableCell>שם משימה</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Object.entries(gradeSheet).map(([course, grade]) => (
-                  <TableRow key={course}>
-                    <TableCell>{course}</TableCell>
-                    <TableCell align="right">{grade}</TableCell>
+                {assignments.map((assignment, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell>{assignment}</TableCell>
                   </TableRow>
                 ))}
-                {Object.keys(gradeSheet).length === 0 && (
+                {assignments.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={2} align="center">
-                      אין נתוני קורסים להצגה
-                    </TableCell>
+                    <TableCell align="center">אין משימות להצגה</TableCell>
                   </TableRow>
                 )}
               </TableBody>
