@@ -45,44 +45,111 @@ const CourseList: React.FC = () => {
   };
 
   return (
-    <Box sx={{ mt: 4, mx: "auto", maxWidth: 800 }}>
+    <Box sx={{ mt: 4, mx: "auto", maxWidth: 800, p: { xs: 2, sm: 0 } }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h6">Course List</Typography>
+        <Typography 
+          variant="h6"
+          sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+        >
+          רשימת קורסים
+        </Typography>
       </Box>
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer 
+        component={Paper}
+        sx={{
+          '& .MuiTable-root': {
+            minWidth: { xs: 'auto', sm: 650 }
+          }
+        }}
+      >
+        <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Course Code</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Credits</TableCell>
-              <TableCell>Semester</TableCell>
-              <TableCell>Assignments</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                קוד קורס
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', sm: 'table-cell' }
+              }}>
+                שם
+              </TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                נק"ז
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', md: 'table-cell' }
+              }}>
+                סמסטר
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', lg: 'table-cell' }
+              }}>
+                משימות
+              </TableCell>
+              <TableCell 
+                align="right"
+                sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+              >
+                פעולות
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {courses.map((course) => (
               <TableRow key={course.id}>
-                <TableCell>{course.courseCode}</TableCell>
-                <TableCell>{course.courseName}</TableCell>
-                <TableCell>{course.credits}</TableCell>
-                <TableCell>{course.semester}</TableCell>
-                <TableCell>{course.assignments.join(", ")}</TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  {course.courseCode}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', sm: 'table-cell' }
+                }}>
+                  {course.courseName}
+                </TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  {course.credits}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', md: 'table-cell' }
+                }}>
+                  {course.semester}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', lg: 'table-cell' }
+                }}>
+                  {course.assignments.join(", ")}
+                </TableCell>
                 <TableCell align="right">
-                  <IconButton onClick={() => handleEdit(course.id)}>
-                    <EditIcon />
+                  <IconButton 
+                    onClick={() => handleEdit(course.id)}
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
+                  >
+                    <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(course.id)}>
-                    <DeleteIcon />
+                  <IconButton 
+                    onClick={() => handleDelete(course.id)}
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
+                  >
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>
             ))}
             {courses.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} align="center">
-                  No courses found.
+                <TableCell 
+                  colSpan={6} 
+                  align="center"
+                  sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                >
+                  לא נמצאו קורסים.
                 </TableCell>
               </TableRow>
             )}
@@ -91,8 +158,15 @@ const CourseList: React.FC = () => {
       </TableContainer>
 
       <Box display="flex" justifyContent="flex-end" mt={2}>
-        <Button variant="contained" onClick={() => navigate("/courses/new")}>
-          Add Course
+        <Button 
+          variant="contained" 
+          onClick={() => navigate("/courses/new")}
+          sx={{ 
+            minHeight: { xs: 44, sm: 36 },
+            fontSize: { xs: '0.875rem', sm: '0.875rem' }
+          }}
+        >
+          הוסף קורס
         </Button>
       </Box>
     </Box>

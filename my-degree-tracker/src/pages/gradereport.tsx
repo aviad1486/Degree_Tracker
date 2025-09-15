@@ -5,6 +5,13 @@ import {
   LinearProgress,
   Card,
   CardContent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from "@mui/material";
 import {
   LineChart,
@@ -15,7 +22,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { DataGrid } from "@mui/x-data-grid";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, firestore } from "../firestore/config";
 import { collection, query, where, getDocs } from "firebase/firestore";
@@ -88,36 +94,45 @@ const GradeReport: React.FC = () => {
     return () => unsub();
   }, []);
 
-  const columns: GridColDef[] = [
-    { field: "courseName", headerName: "קוד קורס", flex: 1 },
-    { field: "grade", headerName: "ציון", width: 100 },
-    { field: "year", headerName: "שנה", width: 100 },
-    { field: "semester", headerName: "סמסטר", width: 100 },
-  ];
-
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {loading && <LinearProgress sx={{ mb: 2 }} />}
 
       {!loading && student && (
         <>
-          <Typography variant="h5" gutterBottom>
+          <Typography 
+            variant="h5" 
+            gutterBottom
+            sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+          >
             דו"ח ציונים 📈 – שלום {student.fullName}
           </Typography>
 
           {/* גרף ממוצעים */}
           <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6" 
+                gutterBottom
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
                 ממוצע ציונים לפי סמסטר
               </Typography>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={gradesBySemester}>
                   <CartesianGrid stroke="#ccc" />
-                  <XAxis dataKey="semester" />
-                  <YAxis domain={[0, 100]} />
+                  <XAxis 
+                    dataKey="semester" 
+                    fontSize={12}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis 
+                    domain={[0, 100]} 
+                    fontSize={12}
+                    tick={{ fontSize: 12 }}
+                  />
                   <Tooltip />
-                  <Line type="monotone" dataKey="avg" stroke="#0077cc" />
+                  <Line type="monotone" dataKey="avg" stroke="#0077cc" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -125,20 +140,82 @@ const GradeReport: React.FC = () => {
 
           {/* טבלת ציונים */}
           <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6" 
+                gutterBottom
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
                 פירוט ציונים
               </Typography>
-              <div style={{ height: 400, width: "100%" }}>
-                <DataGrid
-                  rows={coursesRows}
-                  columns={columns}
-                  pageSizeOptions={[5]}
-                  initialState={{
-                    pagination: { paginationModel: { pageSize: 5 } },
-                  }}
-                />
-              </div>
+              <TableContainer 
+                component={Paper}
+                sx={{
+                  '& .MuiTable-root': {
+                    minWidth: { xs: 'auto', sm: 650 }
+                  }
+                }}
+              >
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                        קוד קורס
+                      </TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                        ציון
+                      </TableCell>
+                      <TableCell sx={{ 
+                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                        display: { xs: 'none', sm: 'table-cell' }
+                      }}>
+                        שנה
+                      </TableCell>
+                      <TableCell sx={{ 
+                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                        display: { xs: 'none', sm: 'table-cell' }
+                      }}>
+                        סמסטר
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {coursesRows.map((row) => (
+                      <TableRow key={row.id}>
+                        <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                          {row.courseName}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                          {row.grade}
+                        </TableCell>
+                        <TableCell sx={{ 
+                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                          display: { xs: 'none', sm: 'table-cell' }
+                        }}>
+                          {row.year}
+                        </TableCell>
+                        <TableCell sx={{ 
+                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                          display: { xs: 'none', sm: 'table-cell' }
+                        }}>
+                          {row.semester}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {coursesRows.length === 0 && (
+                      <TableRow>
+                        <TableCell 
+                          colSpan={4} 
+                          align="center"
+                          sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                        >
+                          אין נתוני ציונים להצגה
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </CardContent>
           </Card>
         </>

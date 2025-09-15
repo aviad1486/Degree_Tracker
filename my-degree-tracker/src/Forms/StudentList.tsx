@@ -47,51 +47,126 @@ const StudentList: React.FC = () => {
   };
 
   return (
-    <Box sx={{ mt: 4, mx: 'auto', maxWidth: 800 }}>
+    <Box sx={{ mt: 4, mx: 'auto', maxWidth: 800, p: { xs: 2, sm: 0 } }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h6">Student List</Typography>
+        <Typography 
+          variant="h6"
+          sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+        >
+          רשימת סטודנטים
+        </Typography>
       </Box>
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer 
+        component={Paper}
+        sx={{
+          '& .MuiTable-root': {
+            minWidth: { xs: 'auto', sm: 650 }
+          }
+        }}
+      >
+        <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Full Name</TableCell>
-              <TableCell>ID</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Courses</TableCell>
-              <TableCell>Program</TableCell>
-              <TableCell>Average</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                שם מלא
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', sm: 'table-cell' }
+              }}>
+                ת.ז
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', md: 'table-cell' }
+              }}>
+                אימייל
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', lg: 'table-cell' }
+              }}>
+                קורסים
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', md: 'table-cell' }
+              }}>
+                תוכנית
+              </TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                ממוצע
+              </TableCell>
+              <TableCell 
+                align="right"
+                sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+              >
+                פעולות
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {students.map(student => (
               <TableRow key={student.id}>
-                <TableCell>{student.fullName}</TableCell>
-                <TableCell>{student.id}</TableCell>
-                <TableCell>{student.email}</TableCell>
-                <TableCell>{(student.courses || []).join(', ')}</TableCell>
-                <TableCell>{student.program}</TableCell>
-                <TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  {student.fullName}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', sm: 'table-cell' }
+                }}>
+                  {student.id}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', md: 'table-cell' }
+                }}>
+                  {student.email}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', lg: 'table-cell' }
+                }}>
+                  {(student.courses || []).join(', ')}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', md: 'table-cell' }
+                }}>
+                  {student.program}
+                </TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                   {(() => {
                     const avg = avgFromGradeSheet(student.gradeSheet);
                     return avg === null ? '—' : avg.toFixed(1);
                   })()}
                 </TableCell>
                 <TableCell align="right">
-                  <IconButton onClick={() => handleEdit(student.id)}>
-                    <EditIcon />
+                  <IconButton 
+                    onClick={() => handleEdit(student.id)}
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
+                  >
+                    <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(student.id)}>
-                    <DeleteIcon />
+                  <IconButton 
+                    onClick={() => handleDelete(student.id)}
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
+                  >
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>
             ))}
             {students.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} align="center">
-                  No students found.
+                <TableCell 
+                  colSpan={7} 
+                  align="center"
+                  sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                >
+                  לא נמצאו סטודנטים.
                 </TableCell>
               </TableRow>
             )}
@@ -103,8 +178,12 @@ const StudentList: React.FC = () => {
         <Button
           variant="contained"
           onClick={() => navigate('/students/new')}
+          sx={{ 
+            minHeight: { xs: 44, sm: 36 },
+            fontSize: { xs: '0.875rem', sm: '0.875rem' }
+          }}
         >
-          Add Student
+          הוסף סטודנט
         </Button>
       </Box>
     </Box>

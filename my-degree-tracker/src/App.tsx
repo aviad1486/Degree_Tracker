@@ -28,6 +28,7 @@ import Login from './pages/login';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const sidebarWidth = 'clamp(200px, 18vw, 320px)';
+const mobileSidebarWidth = '280px';
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -60,7 +61,13 @@ export default function App() {
         open={menuOpen}
         onClose={handleMenuClose}
         ModalProps={{ keepMounted: true }}
-        sx={{ '& .MuiDrawer-paper': { width: sidebarWidth } }}
+        sx={{ 
+          display: { xs: 'block', sm: 'none' },
+          '& .MuiDrawer-paper': { 
+            width: mobileSidebarWidth,
+            maxWidth: '85vw'
+          }
+        }}
       >
         <HamburgerDrawer onClose={handleMenuClose} />
       </Drawer>
@@ -72,12 +79,19 @@ export default function App() {
           display: 'flex',
           flexDirection: 'column',
           minHeight: '100vh',
-          ml: { sm: sidebarWidth },
+          ml: { sm: sidebarWidth }, // רק במחשב יש מרווח משמאל
         }}
       >
         <Toolbar />
 
-        <Container maxWidth="xl" sx={{ flexGrow: 1, py: { xs: 2, sm: 3 } }}>
+        <Container 
+          maxWidth="xl" 
+          sx={{ 
+            flexGrow: 1, 
+            py: { xs: 1, sm: 3 },
+            px: { xs: 1, sm: 3 }
+          }}
+        >
           <Routes>
             {/* פתוחים לכולם */}
             <Route path="/login" element={<Login />} />

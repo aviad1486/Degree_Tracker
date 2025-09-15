@@ -1,0 +1,145 @@
+/* התאמות כלליות למובייל */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+  overflow-x: hidden;
+}
+
+/* התאמות לכפתורים במובייל */
+button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* התאמות לקלט במובייל */
+input, textarea, select {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+}
+
+/* שיפור התצוגה בטבלאות במובייל */
+@media (max-width: 600px) {
+  .MuiTable-root {
+    font-size: 0.75rem;
+  }
+  
+  .MuiTableCell-root {
+    padding: 8px 4px;
+  }
+  
+  .MuiCard-root {
+    margin-bottom: 12px;
+  }
+  
+  .MuiButton-root {
+    min-height: 44px; /* גודל מינימלי לנגיעה */
+  }
+}
+
+/* נגישות טובה יותר למחווני טעינה */
+.MuiLinearProgress-root {
+  height: 6px;
+  border-radius: 3px;
+}
+
+@media (max-width: 600px) {
+  .MuiLinearProgress-root {
+    height: 8px;
+    border-radius: 4px;
+  }
+}
+
+/* שיפור התצוגה של טקסט ארוך */
+.MuiTypography-root {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* התאמות למקלדת וירטואלית */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .MuiContainer-root {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+}
+
+/* שיפור הסקרולינג במובייל */
+.MuiTableContainer-root {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* שיפורים נוספים למובייל */
+@media (max-width: 600px) {
+  /* שיפור הנגישות של לחיצות */
+  .MuiIconButton-root {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  /* שיפור התצוגה של גרפים */
+  .recharts-wrapper {
+    font-size: 12px !important;
+  }
+  
+  .recharts-cartesian-axis-tick-value {
+    font-size: 10px !important;
+  }
+  
+  /* שיפור התצוגה של רשימות */
+  .MuiListItem-root {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  
+  .MuiListItemText-primary {
+    font-size: 0.875rem;
+  }
+  
+  /* שיפור התצוגה של קלט טקסט */
+  .MuiTextField-root .MuiInputBase-input {
+    font-size: 16px; /* מונע זום באייפון */
+  }
+  
+  /* שיפור התצוגה של כרטיסים */
+  .MuiCardContent-root:last-child {
+    padding-bottom: 16px;
+  }
+}
+
+/* התאמות לנוף במובייל */
+@media (max-width: 960px) and (orientation: landscape) {
+  .MuiAppBar-root {
+    height: 48px;
+  }
+  
+  .MuiToolbar-root {
+    min-height: 48px;
+  }
+  
+  .MuiContainer-root {
+    padding-top: 8px;
+  }
+}
+
+/* שיפור תצוגה במסכים בעלי צפיפות גבוהה */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .MuiCard-root {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 
+                0 8px 16px rgba(0, 0, 0, 0.12);
+  }
+}

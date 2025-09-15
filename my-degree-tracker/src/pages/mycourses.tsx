@@ -99,30 +99,63 @@ const MyCourses: React.FC = () => {
 
   const renderCurrentTable = (rows: Course[]) => (
     <Card sx={{ mb: 3 }}>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
+      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+        <Typography 
+          variant="h6" 
+          gutterBottom
+          sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+        >
           קורסים נוכחיים
         </Typography>
-        <TableContainer component={Paper}>
-          <Table>
+        <TableContainer 
+          component={Paper}
+          sx={{
+            '& .MuiTable-root': {
+              minWidth: { xs: 'auto', sm: 650 }
+            }
+          }}
+        >
+          <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>קוד קורס</TableCell>
-                <TableCell>שם קורס</TableCell>
-                <TableCell>נק"ז</TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  קוד קורס
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', sm: 'table-cell' }
+                }}>
+                  שם קורס
+                </TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  נק"ז
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map((r, idx) => (
                 <TableRow key={idx}>
-                  <TableCell>{r.courseCode}</TableCell>
-                  <TableCell>{r.courseName}</TableCell>
-                  <TableCell>{r.credits}</TableCell>
+                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {r.courseCode}
+                  </TableCell>
+                  <TableCell sx={{ 
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    display: { xs: 'none', sm: 'table-cell' }
+                  }}>
+                    {r.courseName}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {r.credits}
+                  </TableCell>
                 </TableRow>
               ))}
               {rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={3} align="center">
+                  <TableCell 
+                    colSpan={3} 
+                    align="center"
+                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                  >
                     אין נתונים להצגה
                   </TableCell>
                 </TableRow>
@@ -136,36 +169,99 @@ const MyCourses: React.FC = () => {
 
   const renderPassedTable = (rows: Course[]) => (
     <Card sx={{ mb: 3 }}>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
+      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+        <Typography 
+          variant="h6" 
+          gutterBottom
+          sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+        >
           קורסים שעברתי
         </Typography>
-        <TableContainer component={Paper}>
-          <Table>
+        <TableContainer 
+          component={Paper}
+          sx={{
+            '& .MuiTable-root': {
+              minWidth: { xs: 'auto', sm: 650 }
+            }
+          }}
+        >
+          <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>קוד קורס</TableCell>
-                <TableCell>שם קורס</TableCell>
-                <TableCell>נק"ז</TableCell>
-                <TableCell>שנה</TableCell>
-                <TableCell>סמסטר</TableCell>
-                <TableCell>ציון</TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  קוד
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', sm: 'table-cell' }
+                }}>
+                  שם קורס
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', md: 'table-cell' }
+                }}>
+                  נק"ז
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', md: 'table-cell' }
+                }}>
+                  שנה
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', sm: 'table-cell' }
+                }}>
+                  סמסטר
+                </TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  ציון
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map((r, idx) => (
                 <TableRow key={idx}>
-                  <TableCell>{r.courseCode}</TableCell>
-                  <TableCell>{r.courseName}</TableCell>
-                  <TableCell>{r.credits}</TableCell>
-                  <TableCell>{r.year ?? "—"}</TableCell>
-                  <TableCell>{r.semester ?? "—"}</TableCell>
-                  <TableCell>{r.grade ?? "—"}</TableCell>
+                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {r.courseCode}
+                  </TableCell>
+                  <TableCell sx={{ 
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    display: { xs: 'none', sm: 'table-cell' }
+                  }}>
+                    {r.courseName}
+                  </TableCell>
+                  <TableCell sx={{ 
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    display: { xs: 'none', md: 'table-cell' }
+                  }}>
+                    {r.credits}
+                  </TableCell>
+                  <TableCell sx={{ 
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    display: { xs: 'none', md: 'table-cell' }
+                  }}>
+                    {r.year ?? "—"}
+                  </TableCell>
+                  <TableCell sx={{ 
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    display: { xs: 'none', sm: 'table-cell' }
+                  }}>
+                    {r.semester ?? "—"}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    {r.grade ?? "—"}
+                  </TableCell>
                 </TableRow>
               ))}
               {rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} align="center">
+                  <TableCell 
+                    colSpan={6} 
+                    align="center"
+                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                  >
                     אין נתונים להצגה
                   </TableCell>
                 </TableRow>
@@ -178,11 +274,15 @@ const MyCourses: React.FC = () => {
   );
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {loading && <LinearProgress sx={{ mb: 2 }} />}
       {!loading && (
         <>
-          <Typography variant="h5" gutterBottom>
+          <Typography 
+            variant="h5" 
+            gutterBottom
+            sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+          >
             הקורסים שלי 📚
           </Typography>
           {renderCurrentTable(currentCourses)}

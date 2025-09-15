@@ -20,22 +20,33 @@ const HelpSupport: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {loading && <LinearProgress sx={{ mb: 2 }} />}
 
       {!loading && (
         <>
-          <Typography variant="h5" gutterBottom>
+          <Typography 
+            variant="h5" 
+            gutterBottom
+            sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+          >
             עזרה ותמיכה ❓
           </Typography>
 
           {/* הסבר כללי */}
           <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6" 
+                gutterBottom
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
                 מטרת המערכת
               </Typography>
-              <Typography variant="body1">
+              <Typography 
+                variant="body1"
+                sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
+              >
                 המערכת נועדה לעזור לסטודנטים לעקוב אחר מצב התואר שלהם בזמן אמת –
                 נק"ז, ציונים, קורסים ומסלול לימודים.
               </Typography>
@@ -44,24 +55,32 @@ const HelpSupport: React.FC = () => {
 
           {/* הנחיות שימוש */}
           <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6" 
+                gutterBottom
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
                 הנחיות לשימוש במסכים
               </Typography>
-              <List dense>
-                <ListItem>
+              <List dense sx={{ 
+                '& .MuiListItemText-primary': {
+                  fontSize: { xs: '0.875rem', sm: '1rem' }
+                }
+              }}>
+                <ListItem sx={{ px: { xs: 1, sm: 2 } }}>
                   <ListItemText primary="להתחברות – התחבר עם אימייל ות״ז כסיסמה בכדי לקבל גישה אישית." />
                 </ListItem>
-                <ListItem>
+                <ListItem sx={{ px: { xs: 1, sm: 2 } }}>
                   <ListItemText primary="ההתקדמות שלי – ראה את מצב נקודות הזכות, ממוצע הציונים ועוד." />
                 </ListItem>
-                <ListItem>
+                <ListItem sx={{ px: { xs: 1, sm: 2 } }}>
                   <ListItemText primary="דו״ח ציונים – צפה בגרף מגמות ובציונים מפורטים לכל קורס." />
                 </ListItem>
-                <ListItem>
+                <ListItem sx={{ px: { xs: 1, sm: 2 } }}>
                   <ListItemText primary="הקורסים שלי – רשימת הקורסים שעברת עם ציונים." />
                 </ListItem>
-                <ListItem>
+                <ListItem sx={{ px: { xs: 1, sm: 2 } }}>
                   <ListItemText primary="המסלול שלי – פרטי מסלול הלימודים שלך והקורסים הנדרשים." />
                 </ListItem>
               </List>
@@ -70,11 +89,18 @@ const HelpSupport: React.FC = () => {
 
           {/* טיפים */}
           <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6" 
+                gutterBottom
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
                 טיפים לשימוש יעיל
               </Typography>
-              <Typography variant="body1">
+              <Typography 
+                variant="body1"
+                sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
+              >
                 שמור את הנתונים שלך מעודכנים, ובדוק את התקדמותך באופן קבוע כדי
                 להבטיח שתסיים את התואר בזמן.
               </Typography>
@@ -83,13 +109,23 @@ const HelpSupport: React.FC = () => {
 
           {/* יצירת קשר */}
           <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6" 
+                gutterBottom
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
                 צור קשר
               </Typography>
-              <Typography variant="body1">
+              <Typography 
+                variant="body1"
+                sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
+              >
                 לשאלות נוספות ניתן לפנות לכתובת{" "}
-                <Link href="mailto:support@degree-tracker.com">
+                <Link 
+                  href="mailto:support@degree-tracker.com"
+                  sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
+                >
                   support@degree-tracker.com
                 </Link>
               </Typography>

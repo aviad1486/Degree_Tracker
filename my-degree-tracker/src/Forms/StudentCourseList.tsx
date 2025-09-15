@@ -45,58 +45,135 @@ const StudentCourseList: React.FC = () => {
   };
 
   return (
-    <Box sx={{ mt: 4, mx: "auto", maxWidth: 900 }}>
+    <Box sx={{ mt: 4, mx: "auto", maxWidth: 900, p: { xs: 2, sm: 0 } }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h6">Student Course Records</Typography>
+        <Typography 
+          variant="h6"
+          sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+        >
+          ציוני סטודנטים
+        </Typography>
       </Box>
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer 
+        component={Paper}
+        sx={{
+          '& .MuiTable-root': {
+            minWidth: { xs: 'auto', sm: 650 }
+          }
+        }}
+      >
+        <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Student ID</TableCell>
-              <TableCell>Course Code</TableCell>
-              <TableCell>Grade</TableCell>
-              <TableCell>Semester</TableCell>
-              <TableCell>Year</TableCell>
-              <TableCell>Attempts</TableCell>
-              <TableCell>Created At</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                ת.ז
+              </TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                קורס
+              </TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                ציון
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', sm: 'table-cell' }
+              }}>
+                סמסטר
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', md: 'table-cell' }
+              }}>
+                שנה
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', lg: 'table-cell' }
+              }}>
+                נסיונות
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', lg: 'table-cell' }
+              }}>
+                נוצר
+              </TableCell>
+              <TableCell 
+                align="right"
+                sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+              >
+                פעולות
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {records.map((record) => (
               <TableRow key={(record as any).id}>
-                <TableCell>{record.studentId}</TableCell>
-                <TableCell>{record.courseCode}</TableCell>
-                <TableCell>{record.grade}</TableCell>
-                <TableCell>{record.semester}</TableCell>
-                <TableCell>{record.year}</TableCell>
-                <TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  {record.studentId}
+                </TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  {record.courseCode}
+                </TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  {record.grade}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', sm: 'table-cell' }
+                }}>
+                  {record.semester}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', md: 'table-cell' }
+                }}>
+                  {record.year}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', lg: 'table-cell' }
+                }}>
                   {typeof record.retaken === "number"
                     ? record.retaken
                     : record.retaken
                     ? 2
                     : 1}
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', lg: 'table-cell' }
+                }}>
                   {record.createdAt
                     ? new Date(record.createdAt).toLocaleString()
                     : "—"}
                 </TableCell>
                 <TableCell align="right">
-                  <IconButton onClick={() => handleEdit((record as any).id)}>
-                    <EditIcon />
+                  <IconButton 
+                    onClick={() => handleEdit((record as any).id)}
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
+                  >
+                    <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete((record as any).id)}>
-                    <DeleteIcon />
+                  <IconButton 
+                    onClick={() => handleDelete((record as any).id)}
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
+                  >
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>
             ))}
             {records.length === 0 && (
               <TableRow>
-                <TableCell colSpan={8} align="center">
-                  No student course records found.
+                <TableCell 
+                  colSpan={8} 
+                  align="center"
+                  sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                >
+                  לא נמצאו רשומות ציונים.
                 </TableCell>
               </TableRow>
             )}
@@ -108,8 +185,12 @@ const StudentCourseList: React.FC = () => {
         <Button
           variant="contained"
           onClick={() => navigate("/student-courses/new")}
+          sx={{ 
+            minHeight: { xs: 44, sm: 36 },
+            fontSize: { xs: '0.875rem', sm: '0.875rem' }
+          }}
         >
-          Add Student Course
+          הוסף ציון
         </Button>
       </Box>
     </Box>

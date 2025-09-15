@@ -55,18 +55,31 @@ const Login: React.FC = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "80vh",
+        minHeight: { xs: "calc(100vh - 120px)", sm: "80vh" },
+        p: { xs: 2, sm: 3 }
       }}
     >
-      <Card sx={{ width: 400 }}>
+      <Card sx={{ 
+        width: { xs: '100%', sm: 400 }, 
+        maxWidth: 400,
+        boxShadow: { xs: 2, sm: 3 }
+      }}>
         {loading && <LinearProgress />}
-        <CardContent>
-          <Typography variant="h5" gutterBottom>
+        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+          <Typography 
+            variant="h5" 
+            gutterBottom
+            sx={{ 
+              fontSize: { xs: '1.25rem', sm: '1.5rem' },
+              textAlign: 'center',
+              mb: { xs: 2, sm: 3 }
+            }}
+          >
             התחברות 🔐
           </Typography>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 2, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
               {error}
             </Alert>
           )}
@@ -80,6 +93,15 @@ const Login: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              size={window.innerWidth < 600 ? 'small' : 'medium'}
+              sx={{ 
+                '& .MuiInputLabel-root': { 
+                  fontSize: { xs: '0.875rem', sm: '1rem' } 
+                },
+                '& .MuiInputBase-input': { 
+                  fontSize: { xs: '0.875rem', sm: '1rem' } 
+                }
+              }}
             />
             <TextField
               id="password"
@@ -90,6 +112,15 @@ const Login: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              size={window.innerWidth < 600 ? 'small' : 'medium'}
+              sx={{ 
+                '& .MuiInputLabel-root': { 
+                  fontSize: { xs: '0.875rem', sm: '1rem' } 
+                },
+                '& .MuiInputBase-input': { 
+                  fontSize: { xs: '0.875rem', sm: '1rem' } 
+                }
+              }}
             />
 
             <Button
@@ -97,7 +128,11 @@ const Login: React.FC = () => {
               variant="contained"
               color="primary"
               fullWidth
-              sx={{ mt: 2 }}
+              sx={{ 
+                mt: { xs: 2, sm: 2 },
+                py: { xs: 1.5, sm: 1 },
+                fontSize: { xs: '0.875rem', sm: '1rem' }
+              }}
               disabled={loading}
             >
               התחבר
@@ -107,7 +142,11 @@ const Login: React.FC = () => {
               variant="outlined"
               color="secondary"
               fullWidth
-              sx={{ mt: 1 }}
+              sx={{ 
+                mt: 1,
+                py: { xs: 1.5, sm: 1 },
+                fontSize: { xs: '0.875rem', sm: '1rem' }
+              }}
               component={Link}
               to="/help"
             >

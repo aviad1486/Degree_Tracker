@@ -5,8 +5,14 @@ import {
   LinearProgress,
   Card,
   CardContent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, firestore } from "../firestore/config";
 import { collection, query, where, getDocs, limit, doc, getDoc } from "firebase/firestore";
@@ -75,26 +81,33 @@ const MyProgram: React.FC = () => {
     return () => unsub();
   }, []);
 
-  const columns: GridColDef[] = [
-    { field: "courseName", headerName: "שם קורס", flex: 1 },
-    { field: "credits", headerName: "נק\"", width: 120 },
-  ];
-
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {loading && <LinearProgress sx={{ mb: 2 }} />}
 
       {!loading && program && (
         <>
-          <Typography variant="h5" gutterBottom>
+          <Typography 
+            variant="h5" 
+            gutterBottom
+            sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+          >
             המסלול שלי 🎓
           </Typography>
 
           {/* פרטי המסלול */}
           <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6">שם המסלול: {program.name}</Typography>
-              <Typography variant="body1">
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6"
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
+                שם המסלול: {program.name}
+              </Typography>
+              <Typography 
+                variant="body1"
+                sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
+              >
                 סך נק"ז נדרש: {program.totalCreditsRequired}
               </Typography>
             </CardContent>
@@ -102,20 +115,70 @@ const MyProgram: React.FC = () => {
 
           {/* טבלת קורסים במסלול */}
           <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6" 
+                gutterBottom
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
                 רשימת קורסים במסלול
               </Typography>
-              <div style={{ height: 400, width: "100%" }}>
-                <DataGrid
-                  rows={courses.map((c, idx) => ({ id: idx, ...c }))}
-                  columns={columns}
-                  pageSizeOptions={[5]}
-                  initialState={{
-                    pagination: { paginationModel: { pageSize: 5 } },
-                  }}
-                />
-              </div>
+              <TableContainer 
+                component={Paper}
+                sx={{
+                  '& .MuiTable-root': {
+                    minWidth: { xs: 'auto', sm: 650 }
+                  }
+                }}
+              >
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                        קוד קורס
+                      </TableCell>
+                      <TableCell sx={{ 
+                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                        display: { xs: 'none', sm: 'table-cell' }
+                      }}>
+                        שם קורס
+                      </TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                        נק"ז
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {courses.map((course, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                          {course.courseCode}
+                        </TableCell>
+                        <TableCell sx={{ 
+                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                          display: { xs: 'none', sm: 'table-cell' }
+                        }}>
+                          {course.courseName}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                          {course.credits}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {courses.length === 0 && (
+                      <TableRow>
+                        <TableCell 
+                          colSpan={3} 
+                          align="center"
+                          sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                        >
+                          אין קורסים במסלול
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </CardContent>
           </Card>
         </>

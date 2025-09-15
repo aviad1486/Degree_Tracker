@@ -45,46 +45,101 @@ const ProgramList: React.FC = () => {
   };
 
   return (
-    <Box sx={{ mt: 4, mx: "auto", maxWidth: 800 }}>
+    <Box sx={{ mt: 4, mx: "auto", maxWidth: 800, p: { xs: 2, sm: 0 } }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h6">Study Programs</Typography>
+        <Typography 
+          variant="h6"
+          sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+        >
+          תוכניות לימודים
+        </Typography>
       </Box>
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer 
+        component={Paper}
+        sx={{
+          '& .MuiTable-root': {
+            minWidth: { xs: 'auto', sm: 650 }
+          }
+        }}
+      >
+        <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Program Name</TableCell>
-              <TableCell>Total Credits</TableCell>
-              <TableCell>Courses</TableCell>
-              <TableCell>Created At</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                שם תוכנית
+              </TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                נק"ז כולל
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', md: 'table-cell' }
+              }}>
+                קורסים
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', lg: 'table-cell' }
+              }}>
+                נוצר
+              </TableCell>
+              <TableCell 
+                align="right"
+                sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+              >
+                פעולות
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {programs.map((program) => (
               <TableRow key={program.id}>
-                <TableCell>{program.name}</TableCell>
-                <TableCell>{program.totalCreditsRequired}</TableCell>
-                <TableCell>{program.courses.join(", ")}</TableCell>
-                <TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  {program.name}
+                </TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  {program.totalCreditsRequired}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', md: 'table-cell' }
+                }}>
+                  {program.courses.join(", ")}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', lg: 'table-cell' }
+                }}>
                   {program.createdAt
                     ? new Date(program.createdAt).toLocaleString()
                     : "—"}
                 </TableCell>
                 <TableCell align="right">
-                  <IconButton onClick={() => handleEdit(program.id)}>
-                    <EditIcon />
+                  <IconButton 
+                    onClick={() => handleEdit(program.id)}
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
+                  >
+                    <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(program.id)}>
-                    <DeleteIcon />
+                  <IconButton 
+                    onClick={() => handleDelete(program.id)}
+                    size="small"
+                    sx={{ p: { xs: 0.5, sm: 1 } }}
+                  >
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>
             ))}
             {programs.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} align="center">
-                  No programs found.
+                <TableCell 
+                  colSpan={5} 
+                  align="center"
+                  sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                >
+                  לא נמצאו תוכניות לימודים.
                 </TableCell>
               </TableRow>
             )}
@@ -93,8 +148,15 @@ const ProgramList: React.FC = () => {
       </TableContainer>
 
       <Box display="flex" justifyContent="flex-end" mt={2}>
-        <Button variant="contained" onClick={() => navigate("/programs/new")}>
-          Add Program
+        <Button 
+          variant="contained" 
+          onClick={() => navigate("/programs/new")}
+          sx={{ 
+            minHeight: { xs: 44, sm: 36 },
+            fontSize: { xs: '0.875rem', sm: '0.875rem' }
+          }}
+        >
+          הוסף תוכנית
         </Button>
       </Box>
     </Box>

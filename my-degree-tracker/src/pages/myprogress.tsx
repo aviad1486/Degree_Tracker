@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
-  Grid,
   Card,
   CardContent,
   LinearProgress,
@@ -84,66 +83,145 @@ const MyProgress: React.FC = () => {
   const progressPercent = Math.round((completedCredits / totalCredits) * 100);
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {loading && <LinearProgress sx={{ mb: 2 }} />}
 
       {!loading && (
         <>
-          <Typography variant="h5" gutterBottom>
+          <Typography 
+            variant="h5"
+            gutterBottom
+            sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+          >
             ההתקדמות שלי 📊
           </Typography>
 
           {/* ציר התקדמות */}
           <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6"
+                gutterBottom
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
                 נק"ז שהושלמו
               </Typography>
-              <LinearProgress variant="determinate" value={progressPercent} />
-              <Typography variant="body2" sx={{ mt: 1 }}>
+              <LinearProgress 
+                variant="determinate" 
+                value={progressPercent}
+                sx={{ height: { xs: 8, sm: 6 } }}
+              />
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  mt: 1,
+                  fontSize: { xs: '0.875rem', sm: '0.875rem' }
+                }}
+              >
                 {completedCredits}/{totalCredits} נק"ז ({progressPercent}%)
               </Typography>
             </CardContent>
           </Card>
 
           {/* ממוצע ציונים */}
-          <Grid container spacing={2} sx={{ mb: 3 }}>
-            <Grid item xs={12} sm={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6">ממוצע ציונים</Typography>
-                  <Typography variant="body1">{gpa}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
+          <Box sx={{ mb: 3 }}>
+            <Card>
+              <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+                <Typography 
+                  variant="h6"
+                  sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+                >
+                  ממוצע ציונים
+                </Typography>
+                <Typography 
+                  variant="body1"
+                  sx={{ 
+                    fontSize: { xs: '1.25rem', sm: '1rem' },
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {gpa}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
 
           {/* טבלה של קורסים שבוצעו */}
-          <Typography variant="h6" gutterBottom>
+          <Typography 
+            variant="h6"
+            gutterBottom
+            sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+          >
             קורסים שביצעתי
           </Typography>
-          <TableContainer component={Paper} sx={{ mb: 4 }}>
-            <Table>
+          <TableContainer 
+            component={Paper} 
+            sx={{ 
+              mb: 4,
+              '& .MuiTable-root': {
+                minWidth: { xs: 'auto', sm: 650 }
+              }
+            }}
+          >
+            <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>קוד קורס</TableCell>
-                  <TableCell align="right">ציון</TableCell>
-                  <TableCell align="right">שנה</TableCell>
-                  <TableCell align="right">סמסטר</TableCell>
+                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                    קוד קורס
+                  </TableCell>
+                  <TableCell 
+                    align="right"
+                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                  >
+                    ציון
+                  </TableCell>
+                  <TableCell 
+                    align="right"
+                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                  >
+                    שנה
+                  </TableCell>
+                  <TableCell 
+                    align="right"
+                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                  >
+                    סמסטר
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {courses.map((c, idx) => (
                   <TableRow key={idx}>
-                    <TableCell>{c.courseCode}</TableCell>
-                    <TableCell align="right">{c.grade}</TableCell>
-                    <TableCell align="right">{c.year}</TableCell>
-                    <TableCell align="right">{c.semester}</TableCell>
+                    <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                      {c.courseCode}
+                    </TableCell>
+                    <TableCell 
+                      align="right"
+                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                    >
+                      {c.grade}
+                    </TableCell>
+                    <TableCell 
+                      align="right"
+                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                    >
+                      {c.year}
+                    </TableCell>
+                    <TableCell 
+                      align="right"
+                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                    >
+                      {c.semester}
+                    </TableCell>
                   </TableRow>
                 ))}
                 {courses.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">
+                    <TableCell 
+                      colSpan={4} 
+                      align="center"
+                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                    >
                       אין נתוני קורסים להצגה
                     </TableCell>
                   </TableRow>
