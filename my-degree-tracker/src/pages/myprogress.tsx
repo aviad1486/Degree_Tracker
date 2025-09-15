@@ -18,8 +18,11 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth, firestore } from "../firestore/config";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
 
-interface GradeSheet {
-  [courseCode: string]: number;
+interface StudentCourse {
+  courseCode: string;
+  grade: number;
+  year: number;
+  semester: string;
 }
 
 const MyProgress: React.FC = () => {
@@ -27,12 +30,13 @@ const MyProgress: React.FC = () => {
   const [totalCredits, setTotalCredits] = useState(120);
   const [completedCredits, setCompletedCredits] = useState(0);
   const [gpa, setGpa] = useState(0);
-  const [gradeSheet, setGradeSheet] = useState<GradeSheet>({});
+  const [courses, setCourses] = useState<StudentCourse[]>([]);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (user?.email) {
         try {
+          // שליפת הסטודנט
           const q = query(
             collection(firestore, "students"),
             where("email", "==", user.email),
@@ -46,16 +50,26 @@ const MyProgress: React.FC = () => {
             setCompletedCredits(Number(student.completedCredits ?? 0));
             setTotalCredits(Number(student.totalCredits ?? 120));
 
-            const grades: GradeSheet = student.gradeSheet ?? {};
-            setGradeSheet(grades);
-
-            const values = Object.values(grades).filter((g) => typeof g === "number");
+            // חישוב ממוצע ציונים מתוך gradeSheet (נשאר מהסטודנט)
+            const grades = student.gradeSheet ?? {};
+            const values = Object.values(grades).filter(
+              (g) => typeof g === "number"
+            );
             if (values.length > 0) {
               const avg = values.reduce((a, b) => a + b, 0) / values.length;
               setGpa(Number(avg.toFixed(2)));
             } else {
               setGpa(0);
             }
+
+            // שליפת קורסים מהקולקציה studentCourses לפי studentId
+            const qCourses = query(
+              collection(firestore, "studentCourses"),
+              where("studentId", "==", student.id)
+            );
+            const snapCourses = await getDocs(qCourses);
+            const rows = snapCourses.docs.map((doc) => doc.data() as StudentCourse);
+            setCourses(rows);
           }
         } catch (err) {
           console.error("❌ שגיאה בשליפת ההתקדמות:", err);
@@ -104,7 +118,7 @@ const MyProgress: React.FC = () => {
             </Grid>
           </Grid>
 
-          {/* טבלה של קורסים וציונים */}
+          {/* טבלה של קורסים שבוצעו */}
           <Typography variant="h6" gutterBottom>
             קורסים שביצעתי
           </Typography>
@@ -114,18 +128,22 @@ const MyProgress: React.FC = () => {
                 <TableRow>
                   <TableCell>קורס</TableCell>
                   <TableCell align="right">ציון</TableCell>
+                  <TableCell align="right">שנה</TableCell>
+                  <TableCell align="right">סמסטר</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Object.entries(gradeSheet).map(([course, grade]) => (
-                  <TableRow key={course}>
-                    <TableCell>{course}</TableCell>
-                    <TableCell align="right">{grade}</TableCell>
+                {courses.map((c, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell>{c.courseCode}</TableCell>
+                    <TableCell align="right">{c.grade}</TableCell>
+                    <TableCell align="right">{c.year}</TableCell>
+                    <TableCell align="right">{c.semester}</TableCell>
                   </TableRow>
                 ))}
-                {Object.keys(gradeSheet).length === 0 && (
+                {courses.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={2} align="center">
+                    <TableCell colSpan={4} align="center">
                       אין נתוני קורסים להצגה
                     </TableCell>
                   </TableRow>
@@ -139,4 +157,4 @@ const MyProgress: React.FC = () => {
   );
 };
 
-export default MyProgress;
+export default MyProgress;
