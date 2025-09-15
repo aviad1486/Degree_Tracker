@@ -4,6 +4,6 @@ export interface StudentCourse {
   grade: number;                         // grade between 0 and 100
   semester: 'A' | 'B' | 'C';             // semester taken
   year: number;                          // 4-digit year
-  Attempts: boolean;                      // whether the course was retaken
+  retaken: boolean;                      // whether the course was retaken
   createdAt: string;                     // ISO timestamp of record creation
 }

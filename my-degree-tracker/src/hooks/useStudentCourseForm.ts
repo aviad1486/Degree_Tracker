@@ -15,7 +15,7 @@ interface StudentCourseFormData {
   grade: string;
   semester: "A" | "B" | "C";
   year: string;
-  attempts: number;
+  retaken: number;
 }
 
 type StudentOption = { id: string; fullName: string };
@@ -33,7 +33,7 @@ export const useStudentCourseForm = () => {
     grade: "",
     semester: "A",
     year: new Date().getFullYear().toString(),
-    attempts: 1,
+    retaken: 1,
   });
 
   const [errors, setErrors] = useState<
@@ -98,10 +98,10 @@ export const useStudentCourseForm = () => {
         const snap = await getDoc(ref);
         if (snap.exists()) {
           const record: any = snap.data();
-          const attemptsCount =
-            typeof record.attempts === "number"
-              ? Math.max(1, Math.floor(record.attempts))
-              : record.attempts
+          const retakenCount =
+            typeof record.retaken === "number"
+              ? Math.max(1, Math.floor(record.retaken))
+              : record.retaken
               ? 2
               : 1;
 
@@ -111,7 +111,7 @@ export const useStudentCourseForm = () => {
             grade: (record.grade ?? "").toString(),
             semester: record.semester ?? "A",
             year: (record.year ?? new Date().getFullYear()).toString(),
-            attempts: attemptsCount,
+            retaken: retakenCount,
           });
         }
       };
@@ -138,8 +138,8 @@ export const useStudentCourseForm = () => {
     if (!/^\d{4}$/.test(data.year) || Number(data.year) < 1960) {
       newErrors.year = "Enter a valid 4-digit year (>= 1960)";
     }
-    if (!Number.isInteger(data.attempts) || data.attempts < 1) {
-      newErrors.attempts = "Attempts must be an integer ≥ 1";
+    if (!Number.isInteger(data.retaken) || data.retaken < 1) {
+      newErrors.retaken = "Attempts must be an integer ≥ 1";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -155,12 +155,12 @@ export const useStudentCourseForm = () => {
   const decAttempts = () =>
     setData((prev) => ({
       ...prev,
-      attempts: Math.max(1, (prev.attempts ?? 1) - 1),
+      retaken: Math.max(1, (prev.retaken ?? 1) - 1),
     }));
   const incAttempts = () =>
     setData((prev) => ({
       ...prev,
-      attempts: Math.max(1, (prev.attempts ?? 1) + 1),
+      retaken: Math.max(1, (prev.retaken ?? 1) + 1),
     }));
 
   const handleSubmit = async () => {
@@ -177,7 +177,7 @@ export const useStudentCourseForm = () => {
       grade: Number(data.grade),
       semester: data.semester,
       year: Number(data.year),
-      attempts: data.attempts,
+      retaken: data.retaken,
       updatedAt: new Date().toISOString(),
     };
 
