@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
-  Grid,
   Card,
   CardContent,
   Button,
@@ -87,8 +86,8 @@ const HomePage: React.FC = () => {
           </Typography>
 
           {/* תקציר מצב התואר */}
-          <Grid container spacing={2} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={4}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 4 }}>
+            <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
               <Card>
                 <CardContent>
                   <Typography variant="h6">נק"ז שהושלמו</Typography>
@@ -97,26 +96,26 @@ const HomePage: React.FC = () => {
                   </Typography>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
 
-            <Grid item xs={12} sm={4}>
+            <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
               <Card>
                 <CardContent>
                   <Typography variant="h6">ממוצע ציונים</Typography>
                   <Typography variant="body1">{gpa}</Typography>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
 
-            <Grid item xs={12} sm={4}>
+            <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
               <Card>
                 <CardContent>
                   <Typography variant="h6">תוכנית לימודים</Typography>
                   <Typography variant="body1">{program}</Typography>
                 </CardContent>
               </Card>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
 
           {/* טבלה של כל ה-assignments */}
           <Typography variant="h6" gutterBottom>
@@ -149,33 +148,23 @@ const HomePage: React.FC = () => {
             <Typography variant="h6" gutterBottom>
               קיצורי דרך
             </Typography>
-            <Grid container spacing={2}>
-              <Grid item>
-                <Button variant="contained" component={Link} to="/myprogress">
-                  ההתקדמות שלי
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button variant="contained" component={Link} to="/gradereport">
-                  דו"ח ציונים
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button variant="contained" component={Link} to="/mycourses">
-                  הקורסים שלי
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button variant="contained" component={Link} to="/myprogram">
-                  המסלול שלי
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button variant="contained" component={Link} to="/helpsupport">
-                  עזרה ותמיכה
-                </Button>
-              </Grid>
-            </Grid>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+              <Button variant="contained" component={Link} to="/progress">
+                ההתקדמות שלי
+              </Button>
+              <Button variant="contained" component={Link} to="/grade-report">
+                דו"ח ציונים
+              </Button>
+              <Button variant="contained" component={Link} to="/my-courses">
+                הקורסים שלי
+              </Button>
+              <Button variant="contained" component={Link} to="/my-program">
+                המסלול שלי
+              </Button>
+              <Button variant="contained" component={Link} to="/help">
+                עזרה ותמיכה
+              </Button>
+            </Box>
           </Box>
         </>
       )}
