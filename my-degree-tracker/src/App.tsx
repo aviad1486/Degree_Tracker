@@ -77,31 +77,28 @@ export default function App() {
 
         <Container maxWidth="xl" sx={{ flexGrow: 1, py: { xs: 2, sm: 3 } }}>
           <Routes>
-          <Route path="/" element={<Login />} />   {/* דף ברירת מחדל = התחברות */}
-          <Route path="/home" element={<HomePage />} />  {/* דף הבית יהיה בנתיב אחר */}
-          
-          <Route path="/students/new" element={<StudentForm />} />
-          <Route path="/students/edit/:id" element={<StudentForm />} />
-          <Route path="/students" element={<StudentList />} />
-          <Route path="/courses/new" element={<CourseForm />} />
-          <Route path="/courses/edit/:courseCode" element={<CourseForm />} />
-          <Route path="/courses" element={<CourseList />} />
-          <Route path="/student-courses/new" element={<StudentCourseForm />} />
-          <Route path="/student-courses/edit/:index" element={<StudentCourseForm />} />
-          <Route path="/student-courses" element={<StudentCourseList />} />
-          <Route path="/programs/new" element={<ProgramForm />} />
-          <Route path="/programs/edit/:name" element={<ProgramForm />} />
-          <Route path="/programs" element={<ProgramList />} />
-          <Route path="/progress" element={<MyProgress />} />
-          <Route path="/grade-report" element={<GradeReport />} />
-          <Route path="/help" element={<HelpSupport />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/my-courses" element={<MyCourses />} />
-          <Route path="/my-program" element={<MyProgram />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="*" element={<Login />} /> {/* ברירת מחדל לכל נתיב לא ידוע */}
-        </Routes>
-
+            <Route path="/" element={<HomePage />} />
+            <Route path="/students/new" element={<StudentForm />} />
+            <Route path="/students/edit/:id" element={<StudentForm />} />
+            <Route path="/students" element={<StudentList />} />
+            <Route path="/courses/new" element={<CourseForm />} />
+            <Route path="/courses/edit/:courseCode" element={<CourseForm />} />
+            <Route path="/courses" element={<CourseList />} />
+            <Route path="/student-courses/new" element={<StudentCourseForm />} />
+            <Route path="/student-courses/edit/:index" element={<StudentCourseForm />} />
+            <Route path="/student-courses" element={<StudentCourseList />} />
+            <Route path="/programs/new" element={<ProgramForm />} />
+            <Route path="/programs/edit/:name" element={<ProgramForm />} />
+            <Route path="/programs" element={<ProgramList />} />
+            <Route path="/progress" element={<MyProgress />} />
+            <Route path="/grade-report" element={<GradeReport />} />
+            <Route path="/help" element={<HelpSupport />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/my-courses" element={<MyCourses />} />
+            <Route path="/my-program" element={<MyProgram />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="*" element={<HomePage />} />
+          </Routes>
         </Container>
 
         <Footer />
