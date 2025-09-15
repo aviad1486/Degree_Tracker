@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import type { Student } from "../models/Student";
 
-import { firestore } from "../firestore/config";
+import { firestore, auth } from "../firestore/config"; // ⭐ הוספתי auth
 import { doc, getDoc, setDoc, getDocs, collection } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth"; // ⭐
 
 const norm = (s: string) => (s || "").trim().toLowerCase();
 
@@ -139,12 +140,26 @@ export function useStudentForm() {
       createdAt: new Date().toISOString(),
     };
 
-    await setDoc(doc(firestore, "students", newStudent.id), newStudent);
+    try {
+      // 1. שמירה ב-Firestore
+      await setDoc(doc(firestore, "students", newStudent.id), newStudent);
 
-    setSnackMsg(isEdit ? "Student updated successfully!" : "Student added successfully!");
-    setSnackSeverity("success");
-    setSnackOpen(true);
-    setTimeout(() => navigate("/students"), 2500);
+      // 2. יצירת משתמש ב-Auth רק אם זה ADD (לא Edit) ⭐
+      if (!isEdit) {
+        await createUserWithEmailAndPassword(auth, newStudent.email, newStudent.id);
+        console.log("✅ Auth user created:", newStudent.email);
+      }
+
+      setSnackMsg(isEdit ? "Student updated successfully!" : "Student added successfully!");
+      setSnackSeverity("success");
+      setSnackOpen(true);
+      setTimeout(() => navigate("/students"), 2500);
+    } catch (err: any) {
+      console.error("❌ Error creating student/auth:", err.code, err.message);
+      setSnackMsg(`Error: ${err.message}`);
+      setSnackSeverity("error");
+      setSnackOpen(true);
+    }
   };
 
   return {

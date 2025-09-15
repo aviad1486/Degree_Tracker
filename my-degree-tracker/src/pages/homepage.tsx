@@ -9,34 +9,63 @@ import {
   LinearProgress,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, firestore } from "../firestore/config";
+import { collection, query, where, getDocs, limit } from "firebase/firestore";
 
 const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
-
-  // Mock data (בשלב מאוחר יותר נחבר ל-Firestore)
-  const studentName = "אביעד זר";
-  const totalCredits = 120;
-  const completedCredits = 72;
-  const gpa = 92.3;
-  const remainingCourses = 6;
-  const currentCourses = 4;
+  const [studentName, setStudentName] = useState<string | null>(null);
+  const [totalCredits, setTotalCredits] = useState(120);
+  const [completedCredits, setCompletedCredits] = useState(0);
+  const [gpa, setGpa] = useState(0);
+  const [remainingCourses, setRemainingCourses] = useState(0);
+  const [currentCourses, setCurrentCourses] = useState(0);
 
   useEffect(() => {
-    // סימולציה של טעינת נתונים (כמו Firestore)
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (user?.email) {
+        try {
+          // חיפוש במסמכי students לפי האימייל
+          const q = query(
+            collection(firestore, "students"),
+            where("email", "==", user.email),
+            limit(1)
+          );
+          const snap = await getDocs(q);
+
+          if (!snap.empty) {
+            const student = snap.docs[0].data();
+            setStudentName(student.fullName);
+            setCompletedCredits(Number(student.completedCredits ?? 0));
+            setCurrentCourses(Array.isArray(student.courses) ? student.courses.length : 0);
+            setGpa(Number(student.gpa ?? 0));
+            setTotalCredits(Number(student.totalCredits ?? 120));
+            setRemainingCourses(Number(student.remainingCourses ?? 0));
+          } else {
+            console.warn("⚠️ לא נמצא סטודנט עם המייל הזה");
+            setStudentName(user.email);
+          }
+        } catch (err) {
+          console.error("❌ שגיאה בשליפת הסטודנט:", err);
+          setStudentName(user.email ?? "סטודנט");
+        }
+      }
+      setLoading(false);
+    });
+
+    return () => unsub();
   }, []);
 
   return (
     <Box sx={{ p: 3 }}>
-      {/* אינדיקציית טעינה */}
       {loading && <LinearProgress sx={{ mb: 2 }} />}
 
       {!loading && (
         <>
           {/* ברכה אישית */}
           <Typography variant="h5" gutterBottom>
-            שלום, {studentName}! 👋
+            שלום, {studentName ?? "סטודנט"}! 👋
           </Typography>
 
           {/* תקציר מצב התואר */}

@@ -10,29 +10,43 @@ import {
   Alert,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firestore/config"; // הקובץ שלך
 
 const Login: React.FC = () => {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");       // מייל של המשתמש
+  const [password, setPassword] = useState(""); // סיסמה (בפרויקט שלך זה ה-ID)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Mock user (בשלב מאוחר יותר יוחלף ב-Firestore/Firebase Auth)
-  const mockUser = { id: "123456789", password: "1234" };
-
-  const handleLogin = () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     setError("");
 
-    setTimeout(() => {
+    try {
+      // קריאה ל־Firebase Auth
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      console.log("✅ Login success:", userCred.user);
+
       setLoading(false);
-      if (id === mockUser.id && password === mockUser.password) {
-        navigate("/"); // מעביר לעמוד הבית
+      navigate("/"); // מעביר לעמוד הבית
+    } catch (err: any) {
+      console.error("❌ Login error:", err.code, err.message);
+      setLoading(false);
+
+      // טיפול בשגיאות נפוצות
+      if (err.code === "auth/invalid-email") {
+        setError("כתובת האימייל אינה תקינה");
+      } else if (err.code === "auth/user-not-found") {
+        setError("משתמש לא נמצא במערכת");
+      } else if (err.code === "auth/wrong-password") {
+        setError("סיסמה שגויה");
       } else {
-        setError("תעודת זהות או סיסמה שגויים");
+        setError("התחברות נכשלה, נסה שוב");
       }
-    }, 1500);
+    }
   };
 
   return (
@@ -57,32 +71,38 @@ const Login: React.FC = () => {
             </Alert>
           )}
 
-          <TextField
-            label="תעודת זהות"
-            fullWidth
-            margin="normal"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
-          />
-          <TextField
-            label="סיסמה"
-            type="password"
-            fullWidth
-            margin="normal"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <form onSubmit={handleLogin}>
+            <TextField
+              id="email"
+              label="אימייל"
+              fullWidth
+              margin="normal"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <TextField
+              id="password"
+              label="סיסמה (תעודת זהות)"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ mt: 2 }}
-            onClick={handleLogin}
-            disabled={loading}
-          >
-            התחבר
-          </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 2 }}
+              disabled={loading}
+            >
+              התחבר
+            </Button>
+          </form>
         </CardContent>
       </Card>
     </Box>
