@@ -58,7 +58,7 @@ const StudentCourseList: React.FC = () => {
               <TableCell>Grade</TableCell>
               <TableCell>Semester</TableCell>
               <TableCell>Year</TableCell>
-              <TableCell>Retaken</TableCell>
+              <TableCell>Attempts</TableCell>
               <TableCell>Created At</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
@@ -72,9 +72,9 @@ const StudentCourseList: React.FC = () => {
                 <TableCell>{record.semester}</TableCell>
                 <TableCell>{record.year}</TableCell>
                 <TableCell>
-                  {typeof record.retaken === "number"
-                    ? record.retaken
-                    : record.retaken
+                  {typeof record.Attempts === "number"
+                    ? record.Attempts
+                    : record.Attempts
                     ? 2
                     : 1}
                 </TableCell>

@@ -147,20 +147,20 @@ const StudentCourseForm: React.FC = () => {
           Attempts (times taken)
         </Typography>
         <Box display="flex" alignItems="center" gap={1}>
-          <ButtonGroup variant="outlined" aria-label="retaken attempts controls">
+          <ButtonGroup variant="outlined" aria-label="attempts attempts controls">
             <Button onClick={decAttempts} aria-label="decrease attempts">
               -
             </Button>
             <Button disabled aria-label="current attempts">
-              {data.retaken}
+              {data.attempts}
             </Button>
             <Button onClick={incAttempts} aria-label="increase attempts">
               +
             </Button>
           </ButtonGroup>
-          {errors.retaken && (
+          {errors.attempts && (
             <Typography variant="caption" color="error" sx={{ ml: 1 }}>
-              {errors.retaken}
+              {errors.attempts}
             </Typography>
           )}
         </Box>
