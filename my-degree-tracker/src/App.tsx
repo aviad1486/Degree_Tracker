@@ -25,6 +25,8 @@ import MyCourses from './pages/mycourses';
 import MyProgram from './pages/myprogram';
 import Login from './pages/login';
 
+import ProtectedRoute from './components/ProtectedRoute';
+
 const sidebarWidth = 'clamp(200px, 18vw, 320px)';
 
 export default function App() {
@@ -77,27 +79,165 @@ export default function App() {
 
         <Container maxWidth="xl" sx={{ flexGrow: 1, py: { xs: 2, sm: 3 } }}>
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/students/new" element={<StudentForm />} />
-            <Route path="/students/edit/:id" element={<StudentForm />} />
-            <Route path="/students" element={<StudentList />} />
-            <Route path="/courses/new" element={<CourseForm />} />
-            <Route path="/courses/edit/:courseCode" element={<CourseForm />} />
-            <Route path="/courses" element={<CourseList />} />
-            <Route path="/student-courses/new" element={<StudentCourseForm />} />
-            <Route path="/student-courses/edit/:index" element={<StudentCourseForm />} />
-            <Route path="/student-courses" element={<StudentCourseList />} />
-            <Route path="/programs/new" element={<ProgramForm />} />
-            <Route path="/programs/edit/:name" element={<ProgramForm />} />
-            <Route path="/programs" element={<ProgramList />} />
-            <Route path="/progress" element={<MyProgress />} />
-            <Route path="/grade-report" element={<GradeReport />} />
-            <Route path="/help" element={<HelpSupport />} />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/my-courses" element={<MyCourses />} />
-            <Route path="/my-program" element={<MyProgram />} />
+            {/* פתוחים לכולם */}
             <Route path="/login" element={<Login />} />
-            <Route path="*" element={<HomePage />} />
+            <Route path="/help" element={<HelpSupport />} />
+
+            {/* כל השאר מוגנים */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <HomePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/students/new"
+              element={
+                <ProtectedRoute>
+                  <StudentForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/students/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <StudentForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/students"
+              element={
+                <ProtectedRoute>
+                  <StudentList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/courses/new"
+              element={
+                <ProtectedRoute>
+                  <CourseForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/courses/edit/:courseCode"
+              element={
+                <ProtectedRoute>
+                  <CourseForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/courses"
+              element={
+                <ProtectedRoute>
+                  <CourseList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student-courses/new"
+              element={
+                <ProtectedRoute>
+                  <StudentCourseForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student-courses/edit/:index"
+              element={
+                <ProtectedRoute>
+                  <StudentCourseForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student-courses"
+              element={
+                <ProtectedRoute>
+                  <StudentCourseList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/programs/new"
+              element={
+                <ProtectedRoute>
+                  <ProgramForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/programs/edit/:name"
+              element={
+                <ProtectedRoute>
+                  <ProgramForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/programs"
+              element={
+                <ProtectedRoute>
+                  <ProgramList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/progress"
+              element={
+                <ProtectedRoute>
+                  <MyProgress />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/grade-report"
+              element={
+                <ProtectedRoute>
+                  <GradeReport />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/logout"
+              element={
+                <ProtectedRoute>
+                  <Logout />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-courses"
+              element={
+                <ProtectedRoute>
+                  <MyCourses />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-program"
+              element={
+                <ProtectedRoute>
+                  <MyProgram />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ברירת מחדל */}
+            <Route
+              path="*"
+              element={
+                <ProtectedRoute>
+                  <HomePage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Container>
 
