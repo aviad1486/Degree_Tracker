@@ -86,35 +86,34 @@ const HomePage: React.FC = () => {
           </Typography>
 
           {/* תקציר מצב התואר */}
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 4 }}>
-            <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6">נק"ז שהושלמו</Typography>
-                  <Typography variant="body1">
-                    {completedCredits}/{totalCredits}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
+          <Box sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+            gap: 2, 
+            mb: 4 
+          }}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6">נק"ז שהושלמו</Typography>
+                <Typography variant="body1">
+                  {completedCredits}/{totalCredits}
+                </Typography>
+              </CardContent>
+            </Card>
 
-            <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6">ממוצע ציונים</Typography>
-                  <Typography variant="body1">{gpa}</Typography>
-                </CardContent>
-              </Card>
-            </Box>
+            <Card>
+              <CardContent>
+                <Typography variant="h6">ממוצע ציונים</Typography>
+                <Typography variant="body1">{gpa}</Typography>
+              </CardContent>
+            </Card>
 
-            <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6">תוכנית לימודים</Typography>
-                  <Typography variant="body1">{program}</Typography>
-                </CardContent>
-              </Card>
-            </Box>
+            <Card>
+              <CardContent>
+                <Typography variant="h6">תוכנית לימודים</Typography>
+                <Typography variant="body1">{program}</Typography>
+              </CardContent>
+            </Card>
           </Box>
 
           {/* טבלה של כל ה-assignments */}
@@ -148,7 +147,11 @@ const HomePage: React.FC = () => {
             <Typography variant="h6" gutterBottom>
               קיצורי דרך
             </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+            <Box sx={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+              gap: 2 
+            }}>
               <Button variant="contained" component={Link} to="/progress">
                 ההתקדמות שלי
               </Button>

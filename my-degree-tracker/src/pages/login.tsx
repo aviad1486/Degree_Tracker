@@ -9,7 +9,7 @@ import {
   LinearProgress,
   Alert,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firestore/config"; // הקובץ שלך
 
@@ -101,6 +101,17 @@ const Login: React.FC = () => {
               disabled={loading}
             >
               התחבר
+            </Button>
+
+            <Button
+              variant="outlined"
+              color="secondary"
+              fullWidth
+              sx={{ mt: 1 }}
+              component={Link}
+              to="/help"
+            >
+              זקוק לעזרה? 🆘
             </Button>
           </form>
         </CardContent>

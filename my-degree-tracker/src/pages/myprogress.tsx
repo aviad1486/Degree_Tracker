@@ -126,7 +126,7 @@ const MyProgress: React.FC = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>קורס</TableCell>
+                  <TableCell>קוד קורס</TableCell>
                   <TableCell align="right">ציון</TableCell>
                   <TableCell align="right">שנה</TableCell>
                   <TableCell align="right">סמסטר</TableCell>

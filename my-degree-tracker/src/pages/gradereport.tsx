@@ -89,7 +89,7 @@ const GradeReport: React.FC = () => {
   }, []);
 
   const columns: GridColDef[] = [
-    { field: "courseName", headerName: "שם קורס", flex: 1 },
+    { field: "courseName", headerName: "קוד קורס", flex: 1 },
     { field: "grade", headerName: "ציון", width: 100 },
     { field: "year", headerName: "שנה", width: 100 },
     { field: "semester", headerName: "סמסטר", width: 100 },
