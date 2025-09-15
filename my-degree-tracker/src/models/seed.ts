@@ -1,12 +1,11 @@
-// src/models/seed.ts
 import type { Student } from "../models/Student";
 import type { Course } from "../models/Course";
 import type { StudentCourse } from "../models/StudentCourse";
 import type { Program } from "../models/Program";
+import type { User } from "../models/User";
 
-import { firestore, auth } from "../firestore/config"; // Import auth
+import { firestore } from "../firestore/config";
 import { doc, setDoc, getDocs, collection } from "firebase/firestore";
-import { createUserWithEmailAndPassword } from "firebase/auth"; // Import client-side function
 
 const SEED_VERSION = "v1";
 const COURSE_CODES = Array.from({ length: 10 }, (_, i) => `CS10${i + 1}`);
@@ -50,8 +49,9 @@ function makeStudents(): (Student & { role: "admin" | "student" })[] {
   });
 }
 
-function makeStudentCourses(): StudentCourse[] {
+function makeStudentCourses(): (StudentCourse & { id: string })[] {
   return Array.from({ length: 10 }, (_, i) => ({
+    id: `sc_${i}`, // Unique ID for each student course record
     studentId: `10000000${i}`,
     courseCode: COURSE_CODES[(i + 2) % COURSE_CODES.length],
     grade: 60 + ((i * 11) % 41),
@@ -83,34 +83,69 @@ async function seedCollection<T>(
     for (const item of items) {
       try {
         const id = String(item[idField]);
-        // 1. Save document to Firestore
+        // Save document to Firestore
         await setDoc(doc(firestore, colName, id), item as any);
-
-        // 2. If it's a student, create an Auth user
-        if (colName === "students" && "email" in item && "id" in item) {
-          const student = item as Student;
-          await createUserWithEmailAndPassword(auth, student.email, student.id);
-          console.log(`✅ Auth user created for ${student.email}`);
-        }
+        console.log(`✅ Added ${id} to ${colName}`);
       } catch (error: any) {
         console.error(`❌ Failed to seed item in ${colName}:`, error.message);
       }
     }
+    console.log(`🎉 Seeded ${items.length} items in ${colName} collection`);
+  } else {
+    console.log(`⏭️ Collection ${colName} already has data, skipping...`);
   }
 }
 
 // פונקציית bootstrap – רק Firestore
 export async function bootstrapFirestore(force = false): Promise<void> {
+  console.log('🌱 Starting database seeding...');
+  
   const snap = await getDocs(collection(firestore, "__meta"));
   const metaDoc = snap.docs.find((d) => d.id === "seed_version");
   const currentVer = metaDoc?.data()?.value;
 
-  if (!force && currentVer === SEED_VERSION) return;
+  if (!force && currentVer === SEED_VERSION) {
+    console.log('⏭️ Database already seeded with current version, skipping...');
+    return;
+  }
 
+  console.log('📚 Seeding all collections...');
   await seedCollection<Student & { role: string }>("students", makeStudents, "id");
   await seedCollection<Course>("courses", makeCourses, "courseCode");
-  await seedCollection<StudentCourse>("studentCourses", makeStudentCourses, "courseCode");
+  await seedCollection<StudentCourse & { id: string }>("studentCourses", makeStudentCourses, "id");
   await seedCollection<Program>("programs", makePrograms, "name");
 
   await setDoc(doc(firestore, "__meta", "seed_version"), { value: SEED_VERSION });
+  console.log('🎉 Database seeding completed successfully!');
 }
+
+/**
+ * Creates an admin user in Firestore
+ */
+export const createInitialAdminUser = async (
+  uid: string,
+  email: string,
+  displayName?: string
+): Promise<boolean> => {
+  try {
+    const adminUser: User = {
+      uid,
+      email,
+      displayName,
+      role: 'admin',
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const userDoc = doc(firestore, 'users', uid);
+    await setDoc(userDoc, adminUser);
+    
+    console.log('✅ Admin user created successfully!');
+    console.log('User details:', adminUser);
+    return true;
+  } catch (error) {
+    console.error('❌ Error creating admin user:', error);
+    return false;
+  }
+};

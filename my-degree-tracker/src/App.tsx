@@ -29,8 +29,8 @@ import AdminPage from './pages/admin';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleProtectedRoute from './components/RoleProtectedRoute';
 
-// Import admin setup helper for development
-import { setupFirstAdmin } from './utils/adminSetup';
+// Import database initialization
+import { setupAdminConsoleHelper } from './utils/databaseInit';
 
 const sidebarWidth = 'clamp(200px, 18vw, 320px)';
 const mobileSidebarWidth = '280px';
@@ -41,7 +41,7 @@ export default function App() {
   // Setup admin helper in development
   useEffect(() => {
     if (import.meta.env.DEV) {
-      setupFirstAdmin();
+      setupAdminConsoleHelper();
     }
   }, []);
 

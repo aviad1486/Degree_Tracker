@@ -132,8 +132,6 @@ const AdminPage: React.FC = () => {
                   <TableCell>Email</TableCell>
                   <TableCell>Role</TableCell>
                   <TableCell>Status</TableCell>
-                  <TableCell>Created</TableCell>
-                  <TableCell>Last Login</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -142,7 +140,7 @@ const AdminPage: React.FC = () => {
                   // Loading skeleton
                   Array.from({ length: 3 }).map((_, index) => (
                     <TableRow key={index}>
-                      {Array.from({ length: 7 }).map((_, cellIndex) => (
+                      {Array.from({ length: 5 }).map((_, cellIndex) => (
                         <TableCell key={cellIndex}>
                           <Skeleton variant="text" />
                         </TableCell>
@@ -151,7 +149,7 @@ const AdminPage: React.FC = () => {
                   ))
                 ) : users.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                    <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
                       <Typography color="text.secondary">
                         No users found
                       </Typography>
@@ -193,19 +191,6 @@ const AdminPage: React.FC = () => {
                           size="small"
                           variant={user.isActive ? 'filled' : 'outlined'}
                         />
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">
-                          {new Date(user.createdAt).toLocaleDateString()}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">
-                          {user.lastLoginAt 
-                            ? new Date(user.lastLoginAt).toLocaleDateString()
-                            : 'Never'
-                          }
-                        </Typography>
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title="Edit user">
