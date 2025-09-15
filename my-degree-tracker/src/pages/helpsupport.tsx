@@ -30,10 +30,10 @@ const HelpSupport: React.FC = () => {
             gutterBottom
             sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
           >
-            עזרה ותמיכה ❓
+            Help & Support ❓
           </Typography>
 
-          {/* הסבר כללי */}
+          {/* General Description */}
           <Card sx={{ mb: 3 }}>
             <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
               <Typography 
@@ -41,19 +41,19 @@ const HelpSupport: React.FC = () => {
                 gutterBottom
                 sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
               >
-                מטרת המערכת
+                System Purpose
               </Typography>
               <Typography 
                 variant="body1"
                 sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
               >
-                המערכת נועדה לעזור לסטודנטים לעקוב אחר מצב התואר שלהם בזמן אמת –
-                נק"ז, ציונים, קורסים ומסלול לימודים.
+                This system is designed to help students track their degree status in real-time –
+                credits, grades, courses, and study program.
               </Typography>
             </CardContent>
           </Card>
 
-          {/* הנחיות שימוש */}
+          {/* Usage Guidelines */}
           <Card sx={{ mb: 3 }}>
             <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
               <Typography 
@@ -61,7 +61,7 @@ const HelpSupport: React.FC = () => {
                 gutterBottom
                 sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
               >
-                הנחיות לשימוש במסכים
+                Screen Usage Guidelines
               </Typography>
               <List dense sx={{ 
                 '& .MuiListItemText-primary': {
@@ -69,25 +69,25 @@ const HelpSupport: React.FC = () => {
                 }
               }}>
                 <ListItem sx={{ px: { xs: 1, sm: 2 } }}>
-                  <ListItemText primary="להתחברות – התחבר עם אימייל ות״ז כסיסמה בכדי לקבל גישה אישית." />
+                  <ListItemText primary="Login – Connect with email and ID as password to get personal access." />
                 </ListItem>
                 <ListItem sx={{ px: { xs: 1, sm: 2 } }}>
-                  <ListItemText primary="ההתקדמות שלי – ראה את מצב נקודות הזכות, ממוצע הציונים ועוד." />
+                  <ListItemText primary="My Progress – View your credit points status, grade average and more." />
                 </ListItem>
                 <ListItem sx={{ px: { xs: 1, sm: 2 } }}>
-                  <ListItemText primary="דו״ח ציונים – צפה בגרף מגמות ובציונים מפורטים לכל קורס." />
+                  <ListItemText primary="Grade Report – View trend charts and detailed grades for each course." />
                 </ListItem>
                 <ListItem sx={{ px: { xs: 1, sm: 2 } }}>
-                  <ListItemText primary="הקורסים שלי – רשימת הקורסים שעברת עם ציונים." />
+                  <ListItemText primary="My Courses – List of courses you've passed with grades." />
                 </ListItem>
                 <ListItem sx={{ px: { xs: 1, sm: 2 } }}>
-                  <ListItemText primary="המסלול שלי – פרטי מסלול הלימודים שלך והקורסים הנדרשים." />
+                  <ListItemText primary="My Program – Your study program details and required courses." />
                 </ListItem>
               </List>
             </CardContent>
           </Card>
 
-          {/* טיפים */}
+          {/* Tips */}
           <Card sx={{ mb: 3 }}>
             <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
               <Typography 
@@ -95,19 +95,19 @@ const HelpSupport: React.FC = () => {
                 gutterBottom
                 sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
               >
-                טיפים לשימוש יעיל
+                Tips for Effective Use
               </Typography>
               <Typography 
                 variant="body1"
                 sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
               >
-                שמור את הנתונים שלך מעודכנים, ובדוק את התקדמותך באופן קבוע כדי
-                להבטיח שתסיים את התואר בזמן.
+                Keep your data updated and check your progress regularly to
+                ensure you complete your degree on time.
               </Typography>
             </CardContent>
           </Card>
 
-          {/* יצירת קשר */}
+          {/* Contact */}
           <Card>
             <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
               <Typography 
@@ -115,13 +115,13 @@ const HelpSupport: React.FC = () => {
                 gutterBottom
                 sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
               >
-                צור קשר
+                Contact Us
               </Typography>
               <Typography 
                 variant="body1"
                 sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
               >
-                לשאלות נוספות ניתן לפנות לכתובת{" "}
+                For additional questions, please contact{" "}
                 <Link 
                   href="mailto:support@degree-tracker.com"
                   sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}

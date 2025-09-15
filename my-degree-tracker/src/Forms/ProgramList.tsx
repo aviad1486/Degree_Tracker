@@ -51,7 +51,7 @@ const ProgramList: React.FC = () => {
           variant="h6"
           sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
         >
-          תוכניות לימודים
+          Study Programs
         </Typography>
       </Box>
       <TableContainer 
@@ -66,28 +66,28 @@ const ProgramList: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                שם תוכנית
+                Program Name
               </TableCell>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                נק"ז כולל
+                Total Credits
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', md: 'table-cell' }
               }}>
-                קורסים
+                Courses
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', lg: 'table-cell' }
               }}>
-                נוצר
+                Created
               </TableCell>
               <TableCell 
                 align="right"
                 sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
               >
-                פעולות
+                Actions
               </TableCell>
             </TableRow>
           </TableHead>
@@ -139,7 +139,7 @@ const ProgramList: React.FC = () => {
                   align="center"
                   sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                 >
-                  לא נמצאו תוכניות לימודים.
+                  No study programs found.
                 </TableCell>
               </TableRow>
             )}
@@ -156,7 +156,7 @@ const ProgramList: React.FC = () => {
             fontSize: { xs: '0.875rem', sm: '0.875rem' }
           }}
         >
-          הוסף תוכנית
+          Add Program
         </Button>
       </Box>
     </Box>

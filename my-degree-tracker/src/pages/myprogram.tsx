@@ -72,7 +72,7 @@ const MyProgram: React.FC = () => {
             }
           }
         } catch (err) {
-          console.error("❌ שגיאה בשליפת מסלול:", err);
+          console.error("❌ Error fetching program:", err);
         }
       }
       setLoading(false);
@@ -92,28 +92,28 @@ const MyProgram: React.FC = () => {
             gutterBottom
             sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
           >
-            המסלול שלי 🎓
+            My Program 🎓
           </Typography>
 
-          {/* פרטי המסלול */}
+          {/* Program Details */}
           <Card sx={{ mb: 3 }}>
             <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
               <Typography 
                 variant="h6"
                 sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
               >
-                שם המסלול: {program.name}
+                Program Name: {program.name}
               </Typography>
               <Typography 
                 variant="body1"
                 sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
               >
-                סך נק"ז נדרש: {program.totalCreditsRequired}
+                Total Credits Required: {program.totalCreditsRequired}
               </Typography>
             </CardContent>
           </Card>
 
-          {/* טבלת קורסים במסלול */}
+          {/* Program Courses Table */}
           <Card>
             <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
               <Typography 
@@ -121,7 +121,7 @@ const MyProgram: React.FC = () => {
                 gutterBottom
                 sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
               >
-                רשימת קורסים במסלול
+                Course List in Program
               </Typography>
               <TableContainer 
                 component={Paper}
@@ -135,16 +135,16 @@ const MyProgram: React.FC = () => {
                   <TableHead>
                     <TableRow>
                       <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        קוד קורס
+                        Course Code
                       </TableCell>
                       <TableCell sx={{ 
                         fontSize: { xs: '0.75rem', sm: '0.875rem' },
                         display: { xs: 'none', sm: 'table-cell' }
                       }}>
-                        שם קורס
+                        Course Name
                       </TableCell>
                       <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        נק"ז
+                        Credits
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -172,7 +172,7 @@ const MyProgram: React.FC = () => {
                           align="center"
                           sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                         >
-                          אין קורסים במסלול
+                          No courses in program
                         </TableCell>
                       </TableRow>
                     )}

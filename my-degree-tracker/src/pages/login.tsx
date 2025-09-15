@@ -36,15 +36,15 @@ const Login: React.FC = () => {
       console.error("❌ Login error:", err.code, err.message);
       setLoading(false);
 
-      // טיפול בשגיאות נפוצות
+      // Handle common errors
       if (err.code === "auth/invalid-email") {
-        setError("כתובת האימייל אינה תקינה");
+        setError("Email address is not valid");
       } else if (err.code === "auth/user-not-found") {
-        setError("משתמש לא נמצא במערכת");
+        setError("User not found in the system");
       } else if (err.code === "auth/wrong-password") {
-        setError("סיסמה שגויה");
+        setError("Wrong password");
       } else {
-        setError("התחברות נכשלה, נסה שוב");
+        setError("Login failed, please try again");
       }
     }
   };
@@ -75,7 +75,7 @@ const Login: React.FC = () => {
               mb: { xs: 2, sm: 3 }
             }}
           >
-            התחברות 🔐
+            Login 🔐
           </Typography>
 
           {error && (
@@ -87,7 +87,7 @@ const Login: React.FC = () => {
           <form onSubmit={handleLogin}>
             <TextField
               id="email"
-              label="אימייל"
+              label="Email"
               fullWidth
               margin="normal"
               value={email}
@@ -105,7 +105,7 @@ const Login: React.FC = () => {
             />
             <TextField
               id="password"
-              label="סיסמה (תעודת זהות)"
+              label="Password (ID Number)"
               type="password"
               fullWidth
               margin="normal"
@@ -135,7 +135,7 @@ const Login: React.FC = () => {
               }}
               disabled={loading}
             >
-              התחבר
+              Login
             </Button>
 
             <Button
@@ -150,7 +150,7 @@ const Login: React.FC = () => {
               component={Link}
               to="/help"
             >
-              זקוק לעזרה? 🆘
+              Need Help? 🆘
             </Button>
           </form>
         </CardContent>

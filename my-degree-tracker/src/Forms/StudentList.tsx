@@ -53,7 +53,7 @@ const StudentList: React.FC = () => {
           variant="h6"
           sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
         >
-          רשימת סטודנטים
+          Students List
         </Typography>
       </Box>
       <TableContainer 
@@ -68,40 +68,40 @@ const StudentList: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                שם מלא
+                Full Name
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', sm: 'table-cell' }
               }}>
-                ת.ז
+                ID
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', md: 'table-cell' }
               }}>
-                אימייל
+                Email
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', lg: 'table-cell' }
               }}>
-                קורסים
+                Courses
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', md: 'table-cell' }
               }}>
-                תוכנית
+                Program
               </TableCell>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                ממוצע
+                Average
               </TableCell>
               <TableCell 
                 align="right"
                 sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
               >
-                פעולות
+                Actions
               </TableCell>
             </TableRow>
           </TableHead>
@@ -166,14 +166,14 @@ const StudentList: React.FC = () => {
                   align="center"
                   sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                 >
-                  לא נמצאו סטודנטים.
+                  No students found.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </TableContainer>
-      {/* כפתור להוספת סטודנט */}
+      {/* Add Student Button */}
       <Box display="flex" justifyContent="flex-end" mt={2}>
         <Button
           variant="contained"
@@ -183,7 +183,7 @@ const StudentList: React.FC = () => {
             fontSize: { xs: '0.875rem', sm: '0.875rem' }
           }}
         >
-          הוסף סטודנט
+          Add Student
         </Button>
       </Box>
     </Box>

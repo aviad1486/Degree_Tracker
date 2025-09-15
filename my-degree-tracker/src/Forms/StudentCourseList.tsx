@@ -51,7 +51,7 @@ const StudentCourseList: React.FC = () => {
           variant="h6"
           sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
         >
-          ציוני סטודנטים
+          Student Grades
         </Typography>
       </Box>
       <TableContainer 
@@ -66,43 +66,43 @@ const StudentCourseList: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                ת.ז
+                Student ID
               </TableCell>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                קורס
+                Course
               </TableCell>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                ציון
+                Grade
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', sm: 'table-cell' }
               }}>
-                סמסטר
+                Semester
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', md: 'table-cell' }
               }}>
-                שנה
+                Year
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', lg: 'table-cell' }
               }}>
-                נסיונות
+                Attempts
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', lg: 'table-cell' }
               }}>
-                נוצר
+                Created
               </TableCell>
               <TableCell 
                 align="right"
                 sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
               >
-                פעולות
+                Actions
               </TableCell>
             </TableRow>
           </TableHead>
@@ -173,7 +173,7 @@ const StudentCourseList: React.FC = () => {
                   align="center"
                   sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                 >
-                  לא נמצאו רשומות ציונים.
+                  No grade records found.
                 </TableCell>
               </TableRow>
             )}
@@ -190,7 +190,7 @@ const StudentCourseList: React.FC = () => {
             fontSize: { xs: '0.875rem', sm: '0.875rem' }
           }}
         >
-          הוסף ציון
+          Add Grade
         </Button>
       </Box>
     </Box>

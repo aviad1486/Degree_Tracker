@@ -71,7 +71,7 @@ const MyProgress: React.FC = () => {
             setCourses(rows);
           }
         } catch (err) {
-          console.error("❌ שגיאה בשליפת ההתקדמות:", err);
+          console.error("❌ Error fetching progress:", err);
         }
       }
       setLoading(false);
@@ -93,10 +93,10 @@ const MyProgress: React.FC = () => {
             gutterBottom
             sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
           >
-            ההתקדמות שלי 📊
+            My Progress 📊
           </Typography>
 
-          {/* ציר התקדמות */}
+          {/* Progress Bar */}
           <Card sx={{ mb: 3 }}>
             <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
               <Typography 
@@ -104,7 +104,7 @@ const MyProgress: React.FC = () => {
                 gutterBottom
                 sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
               >
-                נק"ז שהושלמו
+                Credits Completed
               </Typography>
               <LinearProgress 
                 variant="determinate" 
@@ -118,12 +118,12 @@ const MyProgress: React.FC = () => {
                   fontSize: { xs: '0.875rem', sm: '0.875rem' }
                 }}
               >
-                {completedCredits}/{totalCredits} נק"ז ({progressPercent}%)
+                {completedCredits}/{totalCredits} credits ({progressPercent}%)
               </Typography>
             </CardContent>
           </Card>
 
-          {/* ממוצע ציונים */}
+          {/* Grade Average */}
           <Box sx={{ mb: 3 }}>
             <Card>
               <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
@@ -131,7 +131,7 @@ const MyProgress: React.FC = () => {
                   variant="h6"
                   sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
                 >
-                  ממוצע ציונים
+                  Grade Average
                 </Typography>
                 <Typography 
                   variant="body1"
@@ -146,13 +146,13 @@ const MyProgress: React.FC = () => {
             </Card>
           </Box>
 
-          {/* טבלה של קורסים שבוצעו */}
+          {/* Completed Courses Table */}
           <Typography 
             variant="h6"
             gutterBottom
             sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
           >
-            קורסים שביצעתי
+            Courses I've Completed
           </Typography>
           <TableContainer 
             component={Paper} 
@@ -167,25 +167,25 @@ const MyProgress: React.FC = () => {
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                    קוד קורס
+                    Course Code
                   </TableCell>
                   <TableCell 
                     align="right"
                     sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                   >
-                    ציון
+                    Grade
                   </TableCell>
                   <TableCell 
                     align="right"
                     sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                   >
-                    שנה
+                    Year
                   </TableCell>
                   <TableCell 
                     align="right"
                     sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                   >
-                    סמסטר
+                    Semester
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -222,7 +222,7 @@ const MyProgress: React.FC = () => {
                       align="center"
                       sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                     >
-                      אין נתוני קורסים להצגה
+                      No course data to display
                     </TableCell>
                   </TableRow>
                 )}

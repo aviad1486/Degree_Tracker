@@ -21,8 +21,8 @@ const Logout: React.FC = () => {
         // נווט חזרה למסך התחברות
         navigate("/login");
       } catch (error) {
-        console.error("❌ שגיאה בהתנתקות:", error);
-        navigate("/login"); // גם במקרה של שגיאה מחזיר ל־Login
+        console.error("❌ Logout error:", error);
+        navigate("/login"); // Even in case of error, return to Login
       }
     };
 
@@ -40,7 +40,7 @@ const Logout: React.FC = () => {
       }}
     >
       <Typography variant="h6" gutterBottom>
-        מתנתק מהמערכת...
+        Logging out of the system...
       </Typography>
       <CircularProgress />
     </Box>

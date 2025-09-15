@@ -51,7 +51,7 @@ const CourseList: React.FC = () => {
           variant="h6"
           sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
         >
-          רשימת קורסים
+          Courses List
         </Typography>
       </Box>
       <TableContainer 
@@ -66,34 +66,34 @@ const CourseList: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                קוד קורס
+                Course Code
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', sm: 'table-cell' }
               }}>
-                שם
+                Name
               </TableCell>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                נק"ז
+                Credits
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', md: 'table-cell' }
               }}>
-                סמסטר
+                Semester
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', lg: 'table-cell' }
               }}>
-                משימות
+                Assignments
               </TableCell>
               <TableCell 
                 align="right"
                 sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
               >
-                פעולות
+                Actions
               </TableCell>
             </TableRow>
           </TableHead>
@@ -149,7 +149,7 @@ const CourseList: React.FC = () => {
                   align="center"
                   sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                 >
-                  לא נמצאו קורסים.
+                  No courses found.
                 </TableCell>
               </TableRow>
             )}
@@ -166,7 +166,7 @@ const CourseList: React.FC = () => {
             fontSize: { xs: '0.875rem', sm: '0.875rem' }
           }}
         >
-          הוסף קורס
+          Add Course
         </Button>
       </Box>
     </Box>

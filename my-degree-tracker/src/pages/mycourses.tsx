@@ -88,7 +88,7 @@ const MyCourses: React.FC = () => {
             setPassedCourses(passed);
           }
         } catch (err) {
-          console.error("❌ שגיאה בשליפת קורסים:", err);
+          console.error("❌ Error fetching courses:", err);
         }
       }
       setLoading(false);
@@ -105,7 +105,7 @@ const MyCourses: React.FC = () => {
           gutterBottom
           sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
         >
-          קורסים נוכחיים
+          Current Courses
         </Typography>
         <TableContainer 
           component={Paper}
@@ -119,16 +119,16 @@ const MyCourses: React.FC = () => {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  קוד קורס
+                  Course Code
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', sm: 'table-cell' }
                 }}>
-                  שם קורס
+                  Course Name
                 </TableCell>
                 <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  נק"ז
+                  Credits
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -156,7 +156,7 @@ const MyCourses: React.FC = () => {
                     align="center"
                     sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                   >
-                    אין נתונים להצגה
+                    No data to display
                   </TableCell>
                 </TableRow>
               )}
@@ -175,7 +175,7 @@ const MyCourses: React.FC = () => {
           gutterBottom
           sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
         >
-          קורסים שעברתי
+          Courses I've Passed
         </Typography>
         <TableContainer 
           component={Paper}
@@ -189,34 +189,34 @@ const MyCourses: React.FC = () => {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  קוד
+                  Code
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', sm: 'table-cell' }
                 }}>
-                  שם קורס
+                  Course Name
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', md: 'table-cell' }
                 }}>
-                  נק"ז
+                  Credits
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', md: 'table-cell' }
                 }}>
-                  שנה
+                  Year
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', sm: 'table-cell' }
                 }}>
-                  סמסטר
+                  Semester
                 </TableCell>
                 <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  ציון
+                  Grade
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -262,7 +262,7 @@ const MyCourses: React.FC = () => {
                     align="center"
                     sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                   >
-                    אין נתונים להצגה
+                    No data to display
                   </TableCell>
                 </TableRow>
               )}
@@ -283,7 +283,7 @@ const MyCourses: React.FC = () => {
             gutterBottom
             sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
           >
-            הקורסים שלי 📚
+            My Courses 📚
           </Typography>
           {renderCurrentTable(currentCourses)}
           {renderPassedTable(passedCourses)}

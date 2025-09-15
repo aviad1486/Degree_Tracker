@@ -68,10 +68,10 @@ const GradeReport: React.FC = () => {
             });
             setCoursesRows(rows);
 
-            // מחשב ממוצעים לפי שנה+סמסטר
+            // Calculate averages by year+semester
             const grouped: Record<string, number[]> = {};
             rows.forEach((r) => {
-              const key = `שנה ${r.year} - סמס' ${r.semester}`;
+              const key = `Year ${r.year} - Sem ${r.semester}`;
               if (!grouped[key]) grouped[key] = [];
               if (typeof r.grade === "number") grouped[key].push(r.grade);
             });
@@ -82,10 +82,10 @@ const GradeReport: React.FC = () => {
             }));
             setGradesBySemester(avgBySem);
           } else {
-            console.warn("⚠️ לא נמצא סטודנט עם המייל הזה");
+            console.warn("⚠️ Student with this email not found");
           }
         } catch (err) {
-          console.error("❌ שגיאה בשליפת הנתונים:", err);
+          console.error("❌ Error fetching data:", err);
         }
       }
       setLoading(false);
@@ -105,10 +105,10 @@ const GradeReport: React.FC = () => {
             gutterBottom
             sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
           >
-            דו"ח ציונים 📈 – שלום {student.fullName}
+            Grade Report 📈 – Hello {student.fullName}
           </Typography>
 
-          {/* גרף ממוצעים */}
+          {/* Averages Chart */}
           <Card sx={{ mb: 3 }}>
             <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
               <Typography 
@@ -116,7 +116,7 @@ const GradeReport: React.FC = () => {
                 gutterBottom
                 sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
               >
-                ממוצע ציונים לפי סמסטר
+                Grade Average by Semester
               </Typography>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={gradesBySemester}>
@@ -138,7 +138,7 @@ const GradeReport: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* טבלת ציונים */}
+          {/* Grades Table */}
           <Card>
             <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
               <Typography 
@@ -146,7 +146,7 @@ const GradeReport: React.FC = () => {
                 gutterBottom
                 sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
               >
-                פירוט ציונים
+                Grade Details
               </Typography>
               <TableContainer 
                 component={Paper}
@@ -160,22 +160,22 @@ const GradeReport: React.FC = () => {
                   <TableHead>
                     <TableRow>
                       <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        קוד קורס
+                        Course Code
                       </TableCell>
                       <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        ציון
+                        Grade
                       </TableCell>
                       <TableCell sx={{ 
                         fontSize: { xs: '0.75rem', sm: '0.875rem' },
                         display: { xs: 'none', sm: 'table-cell' }
                       }}>
-                        שנה
+                        Year
                       </TableCell>
                       <TableCell sx={{ 
                         fontSize: { xs: '0.75rem', sm: '0.875rem' },
                         display: { xs: 'none', sm: 'table-cell' }
                       }}>
-                        סמסטר
+                        Semester
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -209,7 +209,7 @@ const GradeReport: React.FC = () => {
                           align="center"
                           sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                         >
-                          אין נתוני ציונים להצגה
+                          No grade data to display
                         </TableCell>
                       </TableRow>
                     )}

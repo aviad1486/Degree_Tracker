@@ -29,7 +29,7 @@ export default function MainDrawer() {
     <div>
       <Toolbar />
       
-      {/* כותרת הסיידבר */}
+      {/* Sidebar Header */}
       <Box sx={{ px: 2, py: 2, borderBottom: '1px solid #e0e0e0' }}>
         <Typography 
           variant="h6" 
@@ -48,55 +48,55 @@ export default function MainDrawer() {
             fontSize: '0.75rem'
           }}
         >
-          מערכת ניהול תואר אקדמי
+          Academic Degree Management System
         </Typography>
       </Box>
 
       <List>
-        {/* דפים אישיים */}
+        {/* Personal Pages */}
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/">
             <ListItemIcon><HomeIcon /></ListItemIcon>
-            <ListItemText primary="דף הבית" />
+            <ListItemText primary="Home" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/progress">
             <ListItemIcon><TimelineIcon /></ListItemIcon>
-            <ListItemText primary="ההתקדמות שלי" />
+            <ListItemText primary="My Progress" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/grade-report">
             <ListItemIcon><AssessmentIcon /></ListItemIcon>
-            <ListItemText primary="דוח ציונים" />
+            <ListItemText primary="Grade Report" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/my-courses">
             <ListItemIcon><MenuBookIcon /></ListItemIcon>
-            <ListItemText primary="הקורסים שלי" />
+            <ListItemText primary="My Courses" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/my-program">
             <ListItemIcon><TableChartIcon /></ListItemIcon>
-            <ListItemText primary="המסלול שלי" />
+            <ListItemText primary="My Program" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/help">
             <ListItemIcon><HelpIcon /></ListItemIcon>
-            <ListItemText primary="עזרה ותמיכה" />
+            <ListItemText primary="Help & Support" />
           </ListItemButton>
         </ListItem>
 
-        {/* מסכי ניהול */}
+        {/* Management Screens */}
         <Divider sx={{ my: 1 }} />
         <Box sx={{ px: 2, py: 1 }}>
           <Typography 
@@ -109,35 +109,35 @@ export default function MainDrawer() {
               letterSpacing: '0.5px'
             }}
           >
-            ניהול מערכת
+            System Management
           </Typography>
         </Box>
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/students">
             <ListItemIcon><PeopleIcon /></ListItemIcon>
-            <ListItemText primary="רשימת סטודנטים" />
+            <ListItemText primary="Students List" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/courses">
             <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
-            <ListItemText primary="רשימת קורסים" />
+            <ListItemText primary="Courses List" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/student-courses">
             <ListItemIcon><AssignmentIcon /></ListItemIcon>
-            <ListItemText primary="ציוני סטודנטים" />
+            <ListItemText primary="Student Grades" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/programs">
             <ListItemIcon><SettingsIcon /></ListItemIcon>
-            <ListItemText primary="רשימת תוכניות" />
+            <ListItemText primary="Programs List" />
           </ListItemButton>
         </ListItem>
 
@@ -146,7 +146,7 @@ export default function MainDrawer() {
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/logout">
             <ListItemIcon><ExitToAppIcon /></ListItemIcon>
-            <ListItemText primary="התנתקות" />
+            <ListItemText primary="Logout" />
           </ListItemButton>
         </ListItem>
       </List>

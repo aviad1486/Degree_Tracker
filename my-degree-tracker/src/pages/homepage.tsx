@@ -60,12 +60,12 @@ const HomePage: React.FC = () => {
             // שמירה של כל ה-assignments מהסטודנט
             setAssignments(student.assignments ?? []);
           } else {
-            console.warn("⚠️ לא נמצא סטודנט עם המייל הזה");
+            console.warn("⚠️ Student with this email not found");
             setStudentName(user.email);
           }
         } catch (err) {
-          console.error("❌ שגיאה בשליפת הסטודנט:", err);
-          setStudentName(user.email ?? "סטודנט");
+          console.error("❌ Error fetching student:", err);
+          setStudentName(user.email ?? "Student");
         }
       }
       setLoading(false);
@@ -80,7 +80,7 @@ const HomePage: React.FC = () => {
 
       {!loading && (
         <>
-          {/* ברכה אישית */}
+          {/* Personal Greeting */}
           <Typography 
             variant="h5" 
             gutterBottom
@@ -90,10 +90,10 @@ const HomePage: React.FC = () => {
               mb: { xs: 2, sm: 1 }
             }}
           >
-            שלום, {studentName ?? "סטודנט"}! 👋
+            Hello, {studentName ?? "Student"}! 👋
           </Typography>
 
-          {/* תקציר מצב התואר */}
+          {/* Degree Status Summary */}
           <Box sx={{ 
             display: 'grid', 
             gridTemplateColumns: { 
@@ -109,7 +109,7 @@ const HomePage: React.FC = () => {
                   variant="h6"
                   sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}
                 >
-                  נק"ז שהושלמו
+                  Credits Completed
                 </Typography>
                 <Typography 
                   variant="body1"
@@ -130,7 +130,7 @@ const HomePage: React.FC = () => {
                   variant="h6"
                   sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}
                 >
-                  ממוצע ציונים
+                  Grade Average
                 </Typography>
                 <Typography 
                   variant="body1"
@@ -151,7 +151,7 @@ const HomePage: React.FC = () => {
                   variant="h6"
                   sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}
                 >
-                  תוכנית לימודים
+                  Study Program
                 </Typography>
                 <Typography 
                   variant="body1"
@@ -166,7 +166,7 @@ const HomePage: React.FC = () => {
             </Card>
           </Box>
 
-          {/* טבלה של כל ה-assignments */}
+          {/* Assignments Table */}
           <Typography 
             variant="h6" 
             gutterBottom
@@ -175,7 +175,7 @@ const HomePage: React.FC = () => {
               mb: { xs: 1, sm: 2 }
             }}
           >
-            משימות (Assignments)
+            Assignments
           </Typography>
           <TableContainer 
             component={Paper} 
@@ -189,7 +189,7 @@ const HomePage: React.FC = () => {
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                    שם משימה
+                    Assignment Name
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -213,7 +213,7 @@ const HomePage: React.FC = () => {
                         py: { xs: 2, sm: 3 }
                       }}
                     >
-                      אין משימות להצגה
+                      No assignments to display
                     </TableCell>
                   </TableRow>
                 )}
@@ -221,7 +221,7 @@ const HomePage: React.FC = () => {
             </Table>
           </TableContainer>
 
-          {/* קיצורי דרך */}
+          {/* Quick Links */}
           <Box sx={{ mt: 2 }}>
             <Typography 
               variant="h6" 
@@ -232,7 +232,7 @@ const HomePage: React.FC = () => {
                 textAlign: { xs: 'center', sm: 'left' }
               }}
             >
-              קיצורי דרך
+              Quick Links
             </Typography>
             <Box sx={{ 
               display: 'grid', 
@@ -251,7 +251,7 @@ const HomePage: React.FC = () => {
                   fontSize: { xs: '0.875rem', sm: '1rem' }
                 }}
               >
-                ההתקדמות שלי
+                My Progress
               </Button>
               <Button 
                 variant="contained" 
@@ -262,7 +262,7 @@ const HomePage: React.FC = () => {
                   fontSize: { xs: '0.875rem', sm: '1rem' }
                 }}
               >
-                דו"ח ציונים
+                Grade Report
               </Button>
               <Button 
                 variant="contained" 
@@ -273,7 +273,7 @@ const HomePage: React.FC = () => {
                   fontSize: { xs: '0.875rem', sm: '1rem' }
                 }}
               >
-                הקורסים שלי
+                My Courses
               </Button>
               <Button 
                 variant="contained" 
@@ -284,7 +284,7 @@ const HomePage: React.FC = () => {
                   fontSize: { xs: '0.875rem', sm: '1rem' }
                 }}
               >
-                המסלול שלי
+                My Program
               </Button>
               <Button 
                 variant="contained" 
@@ -295,7 +295,7 @@ const HomePage: React.FC = () => {
                   fontSize: { xs: '0.875rem', sm: '1rem' }
                 }}
               >
-                עזרה ותמיכה
+                Help & Support
               </Button>
             </Box>
           </Box>
