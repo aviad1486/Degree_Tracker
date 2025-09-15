@@ -26,13 +26,11 @@ interface Course {
   year?: number;
   semester?: string;
   grade?: number;
-  attempts?: number;
 }
 
 const MyCourses: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentCourses, setCurrentCourses] = useState<Course[]>([]);
-  const [repeatedCourses, setRepeatedCourses] = useState<Course[]>([]);
   const [passedCourses, setPassedCourses] = useState<Course[]>([]);
 
   useEffect(() => {
@@ -49,7 +47,7 @@ const MyCourses: React.FC = () => {
           if (!snapStudent.empty) {
             const student = snapStudent.docs[0].data() as Student;
 
-            // שליפת כל רשומות studentCourses
+            // שליפת studentCourses
             const qSC = query(
               collection(firestore, "studentCourses"),
               where("studentId", "==", student.id)
@@ -57,15 +55,14 @@ const MyCourses: React.FC = () => {
             const snapSC = await getDocs(qSC);
             const scRecords = snapSC.docs.map((d) => d.data() as StudentCourse);
 
-            // שליפת מידע על קורסים מהקולקציה courses
+            // שליפת courses
             const snapAllCourses = await getDocs(collection(firestore, "courses"));
             const allCourses = snapAllCourses.docs.map((d) => d.data() as any);
 
-            // מיפוי courseCode -> פרטי קורס
             const courseMap: Record<string, any> = {};
             allCourses.forEach((c) => (courseMap[c.courseCode] = c));
 
-            // --- 1. קורסים נוכחיים (בסטודנט אבל בלי ציונים)
+            // --- קורסים נוכחיים
             const takenCodes = scRecords.map((r) => r.courseCode);
             const current = (student.courses || [])
               .filter((code) => !takenCodes.includes(code))
@@ -75,20 +72,7 @@ const MyCourses: React.FC = () => {
                 credits: courseMap[code]?.credits || 0,
               }));
 
-            // --- 2. קורסים עם attempts > 1
-            const repeated = scRecords
-              .filter((r) => r.attempts && r.attempts > 1)
-              .map((r) => ({
-                courseCode: r.courseCode,
-                courseName: courseMap[r.courseCode]?.courseName || r.courseCode,
-                credits: courseMap[r.courseCode]?.credits || 0,
-                year: r.year,
-                semester: r.semester,
-                grade: r.grade,
-                attempts: r.attempts,
-              }));
-
-            // --- 3. קורסים שעברתי (grade >= 60)
+            // --- קורסים שעברתי (grade >= 60)
             const passed = scRecords
               .filter((r) => typeof r.grade === "number" && r.grade >= 60)
               .map((r) => ({
@@ -101,7 +85,6 @@ const MyCourses: React.FC = () => {
               }));
 
             setCurrentCourses(current);
-            setRepeatedCourses(repeated);
             setPassedCourses(passed);
           }
         } catch (err) {
@@ -114,11 +97,48 @@ const MyCourses: React.FC = () => {
     return () => unsub();
   }, []);
 
-  const renderTable = (title: string, rows: Course[], showAttempts = false) => (
+  const renderCurrentTable = (rows: Course[]) => (
     <Card sx={{ mb: 3 }}>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          {title}
+          קורסים נוכחיים
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>קוד קורס</TableCell>
+                <TableCell>שם קורס</TableCell>
+                <TableCell>נק"ז</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((r, idx) => (
+                <TableRow key={idx}>
+                  <TableCell>{r.courseCode}</TableCell>
+                  <TableCell>{r.courseName}</TableCell>
+                  <TableCell>{r.credits}</TableCell>
+                </TableRow>
+              ))}
+              {rows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">
+                    אין נתונים להצגה
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </CardContent>
+    </Card>
+  );
+
+  const renderPassedTable = (rows: Course[]) => (
+    <Card sx={{ mb: 3 }}>
+      <CardContent>
+        <Typography variant="h6" gutterBottom>
+          קורסים שעברתי
         </Typography>
         <TableContainer component={Paper}>
           <Table>
@@ -130,7 +150,6 @@ const MyCourses: React.FC = () => {
                 <TableCell>שנה</TableCell>
                 <TableCell>סמסטר</TableCell>
                 <TableCell>ציון</TableCell>
-                {showAttempts && <TableCell>מס' ניסיונות</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -142,12 +161,11 @@ const MyCourses: React.FC = () => {
                   <TableCell>{r.year ?? "—"}</TableCell>
                   <TableCell>{r.semester ?? "—"}</TableCell>
                   <TableCell>{r.grade ?? "—"}</TableCell>
-                  {showAttempts && <TableCell>{r.attempts}</TableCell>}
                 </TableRow>
               ))}
               {rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={showAttempts ? 7 : 6} align="center">
+                  <TableCell colSpan={6} align="center">
                     אין נתונים להצגה
                   </TableCell>
                 </TableRow>
@@ -167,9 +185,8 @@ const MyCourses: React.FC = () => {
           <Typography variant="h5" gutterBottom>
             הקורסים שלי 📚
           </Typography>
-          {renderTable("קורסים נוכחיים", currentCourses)}
-          {renderTable("קורסים עם ניסיונות חוזרים", repeatedCourses, true)}
-          {renderTable("קורסים שעברתי", passedCourses)}
+          {renderCurrentTable(currentCourses)}
+          {renderPassedTable(passedCourses)}
         </>
       )}
     </Box>
