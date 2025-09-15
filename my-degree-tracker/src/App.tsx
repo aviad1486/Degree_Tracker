@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Box, Drawer, Toolbar, Container } from '@mui/material';
 
@@ -24,14 +24,26 @@ import Logout from './pages/logout';
 import MyCourses from './pages/mycourses';
 import MyProgram from './pages/myprogram';
 import Login from './pages/login';
+import AdminPage from './pages/admin';
 
 import ProtectedRoute from './components/ProtectedRoute';
+import RoleProtectedRoute from './components/RoleProtectedRoute';
+
+// Import admin setup helper for development
+import { setupFirstAdmin } from './utils/adminSetup';
 
 const sidebarWidth = 'clamp(200px, 18vw, 320px)';
 const mobileSidebarWidth = '280px';
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Setup admin helper in development
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      setupFirstAdmin();
+    }
+  }, []);
 
   const handleMenuToggle = () => setMenuOpen(v => !v);
   const handleMenuClose = () => setMenuOpen(false);
@@ -109,97 +121,105 @@ export default function App() {
             <Route
               path="/students/new"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditStudents">
                   <StudentForm />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               }
             />
             <Route
               path="/students/edit/:id"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditStudents">
                   <StudentForm />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               }
             />
             <Route
               path="/students"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditStudents">
                   <StudentList />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               }
             />
             <Route
               path="/courses/new"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditCourses">
                   <CourseForm />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               }
             />
             <Route
               path="/courses/edit/:courseCode"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditCourses">
                   <CourseForm />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               }
             />
             <Route
               path="/courses"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditCourses">
                   <CourseList />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               }
             />
             <Route
               path="/student-courses/new"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditStudents">
                   <StudentCourseForm />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               }
             />
             <Route
               path="/student-courses/edit/:index"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditStudents">
                   <StudentCourseForm />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               }
             />
             <Route
               path="/student-courses"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditStudents">
                   <StudentCourseList />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               }
             />
             <Route
               path="/programs/new"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditPrograms">
                   <ProgramForm />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               }
             />
             <Route
               path="/programs/edit/:name"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditPrograms">
                   <ProgramForm />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
               }
             />
             <Route
               path="/programs"
               element={
-                <ProtectedRoute>
+                <RoleProtectedRoute requiredPermission="canEditPrograms">
                   <ProgramList />
-                </ProtectedRoute>
+                </RoleProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <RoleProtectedRoute requireAdmin={true}>
+                  <AdminPage />
+                </RoleProtectedRoute>
               }
             />
             <Route

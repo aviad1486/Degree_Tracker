@@ -4,8 +4,9 @@ import type { Course } from "../models/Course";
 import type { StudentCourse } from "../models/StudentCourse";
 import type { Program } from "../models/Program";
 
-import { firestore } from "../firestore/config";
+import { firestore, auth } from "../firestore/config"; // Import auth
 import { doc, setDoc, getDocs, collection } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth"; // Import client-side function
 
 const SEED_VERSION = "v1";
 const COURSE_CODES = Array.from({ length: 10 }, (_, i) => `CS10${i + 1}`);
@@ -22,7 +23,7 @@ function makeCourses(): Course[] {
   }));
 }
 
-function makeStudents(): Student[] {
+function makeStudents(): (Student & { role: "admin" | "student" })[] {
   const semesters: Array<Student["semester"]> = ["A", "B", "C"];
   return Array.from({ length: 10 }, (_, i) => {
     const id = `10000000${i}`;
@@ -44,6 +45,7 @@ function makeStudents(): Student[] {
       semester: semesters[i % semesters.length],
       completedCredits: (i % 8) * 5,
       createdAt: new Date().toISOString(),
+      role: i === 0 ? "admin" : "student", // First student is admin
     };
   });
 }
@@ -79,8 +81,20 @@ async function seedCollection<T>(
   if (snap.empty) {
     const items = factory();
     for (const item of items) {
-      const id = String(item[idField]);
-      await setDoc(doc(firestore, colName, id), item as any);
+      try {
+        const id = String(item[idField]);
+        // 1. Save document to Firestore
+        await setDoc(doc(firestore, colName, id), item as any);
+
+        // 2. If it's a student, create an Auth user
+        if (colName === "students" && "email" in item && "id" in item) {
+          const student = item as Student;
+          await createUserWithEmailAndPassword(auth, student.email, student.id);
+          console.log(`✅ Auth user created for ${student.email}`);
+        }
+      } catch (error: any) {
+        console.error(`❌ Failed to seed item in ${colName}:`, error.message);
+      }
     }
   }
 }
@@ -93,7 +107,7 @@ export async function bootstrapFirestore(force = false): Promise<void> {
 
   if (!force && currentVer === SEED_VERSION) return;
 
-  await seedCollection<Student>("students", makeStudents, "id");
+  await seedCollection<Student & { role: string }>("students", makeStudents, "id");
   await seedCollection<Course>("courses", makeCourses, "courseCode");
   await seedCollection<StudentCourse>("studentCourses", makeStudentCourses, "courseCode");
   await seedCollection<Program>("programs", makePrograms, "name");
