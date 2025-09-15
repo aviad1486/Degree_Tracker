@@ -67,12 +67,7 @@ export const useProgramForm = () => {
       newErrors.totalCreditsRequired =
         "Total credits must be a non-negative integer";
     }
-    if (
-      data.courses
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean).length === 0
-    ) {
+    if (data.courses.length === 0) {
       newErrors.courses = "Enter at least one course code";
     }
 
