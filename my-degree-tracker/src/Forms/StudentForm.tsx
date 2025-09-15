@@ -139,12 +139,12 @@ const StudentForm: React.FC = () => {
 
       <TextField
         label="Completed Credits"
+        type="number"
         value={data.completedCredits}
         onChange={handleChange("completedCredits")}
         error={!!errors.completedCredits}
         helperText={errors.completedCredits}
         required fullWidth margin="normal"
-        disabled={isEdit}
       />
 
       <Box mt={2} textAlign="right">
