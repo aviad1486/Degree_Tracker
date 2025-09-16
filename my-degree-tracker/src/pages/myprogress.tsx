@@ -67,7 +67,9 @@ const MyProgress: React.FC = () => {
               where("studentId", "==", student.id)
             );
             const snapCourses = await getDocs(qCourses);
-            const rows = snapCourses.docs.map((doc) => doc.data() as StudentCourse);
+            const rows = snapCourses.docs
+              .map((doc) => doc.data() as StudentCourse)
+              .filter((c) => c.grade >= 60);
             setCourses(rows);
           }
         } catch (err) {

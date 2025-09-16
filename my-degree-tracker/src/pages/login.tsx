@@ -11,7 +11,8 @@ import {
 } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firestore/config"; // הקובץ שלך
+import { auth, firestore } from "../firestore/config"; // הקובץ שלך
+import { doc, getDoc } from "firebase/firestore";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");       // מייל של המשתמש
@@ -30,8 +31,21 @@ const Login: React.FC = () => {
       const userCred = await signInWithEmailAndPassword(auth, email, password);
       console.log("✅ Login success:", userCred.user);
 
-      setLoading(false);
-      navigate("/"); // מעביר לעמוד הבית
+      // Save credentials for re-login later
+      sessionStorage.setItem("loginEmail", email);
+      sessionStorage.setItem("loginPassword", password);
+
+      // Step 2: Check if Firestore doc exists with ID = password
+      const studentRef = doc(firestore, "students", password); 
+      const studentSnap = await getDoc(studentRef);
+
+      if (!studentSnap.exists()) {
+        setError("User does not exist in the system");
+        setLoading(false);
+        await auth.signOut();
+        return;
+      }
+      navigate("/");
     } catch (err: any) {
       console.error("❌ Login error:", err.code, err.message);
       setLoading(false);

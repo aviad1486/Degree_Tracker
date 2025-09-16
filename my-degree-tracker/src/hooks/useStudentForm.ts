@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import type { Student } from "../models/Student";
 
-import { firestore } from "../firestore/config";
+import { firestore, auth } from "../firestore/config";
 import { doc, getDoc, setDoc, getDocs, collection } from "firebase/firestore";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, type Auth } from "firebase/auth";
 
 const norm = (s: string) => (s || "").trim().toLowerCase();
 
@@ -11,12 +12,13 @@ export interface StudentFormData {
   id: string;
   fullName: string;
   email: string;
-  courses: string[];                   // now array
+  courses: string[];
   assignments: string;
   gradeSheet: string;
   program: string;
   semester: "A" | "B" | "C";
   completedCredits: string;
+  role: "student";   // 🔹 added role
 }
 
 export function useStudentForm() {
@@ -28,12 +30,13 @@ export function useStudentForm() {
     id: "",
     fullName: "",
     email: "",
-    courses: [],                        // initialize as array
+    courses: [],
     assignments: "",
     gradeSheet: "",
     program: "",
     semester: "A",
     completedCredits: "0",
+    role: "student",  // 🔹 default role
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof StudentFormData, string>>>({});
@@ -61,6 +64,7 @@ export function useStudentForm() {
             program: student.program || "",
             semester: student.semester,
             completedCredits: String(student.completedCredits ?? "0"),
+            role: "student",  // 🔹 enforce role
           });
         }
       };
@@ -113,8 +117,7 @@ export function useStudentForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // generic handler (excludes courses, which is managed by Autocomplete)
-  const handleChange = (field: Exclude<keyof StudentFormData, "courses">) =>
+  const handleChange = (field: Exclude<keyof StudentFormData, "courses" | "role">) =>
     (e: React.ChangeEvent<HTMLInputElement>) =>
       setData(prev => ({ ...prev, [field]: e.target.value }));
 
@@ -130,23 +133,44 @@ export function useStudentForm() {
       id: data.id,
       fullName: data.fullName,
       email: data.email,
-      courses: data.courses, // array directly
+      courses: data.courses,
       assignments: data.assignments.split(",").map(s => s.trim()).filter(Boolean),
       gradeSheet: JSON.parse(data.gradeSheet),
       program: data.program,
       semester: data.semester,
       completedCredits: parseInt(data.completedCredits, 10),
       createdAt: new Date().toISOString(),
+      role: "student",
     };
 
     try {
-      // Save student data to Firestore
+      // Step 1: Save to Firestore
       await setDoc(doc(firestore, "students", newStudent.id), newStudent);
 
-      setSnackMsg(isEdit ? "Student updated successfully!" : "Student added successfully!");
-      setSnackSeverity("success");
-      setSnackOpen(true);
-      setTimeout(() => navigate("/students"), 2500);
+      // Step 2: If ADD → create in Auth
+      if (!isEdit) {
+        // Save current admin credentials from sessionStorage
+        const prevEmail = sessionStorage.getItem("loginEmail");
+        const prevPassword = sessionStorage.getItem("loginPassword");
+        await createUserWithEmailAndPassword(auth, data.email, data.id);
+        setSnackMsg("Student added successfully!");
+        setSnackSeverity("success");
+        setSnackOpen(true);
+
+        setTimeout(async () => {
+          navigate("/login");
+          await auth.signOut();
+          if (prevEmail && prevPassword) {
+            await signInWithEmailAndPassword(auth, prevEmail, prevPassword);
+            navigate("/students");
+          }
+        }, 1500);
+      } else {
+        setSnackMsg("Student updated successfully!");
+        setSnackSeverity("success");
+        setSnackOpen(true);
+        setTimeout(() => navigate("/students"), 1500);
+      }
     } catch (err: any) {
       console.error("❌ Error saving student:", err.code, err.message);
       setSnackMsg(`Error: ${err.message}`);

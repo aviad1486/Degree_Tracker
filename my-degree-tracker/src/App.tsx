@@ -31,7 +31,8 @@ import RoleProtectedRoute from './components/RoleProtectedRoute';
 
 // Import database initialization
 import { setupAdminConsoleHelper } from './utils/databaseInit';
-
+import { auth } from './firestore/config';
+await auth.signOut(); // Ensure logged out on app start
 const sidebarWidth = 'clamp(200px, 18vw, 320px)';
 const mobileSidebarWidth = '280px';
 
