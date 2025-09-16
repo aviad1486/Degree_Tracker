@@ -9,4 +9,5 @@ export interface Student {
   semester: 'A' | 'B' | 'C';
   completedCredits: number;
   createdAt: string;         // ISO timestamp
+  role: 'admin' | 'student'; // 🔹 added role
 }

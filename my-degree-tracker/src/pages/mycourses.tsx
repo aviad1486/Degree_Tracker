@@ -32,6 +32,7 @@ const MyCourses: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentCourses, setCurrentCourses] = useState<Course[]>([]);
   const [passedCourses, setPassedCourses] = useState<Course[]>([]);
+  const [failedCourses, setFailedCourses] = useState<Course[]>([]);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
@@ -84,8 +85,21 @@ const MyCourses: React.FC = () => {
                 grade: r.grade,
               }));
 
+            // --- קורסים שנכשלתי (grade < 60)
+            const failed = scRecords
+              .filter((r) => typeof r.grade === "number" && r.grade < 60)
+              .map((r) => ({
+                courseCode: r.courseCode,
+                courseName: courseMap[r.courseCode]?.courseName || r.courseCode,
+                credits: courseMap[r.courseCode]?.credits || 0,
+                year: r.year,
+                semester: r.semester,
+                grade: r.grade,
+              }));
+
             setCurrentCourses(current);
             setPassedCourses(passed);
+            setFailedCourses(failed);
           }
         } catch (err) {
           console.error("❌ Error fetching courses:", err);
@@ -100,34 +114,36 @@ const MyCourses: React.FC = () => {
   const renderCurrentTable = (rows: Course[]) => (
     <Card sx={{ mb: 3 }}>
       <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-        <Typography 
-          variant="h6" 
+        <Typography
+          variant="h6"
           gutterBottom
-          sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+          sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
         >
           Current Courses
         </Typography>
-        <TableContainer 
+        <TableContainer
           component={Paper}
           sx={{
-            '& .MuiTable-root': {
-              minWidth: { xs: 'auto', sm: 650 }
-            }
+            "& .MuiTable-root": {
+              minWidth: { xs: "auto", sm: 650 },
+            },
           }}
         >
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                   Course Code
                 </TableCell>
-                <TableCell sx={{ 
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  display: { xs: 'none', sm: 'table-cell' }
-                }}>
+                <TableCell
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    display: { xs: "none", sm: "table-cell" },
+                  }}
+                >
                   Course Name
                 </TableCell>
-                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                   Credits
                 </TableCell>
               </TableRow>
@@ -135,26 +151,28 @@ const MyCourses: React.FC = () => {
             <TableBody>
               {rows.map((r, idx) => (
                 <TableRow key={idx}>
-                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                     {r.courseCode}
                   </TableCell>
-                  <TableCell sx={{ 
-                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                    display: { xs: 'none', sm: 'table-cell' }
-                  }}>
+                  <TableCell
+                    sx={{
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      display: { xs: "none", sm: "table-cell" },
+                    }}
+                  >
                     {r.courseName}
                   </TableCell>
-                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                     {r.credits}
                   </TableCell>
                 </TableRow>
               ))}
               {rows.length === 0 && (
                 <TableRow>
-                  <TableCell 
-                    colSpan={3} 
+                  <TableCell
+                    colSpan={3}
                     align="center"
-                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                    sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                   >
                     No data to display
                   </TableCell>
@@ -170,52 +188,60 @@ const MyCourses: React.FC = () => {
   const renderPassedTable = (rows: Course[]) => (
     <Card sx={{ mb: 3 }}>
       <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-        <Typography 
-          variant="h6" 
+        <Typography
+          variant="h6"
           gutterBottom
-          sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+          sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
         >
           Courses I've Passed
         </Typography>
-        <TableContainer 
+        <TableContainer
           component={Paper}
           sx={{
-            '& .MuiTable-root': {
-              minWidth: { xs: 'auto', sm: 650 }
-            }
+            "& .MuiTable-root": {
+              minWidth: { xs: "auto", sm: 650 },
+            },
           }}
         >
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                   Code
                 </TableCell>
-                <TableCell sx={{ 
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  display: { xs: 'none', sm: 'table-cell' }
-                }}>
+                <TableCell
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    display: { xs: "none", sm: "table-cell" },
+                  }}
+                >
                   Course Name
                 </TableCell>
-                <TableCell sx={{ 
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  display: { xs: 'none', md: 'table-cell' }
-                }}>
+                <TableCell
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    display: { xs: "none", md: "table-cell" },
+                  }}
+                >
                   Credits
                 </TableCell>
-                <TableCell sx={{ 
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  display: { xs: 'none', md: 'table-cell' }
-                }}>
+                <TableCell
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    display: { xs: "none", md: "table-cell" },
+                  }}
+                >
                   Year
                 </TableCell>
-                <TableCell sx={{ 
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  display: { xs: 'none', sm: 'table-cell' }
-                }}>
+                <TableCell
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    display: { xs: "none", sm: "table-cell" },
+                  }}
+                >
                   Semester
                 </TableCell>
-                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                   Grade
                 </TableCell>
               </TableRow>
@@ -223,46 +249,176 @@ const MyCourses: React.FC = () => {
             <TableBody>
               {rows.map((r, idx) => (
                 <TableRow key={idx}>
-                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                     {r.courseCode}
                   </TableCell>
-                  <TableCell sx={{ 
-                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                    display: { xs: 'none', sm: 'table-cell' }
-                  }}>
+                  <TableCell
+                    sx={{
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      display: { xs: "none", sm: "table-cell" },
+                    }}
+                  >
                     {r.courseName}
                   </TableCell>
-                  <TableCell sx={{ 
-                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                    display: { xs: 'none', md: 'table-cell' }
-                  }}>
+                  <TableCell
+                    sx={{
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      display: { xs: "none", md: "table-cell" },
+                    }}
+                  >
                     {r.credits}
                   </TableCell>
-                  <TableCell sx={{ 
-                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                    display: { xs: 'none', md: 'table-cell' }
-                  }}>
+                  <TableCell
+                    sx={{
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      display: { xs: "none", md: "table-cell" },
+                    }}
+                  >
                     {r.year ?? "—"}
                   </TableCell>
-                  <TableCell sx={{ 
-                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                    display: { xs: 'none', sm: 'table-cell' }
-                  }}>
+                  <TableCell
+                    sx={{
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      display: { xs: "none", sm: "table-cell" },
+                    }}
+                  >
                     {r.semester ?? "—"}
                   </TableCell>
-                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                     {r.grade ?? "—"}
                   </TableCell>
                 </TableRow>
               ))}
               {rows.length === 0 && (
                 <TableRow>
-                  <TableCell 
-                    colSpan={6} 
+                  <TableCell
+                    colSpan={6}
                     align="center"
-                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+                    sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                   >
                     No data to display
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </CardContent>
+    </Card>
+  );
+
+  const renderFailedTable = (rows: Course[]) => (
+    <Card sx={{ mb: 3 }}>
+      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+        >
+          Failed Courses
+        </Typography>
+        <TableContainer
+          component={Paper}
+          sx={{
+            "& .MuiTable-root": {
+              minWidth: { xs: "auto", sm: 650 },
+            },
+          }}
+        >
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
+                  Code
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    display: { xs: "none", sm: "table-cell" },
+                  }}
+                >
+                  Course Name
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    display: { xs: "none", md: "table-cell" },
+                  }}
+                >
+                  Credits
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    display: { xs: "none", md: "table-cell" },
+                  }}
+                >
+                  Year
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    display: { xs: "none", sm: "table-cell" },
+                  }}
+                >
+                  Semester
+                </TableCell>
+                <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
+                  Grade
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((r, idx) => (
+                <TableRow key={idx}>
+                  <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
+                    {r.courseCode}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      display: { xs: "none", sm: "table-cell" },
+                    }}
+                  >
+                    {r.courseName}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      display: { xs: "none", md: "table-cell" },
+                    }}
+                  >
+                    {r.credits}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      display: { xs: "none", md: "table-cell" },
+                    }}
+                  >
+                    {r.year ?? "—"}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      display: { xs: "none", sm: "table-cell" },
+                    }}
+                  >
+                    {r.semester ?? "—"}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
+                    {r.grade ?? "—"}
+                  </TableCell>
+                </TableRow>
+              ))}
+              {rows.length === 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={6}
+                    align="center"
+                    sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                  >
+                    No failed courses 🎉
                   </TableCell>
                 </TableRow>
               )}
@@ -278,15 +434,16 @@ const MyCourses: React.FC = () => {
       {loading && <LinearProgress sx={{ mb: 2 }} />}
       {!loading && (
         <>
-          <Typography 
-            variant="h5" 
+          <Typography
+            variant="h5"
             gutterBottom
-            sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+            sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
           >
             My Courses 📚
           </Typography>
           {renderCurrentTable(currentCourses)}
           {renderPassedTable(passedCourses)}
+          {renderFailedTable(failedCourses)}
         </>
       )}
     </Box>
