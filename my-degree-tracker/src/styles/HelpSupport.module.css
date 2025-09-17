@@ -1,0 +1,392 @@
+/* Professional HelpSupport Styles */
+
+.container {
+  padding: 2rem;
+  margin: 0;
+  width: 100%;
+  max-width: calc(100vw - 280px); /* Account for sidebar width */
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  min-height: 100vh;
+  font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.headerSection {
+  text-align: center;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.pageTitle {
+  text-align: center !important;
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  margin-bottom: 0.5rem !important;
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 1s ease-out;
+}
+
+.subtitle {
+  color: #94a3b8 !important;
+  font-size: 1.1rem !important;
+  margin-bottom: 0 !important;
+}
+
+/* Statistics Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+/* Statistics Cards - Purple Theme */
+.statCard {
+  background: rgba(139, 92, 246, 0.1) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-align: center !important;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #8b5cf6, #a855f7);
+  border-radius: 16px 16px 0 0;
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(139, 92, 246, 0.3);
+  background: rgba(139, 92, 246, 0.15) !important;
+}
+
+.statLabel {
+  color: #c4b5fd !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  margin-bottom: 8px !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center !important;
+}
+
+.statValue {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700 !important;
+  font-size: 2.5rem !important;
+  line-height: 1.2;
+  text-align: center !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Section Cards */
+.sectionCard {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.8s ease-out both;
+}
+
+.sectionCard:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.sectionCard:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.sectionCard:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+.sectionCard:nth-child(5) {
+  animation-delay: 0.8s;
+}
+
+.sectionCard:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Different colored top borders for variety */
+.purposeCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #8b5cf6, #a855f7);
+}
+
+.guidelinesCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+}
+
+.tipsCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.contactCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.sectionHeader {
+  padding: 2rem 2rem 1rem 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  color: #e2e8f0 !important;
+  margin-bottom: 1rem !important;
+  text-align: left !important;
+}
+
+.sectionContent {
+  padding: 0 2rem 2rem 2rem;
+}
+
+.sectionText {
+  color: #cbd5e1 !important;
+  font-size: 1.1rem !important;
+  line-height: 1.6 !important;
+  margin-bottom: 0 !important;
+}
+
+/* List styling */
+.guidelinesList {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+.guidelineItem {
+  background: rgba(59, 130, 246, 0.05) !important;
+  border-radius: 12px !important;
+  margin-bottom: 0.75rem !important;
+  padding: 1rem 1.5rem !important;
+  border-left: 4px solid #3b82f6 !important;
+  transition: all 0.3s ease !important;
+}
+
+.guidelineItem:hover {
+  background: rgba(59, 130, 246, 0.1) !important;
+  transform: translateX(5px) !important;
+}
+
+.guidelineText {
+  color: #e2e8f0 !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+/* Contact link styling */
+.contactLink {
+  color: #60a5fa !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+}
+
+.contactLink::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #60a5fa, #3b82f6);
+  transition: width 0.3s ease;
+}
+
+.contactLink:hover {
+  color: #3b82f6 !important;
+  text-decoration: none !important;
+}
+
+.contactLink:hover::after {
+  width: 100%;
+}
+
+/* Loading and Error States */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+}
+
+.title {
+  color: #e2e8f0 !important;
+  margin-bottom: 1rem !important;
+}
+
+.progressBar {
+  width: 300px !important;
+  height: 4px !important;
+  border-radius: 2px !important;
+}
+
+/* Feature highlights */
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.featureItem {
+  background: rgba(59, 130, 246, 0.05) !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+  text-align: center !important;
+  border: 1px solid rgba(59, 130, 246, 0.2) !important;
+  transition: all 0.3s ease !important;
+}
+
+.featureItem:hover {
+  background: rgba(59, 130, 246, 0.1) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2) !important;
+}
+
+.featureIcon {
+  font-size: 2rem !important;
+  margin-bottom: 0.5rem !important;
+  display: block !important;
+}
+
+.featureName {
+  color: #60a5fa !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  margin-bottom: 0 !important;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Desktop optimizations for sidebar layout */
+@media (min-width: 769px) {
+  .container {
+    max-width: calc(100vw - 300px);
+    padding: 2rem;
+  }
+  
+  .statsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+    max-width: 100vw;
+  }
+  
+  .pageTitle {
+    font-size: 2rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .subtitle {
+    font-size: 1rem !important;
+  }
+  
+  .sectionHeader {
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+  }
+  
+  .sectionContent {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.5rem !important;
+  }
+  
+  .sectionText {
+    font-size: 1rem !important;
+  }
+  
+  .guidelineItem {
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .guidelineText {
+    font-size: 0.9rem !important;
+  }
+  
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .statValue {
+    font-size: 2rem !important;
+  }
+  
+  .featureGrid {
+    grid-template-columns: 1fr;
+  }
+}
