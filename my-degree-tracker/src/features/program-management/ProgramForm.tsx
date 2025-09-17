@@ -4,24 +4,20 @@ import SnackbarNotification from "../../components/ui/SnackbarNotification";
 import { useProgramForm } from "../../hooks/useProgramForm";
 import { collection, getDocs } from "firebase/firestore";
 import { firestore } from "../../firestore/config";
+import { useNavigate } from "react-router-dom";
+
+import styles from "../styles/ProgramForm.module.css";
 
 const ProgramForm: React.FC = () => {
   const {
-    data,
-    setData,
-    errors,
-    snackOpen,
-    setSnackOpen,
-    snackMsg,
-    snackSeverity,
-    isEdit,
-    handleChange,
-    handleSubmit,
+    data, errors, snackOpen, snackMsg, snackSeverity,
+    setSnackOpen, handleChange, handleSubmit, isEdit, setData
   } = useProgramForm();
 
   const [courseOptions, setCourseOptions] = useState<string[]>([]);
+  const navigate = useNavigate();
 
-  // טוען את רשימת הקורסים מ-Firestore
+  // טוען קורסים להצגת אפשרויות
   useEffect(() => {
     const fetchCourses = async () => {
       const snap = await getDocs(collection(firestore, "courses"));
@@ -32,56 +28,67 @@ const ProgramForm: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
-      <Typography variant="h6" gutterBottom>
+    <Box className={styles.programFormContainer}>
+      <Typography className={styles.programFormTitle}>
         {isEdit ? "Edit Study Program" : "Add Study Program"}
       </Typography>
 
-      <TextField
-        label="Program Name"
-        value={data.name}
-        onChange={handleChange("name")}
-        error={!!errors.name}
-        helperText={errors.name}
-        required
-        fullWidth
-        margin="normal"
-        disabled={isEdit}
-      />
+      <Box className={styles.programFormFields}>
+        <TextField
+          label="Program Name"
+          value={data.name}
+          onChange={handleChange("name")}
+          error={!!errors.name}
+          helperText={errors.name}
+          required fullWidth margin="normal"
+          disabled={isEdit}
+          className={styles.programFormField}
+        />
 
-      <TextField
-        type="number"
-        inputProps={{ min: 0 }}
-        label="Total Credits Required"
-        value={data.totalCreditsRequired}
-        onChange={handleChange("totalCreditsRequired")}
-        error={!!errors.totalCreditsRequired}
-        helperText={errors.totalCreditsRequired}
-        required
-        fullWidth
-        margin="normal"
-      />
+        <TextField
+          label="Total Credits Required"
+          type="number"
+          value={data.totalCreditsRequired}
+          onChange={handleChange("totalCreditsRequired")}
+          error={!!errors.totalCreditsRequired}
+          helperText={errors.totalCreditsRequired}
+          required fullWidth margin="normal"
+          className={styles.programFormField}
+        />
 
-      {/* בחירת קורסים מרובים מתוך רשימת קורסים */}
-      <Autocomplete
-        multiple
-        options={courseOptions}
-        value={data.courses}
-        onChange={(_, newValue) => setData((prev) => ({ ...prev, courses: newValue }))}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Courses"
-            error={!!errors.courses}
-            helperText={errors.courses}
-            required
-            margin="normal"
-          />
-        )}
-      />
+        <Autocomplete
+          multiple
+          options={courseOptions}
+          value={data.courses}
+          onChange={(_, newValue) =>
+            setData((prev) => ({ ...prev, courses: newValue }))
+          }
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Courses"
+              error={!!errors.courses}
+              helperText={errors.courses}
+              required
+              margin="normal"
+              className={styles.programFormField}
+            />
+          )}
+        />
+      </Box>
 
-      <Box mt={2} textAlign="right">
-        <Button variant="contained" onClick={handleSubmit}>
+      <Box className={styles.formButtons}>
+        <Button
+          onClick={() => navigate("/programs")}
+          className={styles.cancelButton}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          className={styles.saveButton}
+        >
           {isEdit ? "Update" : "Save"}
         </Button>
       </Box>

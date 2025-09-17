@@ -1,0 +1,94 @@
+.courseListContainer {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.courseListCard {
+  background: rgba(30, 41, 59, 0.9); /* בהיר יותר מהרקע הכללי */
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  overflow: hidden;
+}
+
+.courseListTitle {
+  font-size: 1.8rem;
+  font-weight: 800;
+  text-align: center; /* ממורכז */
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.tableWrapper {
+  background: rgba(255, 255, 255, 0.05); /* טבלה בהירה יותר מהרקע */
+}
+
+.tableHeader {
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+}
+
+.tableHeaderCell {
+  color: #fff !important;
+  font-weight: 700 !important;
+  text-align: center;
+}
+
+.tableRow {
+  transition: background 0.2s ease;
+}
+
+.tableRow:hover {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.tableCell {
+  color: #e2e8f0 !important;
+  text-align: center;
+}
+
+.actionButton {
+  margin: 0 0.2rem;
+  border-radius: 8px;
+  padding: 0.35rem !important;
+  transition: transform 0.2s ease;
+}
+
+.editButton {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6 !important;
+}
+
+.deleteButton {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444 !important;
+}
+
+.editButton:hover,
+.deleteButton:hover {
+  transform: scale(1.1);
+}
+
+.emptyState {
+  text-align: center;
+  color: #94a3b8;
+  padding: 2rem;
+}
+
+.addButton {
+  margin-top: 1rem !important;
+  padding: 0.8rem 2rem !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 18px rgba(59,130,246,0.5);
+  transition: transform 0.2s ease;
+}
+
+.addButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(59,130,246,0.6);
+}
