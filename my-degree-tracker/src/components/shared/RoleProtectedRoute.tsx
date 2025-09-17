@@ -1,8 +1,8 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { Box, CircularProgress, Alert } from "@mui/material";
-import { useUserRole } from "../hooks/useUserRole";
-import type { UserPermissions } from "../models/User";
+import { useUserRole } from "../../hooks/useUserRole";
+import type { UserPermissions } from "../../models/User";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

@@ -4,7 +4,7 @@ import type { Student } from "../models/Student";
 
 import { firestore, auth } from "../firestore/config";
 import { doc, getDoc, setDoc, getDocs, collection } from "firebase/firestore";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, type Auth } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 const norm = (s: string) => (s || "").trim().toLowerCase();
 

@@ -8,8 +8,8 @@ import {
   ButtonGroup,
   Autocomplete,
 } from '@mui/material';
-import SnackbarNotification from '../components/SnackbarNotification';
-import { useStudentCourseForm } from '../hooks/useStudentCourseForm';
+import SnackbarNotification from '../../components/ui/SnackbarNotification';
+import { useStudentCourseForm } from '../../hooks/useStudentCourseForm';
 
 const StudentCourseForm: React.FC = () => {
   const {

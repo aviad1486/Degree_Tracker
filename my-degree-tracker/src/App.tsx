@@ -2,20 +2,12 @@ import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Box, Drawer, Toolbar, Container } from '@mui/material';
 
-import Header from './components/Header';
-import Footer from './components/Footer';
-import MainDrawer from './components/MainDrawer';
-import HamburgerDrawer from './components/HamburgerDrawer';
+import { Header, Footer, MainDrawer, HamburgerDrawer } from './components/layout';
 
 import HomePage from './pages/homepage';
-import StudentForm from './Forms/StudentForm';
-import StudentList from './Forms/StudentList';
-import CourseForm from './Forms/CourseForm';
-import CourseList from './Forms/CourseList';
-import StudentCourseForm from './Forms/StudentCourseForm';
-import StudentCourseList from './Forms/StudentCourseList';
-import ProgramForm from './Forms/ProgramForm';
-import ProgramList from './Forms/ProgramList';
+import { StudentForm, StudentList, StudentCourseForm, StudentCourseList } from './features/student-management';
+import { CourseForm, CourseList } from './features/course-management';
+import { ProgramForm, ProgramList } from './features/program-management';
 
 import MyProgress from './pages/myprogress';
 import GradeReport from './pages/gradereport';
@@ -26,9 +18,7 @@ import MyProgram from './pages/myprogram';
 import Login from './pages/login';
 import AdminPage from './pages/admin';
 
-import ProtectedRoute from './components/ProtectedRoute';
-import RoleProtectedRoute from './components/RoleProtectedRoute';
-import DesktopOnly from './components/DesktopOnly';
+import { ProtectedRoute, RoleProtectedRoute, DesktopOnly } from './components/shared';
 
 // Import database initialization
 import { setupAdminConsoleHelper } from './utils/databaseInit';

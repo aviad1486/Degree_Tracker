@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
-  TableBody,
-  TableCell,
-  TableContainer,
   TableHead,
+  TableBody,
   TableRow,
+  TableCell,
   Paper,
+  TableContainer,
   IconButton,
   Box,
   Typography,
@@ -14,34 +14,34 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import type { Program } from "../models/Program";
 import { useNavigate } from "react-router-dom";
+import type { Course } from "../../models/Course";
 
-import { firestore } from "../firestore/config";
+import { firestore } from "../../firestore/config";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
-const ProgramList: React.FC = () => {
-  const [programs, setPrograms] = useState<(Program & { id: string })[]>([]);
+const CourseList: React.FC = () => {
+  const [courses, setCourses] = useState<(Course & { id: string })[]>([]);
   const navigate = useNavigate();
 
-  // טוען את כל ה-Programs מ-Firestore
+  // טוען את כל הקורסים מ-Firestore
   useEffect(() => {
-    const fetchPrograms = async () => {
-      const snap = await getDocs(collection(firestore, "programs"));
-      const data = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Program) }));
-      setPrograms(data);
+    const fetchCourses = async () => {
+      const snap = await getDocs(collection(firestore, "courses"));
+      const data = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Course) }));
+      setCourses(data);
     };
-    fetchPrograms();
+    fetchCourses();
   }, []);
 
-  // מוחק Program לפי ה-id שלו
+  // מוחק קורס לפי courseCode
   const handleDelete = async (docId: string) => {
-    await deleteDoc(doc(firestore, "programs", docId));
-    setPrograms((prev) => prev.filter((p) => p.id !== docId));
+    await deleteDoc(doc(firestore, "courses", docId));
+    setCourses((prev) => prev.filter((c) => c.id !== docId));
   };
 
   const handleEdit = (docId: string) => {
-    navigate(`/programs/edit/${docId}`);
+    navigate(`/courses/edit/${docId}`);
   };
 
   return (
@@ -51,7 +51,7 @@ const ProgramList: React.FC = () => {
           variant="h6"
           sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
         >
-          Study Programs
+          Courses List
         </Typography>
       </Box>
       <TableContainer 
@@ -66,22 +66,28 @@ const ProgramList: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                Program Name
+                Course Code
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', sm: 'table-cell' }
+              }}>
+                Name
               </TableCell>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                Total Credits
+                Credits
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', md: 'table-cell' }
               }}>
-                Courses
+                Semester
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', lg: 'table-cell' }
               }}>
-                Created
+                Assignments
               </TableCell>
               <TableCell 
                 align="right"
@@ -92,38 +98,42 @@ const ProgramList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {programs.map((program) => (
-              <TableRow key={program.id}>
+            {courses.map((course) => (
+              <TableRow key={course.id}>
                 <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  {program.name}
+                  {course.courseCode}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', sm: 'table-cell' }
+                }}>
+                  {course.courseName}
                 </TableCell>
                 <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  {program.totalCreditsRequired}
+                  {course.credits}
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', md: 'table-cell' }
                 }}>
-                  {program.courses.join(", ")}
+                  {course.semester}
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', lg: 'table-cell' }
                 }}>
-                  {program.createdAt
-                    ? new Date(program.createdAt).toLocaleString()
-                    : "—"}
+                  {course.assignments.join(", ")}
                 </TableCell>
                 <TableCell align="right">
                   <IconButton 
-                    onClick={() => handleEdit(program.id)}
+                    onClick={() => handleEdit(course.id)}
                     size="small"
                     sx={{ p: { xs: 0.5, sm: 1 } }}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton 
-                    onClick={() => handleDelete(program.id)}
+                    onClick={() => handleDelete(course.id)}
                     size="small"
                     sx={{ p: { xs: 0.5, sm: 1 } }}
                   >
@@ -132,14 +142,14 @@ const ProgramList: React.FC = () => {
                 </TableCell>
               </TableRow>
             ))}
-            {programs.length === 0 && (
+            {courses.length === 0 && (
               <TableRow>
                 <TableCell 
-                  colSpan={5} 
+                  colSpan={6} 
                   align="center"
                   sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                 >
-                  No study programs found.
+                  No courses found.
                 </TableCell>
               </TableRow>
             )}
@@ -150,17 +160,17 @@ const ProgramList: React.FC = () => {
       <Box display="flex" justifyContent="flex-end" mt={2}>
         <Button 
           variant="contained" 
-          onClick={() => navigate("/programs/new")}
+          onClick={() => navigate("/courses/new")}
           sx={{ 
             minHeight: { xs: 44, sm: 36 },
             fontSize: { xs: '0.875rem', sm: '0.875rem' }
           }}
         >
-          Add Program
+          Add Course
         </Button>
       </Box>
     </Box>
   );
 };
 
-export default ProgramList;
+export default CourseList;

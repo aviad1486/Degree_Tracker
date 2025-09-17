@@ -24,7 +24,7 @@ import {
   AdminPanelSettings as AdminIcon,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { useUserRole } from '../hooks/useUserRole';
+import { useUserRole } from '../../hooks/useUserRole';
 
 interface HamburgerDrawerProps {
   onClose: () => void;

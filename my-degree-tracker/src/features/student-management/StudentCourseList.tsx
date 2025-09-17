@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
   Table,
-  TableHead,
   TableBody,
-  TableRow,
   TableCell,
-  Paper,
   TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
   IconButton,
   Box,
   Typography,
@@ -15,43 +15,43 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
-import type { Course } from "../models/Course";
+import type { StudentCourse } from "../../models/StudentCourse";
 
-import { firestore } from "../firestore/config";
+import { firestore } from "../../firestore/config";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
-const CourseList: React.FC = () => {
-  const [courses, setCourses] = useState<(Course & { id: string })[]>([]);
+const StudentCourseList: React.FC = () => {
+  const [records, setRecords] = useState<StudentCourse[]>([]);
   const navigate = useNavigate();
 
-  // טוען את כל הקורסים מ-Firestore
+  // טוען את כל הרשומות מ-Firestore
   useEffect(() => {
-    const fetchCourses = async () => {
-      const snap = await getDocs(collection(firestore, "courses"));
-      const data = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Course) }));
-      setCourses(data);
+    const fetchRecords = async () => {
+      const snap = await getDocs(collection(firestore, "studentCourses"));
+      const data = snap.docs.map((d) => ({ id: d.id, ...(d.data() as StudentCourse) }));
+      setRecords(data);
     };
-    fetchCourses();
+    fetchRecords();
   }, []);
 
-  // מוחק קורס לפי courseCode
+  // מוחק רשומה לפי ה-ID שלה ב-Firestore
   const handleDelete = async (docId: string) => {
-    await deleteDoc(doc(firestore, "courses", docId));
-    setCourses((prev) => prev.filter((c) => c.id !== docId));
+    await deleteDoc(doc(firestore, "studentCourses", docId));
+    setRecords((prev) => prev.filter((rec) => (rec as any).id !== docId));
   };
 
   const handleEdit = (docId: string) => {
-    navigate(`/courses/edit/${docId}`);
+    navigate(`/student-courses/edit/${docId}`);
   };
 
   return (
-    <Box sx={{ mt: 4, mx: "auto", maxWidth: 800, p: { xs: 2, sm: 0 } }}>
+    <Box sx={{ mt: 4, mx: "auto", maxWidth: 900, p: { xs: 2, sm: 0 } }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography 
           variant="h6"
           sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
         >
-          Courses List
+          Student Grades
         </Typography>
       </Box>
       <TableContainer 
@@ -66,28 +66,37 @@ const CourseList: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                Course Code
+                Student ID
+              </TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                Course
+              </TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                Grade
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', sm: 'table-cell' }
               }}>
-                Name
-              </TableCell>
-              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                Credits
+                Semester
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', md: 'table-cell' }
               }}>
-                Semester
+                Year
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', lg: 'table-cell' }
               }}>
-                Assignments
+                Attempts
+              </TableCell>
+              <TableCell sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'none', lg: 'table-cell' }
+              }}>
+                Created
               </TableCell>
               <TableCell 
                 align="right"
@@ -98,42 +107,57 @@ const CourseList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {courses.map((course) => (
-              <TableRow key={course.id}>
+            {records.map((record) => (
+              <TableRow key={(record as any).id}>
                 <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  {course.courseCode}
+                  {record.studentId}
+                </TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  {record.courseCode}
+                </TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  {record.grade}
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', sm: 'table-cell' }
                 }}>
-                  {course.courseName}
-                </TableCell>
-                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  {course.credits}
+                  {record.semester}
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', md: 'table-cell' }
                 }}>
-                  {course.semester}
+                  {record.year}
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', lg: 'table-cell' }
                 }}>
-                  {course.assignments.join(", ")}
+                  {typeof record.retaken === "number"
+                    ? record.retaken
+                    : record.retaken
+                    ? 2
+                    : 1}
+                </TableCell>
+                <TableCell sx={{ 
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  display: { xs: 'none', lg: 'table-cell' }
+                }}>
+                  {record.createdAt
+                    ? new Date(record.createdAt).toLocaleString()
+                    : "—"}
                 </TableCell>
                 <TableCell align="right">
                   <IconButton 
-                    onClick={() => handleEdit(course.id)}
+                    onClick={() => handleEdit((record as any).id)}
                     size="small"
                     sx={{ p: { xs: 0.5, sm: 1 } }}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton 
-                    onClick={() => handleDelete(course.id)}
+                    onClick={() => handleDelete((record as any).id)}
                     size="small"
                     sx={{ p: { xs: 0.5, sm: 1 } }}
                   >
@@ -142,14 +166,14 @@ const CourseList: React.FC = () => {
                 </TableCell>
               </TableRow>
             ))}
-            {courses.length === 0 && (
+            {records.length === 0 && (
               <TableRow>
                 <TableCell 
-                  colSpan={6} 
+                  colSpan={8} 
                   align="center"
                   sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                 >
-                  No courses found.
+                  No grade records found.
                 </TableCell>
               </TableRow>
             )}
@@ -158,19 +182,19 @@ const CourseList: React.FC = () => {
       </TableContainer>
 
       <Box display="flex" justifyContent="flex-end" mt={2}>
-        <Button 
-          variant="contained" 
-          onClick={() => navigate("/courses/new")}
+        <Button
+          variant="contained"
+          onClick={() => navigate("/student-courses/new")}
           sx={{ 
             minHeight: { xs: 44, sm: 36 },
             fontSize: { xs: '0.875rem', sm: '0.875rem' }
           }}
         >
-          Add Course
+          Add Grade
         </Button>
       </Box>
     </Box>
   );
 };
 
-export default CourseList;
+export default StudentCourseList;

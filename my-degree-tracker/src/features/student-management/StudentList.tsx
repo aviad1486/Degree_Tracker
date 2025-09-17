@@ -1,57 +1,59 @@
-import React, { useEffect, useState } from "react";
+// src/Forms/StudentList.tsx
+import React, { useEffect, useState } from 'react';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Box,
-  Typography,
-  Button,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import { useNavigate } from "react-router-dom";
-import type { StudentCourse } from "../models/StudentCourse";
+  Table, TableHead, TableBody, TableRow, TableCell,
+  Paper, TableContainer, IconButton, Box, Typography, Button
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { useNavigate } from 'react-router-dom';
+import type { Student } from '../../models/Student';
 
-import { firestore } from "../firestore/config";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { firestore } from '../../firestore/config';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 
-const StudentCourseList: React.FC = () => {
-  const [records, setRecords] = useState<StudentCourse[]>([]);
+const avgFromGradeSheet = (gradeSheet: Record<string, number> | undefined | null) => {
+  if (!gradeSheet || typeof gradeSheet !== 'object' || Array.isArray(gradeSheet)) return null;
+  const grades = Object.values(gradeSheet).filter(
+    (g) => typeof g === 'number' && !Number.isNaN(g)
+  );
+  if (grades.length === 0) return null;
+  const sum = grades.reduce((a, b) => a + b, 0);
+  return sum / grades.length;
+};
+
+const StudentList: React.FC = () => {
+  const [students, setStudents] = useState<Student[]>([]);
   const navigate = useNavigate();
 
-  // טוען את כל הרשומות מ-Firestore
+  // טוען סטודנטים מ-Firestore
   useEffect(() => {
-    const fetchRecords = async () => {
-      const snap = await getDocs(collection(firestore, "studentCourses"));
-      const data = snap.docs.map((d) => ({ id: d.id, ...(d.data() as StudentCourse) }));
-      setRecords(data);
+    const fetchStudents = async () => {
+      const snap = await getDocs(collection(firestore, 'students'));
+      const data = snap.docs.map(d => d.data() as Student);
+      setStudents(data);
     };
-    fetchRecords();
+    fetchStudents();
   }, []);
 
-  // מוחק רשומה לפי ה-ID שלה ב-Firestore
-  const handleDelete = async (docId: string) => {
-    await deleteDoc(doc(firestore, "studentCourses", docId));
-    setRecords((prev) => prev.filter((rec) => (rec as any).id !== docId));
+  // מוחק סטודנט מ-Firestore
+  const handleDelete = async (id: string) => {
+    await deleteDoc(doc(firestore, 'students', id));
+    setStudents(prev => prev.filter(s => s.id !== id));
   };
 
-  const handleEdit = (docId: string) => {
-    navigate(`/student-courses/edit/${docId}`);
+  const handleEdit = (id: string) => {
+    navigate(`/students/edit/${id}`);
   };
 
   return (
-    <Box sx={{ mt: 4, mx: "auto", maxWidth: 900, p: { xs: 2, sm: 0 } }}>
+    <Box sx={{ mt: 4, mx: 'auto', maxWidth: 800, p: { xs: 2, sm: 0 } }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography 
           variant="h6"
           sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
         >
-          Student Grades
+          Students List
         </Typography>
       </Box>
       <TableContainer 
@@ -66,37 +68,34 @@ const StudentCourseList: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                Student ID
-              </TableCell>
-              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                Course
-              </TableCell>
-              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                Grade
+                Full Name
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', sm: 'table-cell' }
               }}>
-                Semester
+                ID
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', md: 'table-cell' }
               }}>
-                Year
+                Email
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 display: { xs: 'none', lg: 'table-cell' }
               }}>
-                Attempts
+                Courses
               </TableCell>
               <TableCell sx={{ 
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                display: { xs: 'none', lg: 'table-cell' }
+                display: { xs: 'none', md: 'table-cell' }
               }}>
-                Created
+                Program
+              </TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                Average
               </TableCell>
               <TableCell 
                 align="right"
@@ -107,57 +106,51 @@ const StudentCourseList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {records.map((record) => (
-              <TableRow key={(record as any).id}>
+            {students.map(student => (
+              <TableRow key={student.id}>
                 <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  {record.studentId}
-                </TableCell>
-                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  {record.courseCode}
-                </TableCell>
-                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  {record.grade}
+                  {student.fullName}
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', sm: 'table-cell' }
                 }}>
-                  {record.semester}
+                  {student.id}
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', md: 'table-cell' }
                 }}>
-                  {record.year}
+                  {student.email}
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   display: { xs: 'none', lg: 'table-cell' }
                 }}>
-                  {typeof record.retaken === "number"
-                    ? record.retaken
-                    : record.retaken
-                    ? 2
-                    : 1}
+                  {(student.courses || []).join(', ')}
                 </TableCell>
                 <TableCell sx={{ 
                   fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  display: { xs: 'none', lg: 'table-cell' }
+                  display: { xs: 'none', md: 'table-cell' }
                 }}>
-                  {record.createdAt
-                    ? new Date(record.createdAt).toLocaleString()
-                    : "—"}
+                  {student.program}
+                </TableCell>
+                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                  {(() => {
+                    const avg = avgFromGradeSheet(student.gradeSheet);
+                    return avg === null ? '—' : avg.toFixed(1);
+                  })()}
                 </TableCell>
                 <TableCell align="right">
                   <IconButton 
-                    onClick={() => handleEdit((record as any).id)}
+                    onClick={() => handleEdit(student.id)}
                     size="small"
                     sx={{ p: { xs: 0.5, sm: 1 } }}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton 
-                    onClick={() => handleDelete((record as any).id)}
+                    onClick={() => handleDelete(student.id)}
                     size="small"
                     sx={{ p: { xs: 0.5, sm: 1 } }}
                   >
@@ -166,35 +159,35 @@ const StudentCourseList: React.FC = () => {
                 </TableCell>
               </TableRow>
             ))}
-            {records.length === 0 && (
+            {students.length === 0 && (
               <TableRow>
                 <TableCell 
-                  colSpan={8} 
+                  colSpan={7} 
                   align="center"
                   sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                 >
-                  No grade records found.
+                  No students found.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </TableContainer>
-
+      {/* Add Student Button */}
       <Box display="flex" justifyContent="flex-end" mt={2}>
         <Button
           variant="contained"
-          onClick={() => navigate("/student-courses/new")}
+          onClick={() => navigate('/students/new')}
           sx={{ 
             minHeight: { xs: 44, sm: 36 },
             fontSize: { xs: '0.875rem', sm: '0.875rem' }
           }}
         >
-          Add Grade
+          Add Student
         </Button>
       </Box>
     </Box>
   );
 };
 
-export default StudentCourseList;
+export default StudentList;

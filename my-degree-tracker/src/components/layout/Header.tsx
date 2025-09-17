@@ -3,9 +3,9 @@ import { AppBar, Toolbar, Typography, Button, Box, IconButton, Menu, MenuItem } 
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useNavigate } from 'react-router-dom';
-import { useUserRole } from '../hooks/useUserRole';
+import { useUserRole } from '../../hooks/useUserRole';
 import { signOut } from 'firebase/auth';
-import { auth } from '../firestore/config';
+import { auth } from '../../firestore/config';
 
 interface HeaderProps {
   onMenuClick?: () => void;

@@ -1,7 +1,7 @@
 import React from "react";
 import { TextField, Button, Box, Typography, MenuItem } from "@mui/material";
-import SnackbarNotification from "../components/SnackbarNotification";
-import { useCourseForm } from "../hooks/useCourseForm";
+import SnackbarNotification from "../../components/ui/SnackbarNotification";
+import { useCourseForm } from "../../hooks/useCourseForm";
 
 const CourseForm: React.FC = () => {
   const {

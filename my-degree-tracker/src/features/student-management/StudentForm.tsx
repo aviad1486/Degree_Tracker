@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { TextField, Button, Box, Typography, MenuItem, Autocomplete } from "@mui/material";
-import SnackbarNotification from "../components/SnackbarNotification";
-import { useStudentForm } from "../hooks/useStudentForm";
+import SnackbarNotification from "../../components/ui/SnackbarNotification";
+import { useStudentForm } from "../../hooks/useStudentForm";
 import { collection, getDocs } from "firebase/firestore";
-import { firestore } from "../firestore/config";
+import { firestore } from "../../firestore/config";
 
 const StudentForm: React.FC = () => {
   const {
