@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box,
   Typography,
   Card,
   CardContent,
@@ -18,6 +17,7 @@ import { Link } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, firestore } from "../firestore/config";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
+import styles from "../styles/Homepage.module.css";
 
 const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -75,180 +75,112 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{ p: { xs: 1, sm: 3 } }}>
-      {loading && <LinearProgress sx={{ mb: 2 }} />}
+    <div className={styles.homepageContainer}>
+      {loading && <LinearProgress className={styles.loadingBar} />}
 
       {!loading && (
         <>
-          {/* Personal Greeting */}
+          {/* Professional Welcome Title */}
           <Typography 
-            variant="h4" 
+            variant="h2" 
             component="h1"
-            gutterBottom
-            sx={{ 
-              textAlign: { xs: 'center', sm: 'left' },
-              mb: { xs: 2, sm: 3 }
-            }}
+            className={styles.welcomeTitle}
           >
             Hello, {studentName ?? "Student"}! 👋
           </Typography>
 
-          {/* Degree Status Summary */}
-          <Box sx={{ 
-            display: 'grid', 
-            gridTemplateColumns: { 
-              xs: '1fr', 
-              sm: 'repeat(auto-fit, minmax(250px, 1fr))' 
-            }, 
-            gap: { xs: 1.5, sm: 2 }, 
-            mb: { xs: 3, sm: 4 }
-          }}>
-            <Card sx={{ minHeight: { xs: 'auto', sm: 120 } }}>
-              <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-                <Typography 
-                  variant="h6"
-                  component="h3"
-                >
+          {/* Professional Stats Grid */}
+          <div className={styles.statsGrid}>
+            {/* Credits Card */}
+            <Card className={styles.statCard}>
+              <CardContent className={styles.statCardContent}>
+                <Typography className={styles.statTitle}>
                   Credits Completed
                 </Typography>
-                <Typography 
-                  variant="h5"
-                  component="div"
-                  sx={{ 
-                    fontWeight: 'bold',
-                    color: 'primary.main'
-                  }}
-                >
+                <Typography className={`${styles.statValue} ${styles.creditsValue}`}>
                   {completedCredits}/{totalCredits}
                 </Typography>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={(completedCredits / totalCredits) * 100}
+                  className={styles.progressBar}
+                />
               </CardContent>
             </Card>
 
-            <Card sx={{ minHeight: { xs: 'auto', sm: 120 } }}>
-              <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-                <Typography 
-                  variant="h6"
-                  component="h3"
-                >
+            {/* Grade Average Card */}
+            <Card className={styles.statCard}>
+              <CardContent className={styles.statCardContent}>
+                <Typography className={styles.statTitle}>
                   Grade Average
                 </Typography>
-                <Typography 
-                  variant="h5"
-                  component="div"
-                  sx={{ 
-                    fontWeight: 'bold',
-                    color: 'secondary.main'
-                  }}
-                >
-                  {gpa}
+                <Typography className={`${styles.statValue} ${styles.gradeValue}`}>
+                  {gpa.toFixed(2)}
                 </Typography>
               </CardContent>
             </Card>
 
-            <Card sx={{ minHeight: { xs: 'auto', sm: 120 } }}>
-              <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-                <Typography 
-                  variant="h6"
-                  component="h3"
-                >
+            {/* Study Program Card */}
+            <Card className={styles.statCard}>
+              <CardContent className={styles.statCardContent}>
+                <Typography className={styles.statTitle}>
                   Study Program
                 </Typography>
-                <Typography 
-                  variant="body1"
-                  sx={{ 
-                    wordBreak: 'break-word'
-                  }}
-                >
-                  {program}
+                <Typography className={styles.programText}>
+                  {program || "Program 1"}
                 </Typography>
               </CardContent>
             </Card>
-          </Box>
+          </div>
 
-          {/* Assignments Table */}
-          <Typography 
-            variant="h6" 
-            gutterBottom
-            sx={{ 
-              fontSize: { xs: '1.1rem', sm: '1.25rem' },
-              mb: { xs: 1, sm: 2 }
-            }}
-          >
-            Assignments
-          </Typography>
-          <TableContainer 
-            component={Paper} 
-            sx={{ 
-              mb: { xs: 3, sm: 4 },
-              maxHeight: { xs: 300, sm: 'none' },
-              overflow: 'auto'
-            }}
-          >
-            <Table size={window.innerWidth < 600 ? 'small' : 'medium'}>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                    Assignment Name
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {assignments.map((assignment, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell sx={{ 
-                      fontSize: { xs: '0.875rem', sm: '1rem' },
-                      py: { xs: 1, sm: 2 }
-                    }}>
-                      {assignment}
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {assignments.length === 0 && (
-                  <TableRow>
-                    <TableCell 
-                      align="center"
-                      sx={{ 
-                        fontSize: { xs: '0.875rem', sm: '1rem' },
-                        py: { xs: 2, sm: 3 }
-                      }}
-                    >
-                      No assignments to display
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          {/* Quick Links */}
-          <Box sx={{ mt: 2 }}>
-            <Typography 
-              variant="h6" 
-              gutterBottom
-              sx={{ 
-                fontSize: { xs: '1.1rem', sm: '1.25rem' },
-                mb: { xs: 1.5, sm: 2 },
-                textAlign: { xs: 'center', sm: 'left' }
-              }}
+          {/* Professional Assignments Section */}
+          <div className={styles.assignmentsSection}>
+            <Typography className={styles.sectionTitle}>
+              Assignments
+            </Typography>
+            <TableContainer 
+              component={Paper} 
+              className={styles.assignmentsTable}
             >
+              <Table>
+                <TableHead className={styles.tableHeader}>
+                  <TableRow>
+                    <TableCell className={styles.tableHeaderCell}>
+                      Assignment Name
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {assignments.map((assignment, idx) => (
+                    <TableRow key={idx} className={styles.tableRow}>
+                      <TableCell className={styles.tableCell}>
+                        {assignment}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {assignments.length === 0 && (
+                    <TableRow className={styles.tableRow}>
+                      <TableCell className={styles.emptyState}>
+                        No assignments to display ✨
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+
+          {/* Professional Quick Links */}
+          <div className={styles.quickLinksSection}>
+            <Typography className={styles.sectionTitle}>
               Quick Links
             </Typography>
-            <Box sx={{ 
-              display: 'grid', 
-              gridTemplateColumns: { 
-                xs: '1fr', 
-                sm: 'repeat(auto-fit, minmax(180px, 1fr))' 
-              }, 
-              gap: { xs: 1.5, sm: 2 }
-            }}>
+            <div className={styles.buttonGrid}>
               <Button 
                 variant="contained" 
                 component={Link} 
                 to="/progress"
-                sx={{ 
-                  py: { xs: 1.5, sm: 1 },
-                  fontSize: { xs: '0.875rem', sm: '1rem' }
-                }}
+                className={styles.actionButton}
               >
                 My Progress
               </Button>
@@ -256,10 +188,7 @@ const HomePage: React.FC = () => {
                 variant="contained" 
                 component={Link} 
                 to="/grade-report"
-                sx={{ 
-                  py: { xs: 1.5, sm: 1 },
-                  fontSize: { xs: '0.875rem', sm: '1rem' }
-                }}
+                className={styles.actionButton}
               >
                 Grade Report
               </Button>
@@ -267,10 +196,7 @@ const HomePage: React.FC = () => {
                 variant="contained" 
                 component={Link} 
                 to="/my-courses"
-                sx={{ 
-                  py: { xs: 1.5, sm: 1 },
-                  fontSize: { xs: '0.875rem', sm: '1rem' }
-                }}
+                className={styles.actionButton}
               >
                 My Courses
               </Button>
@@ -278,10 +204,7 @@ const HomePage: React.FC = () => {
                 variant="contained" 
                 component={Link} 
                 to="/my-program"
-                sx={{ 
-                  py: { xs: 1.5, sm: 1 },
-                  fontSize: { xs: '0.875rem', sm: '1rem' }
-                }}
+                className={styles.actionButton}
               >
                 My Program
               </Button>
@@ -289,18 +212,23 @@ const HomePage: React.FC = () => {
                 variant="contained" 
                 component={Link} 
                 to="/help"
-                sx={{ 
-                  py: { xs: 1.5, sm: 1 },
-                  fontSize: { xs: '0.875rem', sm: '1rem' }
-                }}
+                className={styles.actionButton}
               >
                 Help & Support
               </Button>
-            </Box>
-          </Box>
+              <Button 
+                variant="contained" 
+                component={Link} 
+                to="/logout"
+                className={styles.actionButton}
+              >
+                Logout
+              </Button>
+            </div>
+          </div>
         </>
       )}
-    </Box>
+    </div>
   );
 };
 

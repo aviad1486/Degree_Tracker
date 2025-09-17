@@ -1,0 +1,23 @@
+#root {
+  background: #0f172a !important;
+  min-height: 100vh;
+}
+
+.App {
+  background: #0f172a !important;
+  min-height: 100vh;
+}
+
+/* Ensure all Material-UI components inherit the dark background */
+.MuiPaper-root {
+  background: rgba(30, 41, 59, 0.95) !important;
+}
+
+/* Override any white backgrounds */
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  background: #0f172a !important;
+}
