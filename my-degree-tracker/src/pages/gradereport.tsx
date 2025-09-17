@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box,
   Typography,
   LinearProgress,
   Card,
@@ -27,12 +26,31 @@ import { auth, firestore } from "../firestore/config";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import type { Student } from "../models/Student";
 import type { StudentCourse } from "../models/StudentCourse";
+import styles from "../styles/GradeReport.module.css";
 
 const GradeReport: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [student, setStudent] = useState<Student | null>(null);
   const [coursesRows, setCoursesRows] = useState<any[]>([]);
   const [gradesBySemester, setGradesBySemester] = useState<any[]>([]);
+
+  // Helper function to get grade color class
+  const getGradeColorClass = (grade: number) => {
+    if (grade >= 90) return styles.excellent;
+    if (grade >= 80) return styles.good;
+    if (grade >= 70) return styles.average;
+    return styles.poor;
+  };
+
+  // Calculate statistics
+  const totalCourses = coursesRows.length;
+  const averageGrade = coursesRows.length > 0 
+    ? (coursesRows.reduce((sum, course) => sum + course.grade, 0) / coursesRows.length).toFixed(2)
+    : "0.00";
+  const highestGrade = coursesRows.length > 0 
+    ? Math.max(...coursesRows.map(course => course.grade))
+    : 0;
+  const passingGrades = coursesRows.filter(course => course.grade >= 60).length;
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
@@ -95,132 +113,146 @@ const GradeReport: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 } }}>
-      {loading && <LinearProgress sx={{ mb: 2 }} />}
+    <div className={styles.gradeReportContainer}>
+      {loading && <LinearProgress className={styles.loadingBar} />}
 
       {!loading && student && (
         <>
+          {/* Professional Page Title */}
           <Typography 
-            variant="h5" 
-            gutterBottom
-            sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+            variant="h2" 
+            component="h1"
+            className={styles.pageTitle}
           >
-            Grade Report 📈 – Hello {student.fullName}
+            Grade Report for {student.fullName}
           </Typography>
 
-          {/* Averages Chart */}
-          <Card sx={{ mb: 3 }}>
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-              <Typography 
-                variant="h6" 
-                gutterBottom
-                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-              >
-                Grade Average by Semester
-              </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={gradesBySemester}>
-                  <CartesianGrid stroke="#ccc" />
-                  <XAxis 
-                    dataKey="semester" 
-                    fontSize={12}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <YAxis 
-                    domain={[0, 100]} 
-                    fontSize={12}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="avg" stroke="#0077cc" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          {/* Statistics Cards */}
+          <div className={styles.statsGrid}>
+            <div className={styles.statCard}>
+              <div className={styles.statValue}>{totalCourses}</div>
+              <div className={styles.statLabel}>Total Courses</div>
+            </div>
+            <div className={styles.statCard}>
+              <div className={styles.statValue}>{averageGrade}</div>
+              <div className={styles.statLabel}>Average Grade</div>
+            </div>
+            <div className={styles.statCard}>
+              <div className={styles.statValue}>{highestGrade}</div>
+              <div className={styles.statLabel}>Highest Grade</div>
+            </div>
+            <div className={styles.statCard}>
+              <div className={styles.statValue}>{passingGrades}</div>
+              <div className={styles.statLabel}>Passing Grades</div>
+            </div>
+          </div>
 
-          {/* Grades Table */}
-          <Card>
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-              <Typography 
-                variant="h6" 
-                gutterBottom
-                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-              >
-                Grade Details
-              </Typography>
-              <TableContainer 
-                component={Paper}
-                sx={{
-                  '& .MuiTable-root': {
-                    minWidth: { xs: 'auto', sm: 650 }
-                  }
-                }}
-              >
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        Course Code
-                      </TableCell>
-                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        Grade
-                      </TableCell>
-                      <TableCell sx={{ 
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        display: { xs: 'none', sm: 'table-cell' }
-                      }}>
-                        Year
-                      </TableCell>
-                      <TableCell sx={{ 
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        display: { xs: 'none', sm: 'table-cell' }
-                      }}>
-                        Semester
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {coursesRows.map((row) => (
-                      <TableRow key={row.id}>
-                        <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                          {row.courseName}
-                        </TableCell>
-                        <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                          {row.grade}
-                        </TableCell>
-                        <TableCell sx={{ 
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          display: { xs: 'none', sm: 'table-cell' }
-                        }}>
-                          {row.year}
-                        </TableCell>
-                        <TableCell sx={{ 
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          display: { xs: 'none', sm: 'table-cell' }
-                        }}>
-                          {row.semester}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    {coursesRows.length === 0 && (
+          {/* Chart Section */}
+          <div className={styles.chartSection}>
+            <Card className={styles.chartCard}>
+              <CardContent className={styles.chartCardContent}>
+                <Typography className={styles.sectionTitle}>
+                  Grade Average by Semester
+                </Typography>
+                <div className={styles.chartContainer}>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={gradesBySemester}>
+                      <CartesianGrid stroke="rgba(71, 85, 105, 0.5)" />
+                      <XAxis 
+                        dataKey="semester" 
+                        fontSize={12}
+                        tick={{ fontSize: 12, fill: '#cbd5e1' }}
+                      />
+                      <YAxis 
+                        domain={[0, 100]} 
+                        fontSize={12}
+                        tick={{ fontSize: 12, fill: '#cbd5e1' }}
+                      />
+                      <Tooltip 
+                        contentStyle={{
+                          backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                          border: '1px solid rgba(71, 85, 105, 0.3)',
+                          borderRadius: '10px',
+                          backdropFilter: 'blur(10px)',
+                          color: '#e2e8f0'
+                        }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="avg" 
+                        stroke="#3b82f6" 
+                        strokeWidth={3}
+                        dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 6 }}
+                        activeDot={{ r: 8, fill: '#06b6d4' }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Table Section */}
+          <div className={styles.tableSection}>
+            <Card className={styles.tableCard}>
+              <CardContent className={styles.tableCardContent}>
+                <Typography className={styles.sectionTitle}>
+                  Grade Details
+                </Typography>
+                <TableContainer 
+                  component={Paper}
+                  className={styles.gradesTable}
+                >
+                  <Table>
+                    <TableHead className={styles.tableHeader}>
                       <TableRow>
-                        <TableCell 
-                          colSpan={4} 
-                          align="center"
-                          sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                        >
-                          No grade data to display
+                        <TableCell className={styles.tableHeaderCell}>
+                          Course Code
+                        </TableCell>
+                        <TableCell className={styles.tableHeaderCell}>
+                          Grade
+                        </TableCell>
+                        <TableCell className={styles.tableHeaderCell}>
+                          Year
+                        </TableCell>
+                        <TableCell className={styles.tableHeaderCell}>
+                          Semester
                         </TableCell>
                       </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </CardContent>
-          </Card>
+                    </TableHead>
+                    <TableBody>
+                      {coursesRows.map((row) => (
+                        <TableRow key={row.id} className={styles.tableRow}>
+                          <TableCell className={styles.tableCell}>
+                            {row.courseName}
+                          </TableCell>
+                          <TableCell className={`${styles.tableCell} ${styles.gradeCell} ${getGradeColorClass(row.grade)}`}>
+                            {row.grade}
+                          </TableCell>
+                          <TableCell className={styles.tableCell}>
+                            {row.year}
+                          </TableCell>
+                          <TableCell className={styles.tableCell}>
+                            {row.semester}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {coursesRows.length === 0 && (
+                        <TableRow className={styles.tableRow}>
+                          <TableCell colSpan={4} className={styles.emptyState}>
+                            No grade data to display ✨
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </CardContent>
+            </Card>
+          </div>
         </>
       )}
-    </Box>
+    </div>
   );
 };
 
