@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  Box,
   Typography,
   Card,
   CardContent,
@@ -16,6 +15,7 @@ import {
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, firestore } from "../firestore/config";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
+import styles from "../styles/MyProgress.module.css";
 
 interface StudentCourse {
   courseCode: string;
@@ -85,155 +85,112 @@ const MyProgress: React.FC = () => {
   const progressPercent = Math.round((completedCredits / totalCredits) * 100);
 
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 } }}>
-      {loading && <LinearProgress sx={{ mb: 2 }} />}
+    <div className={styles.progressContainer}>
+      {loading && <LinearProgress className={styles.loadingBar} />}
 
       {!loading && (
         <>
+          {/* Professional Page Title */}
           <Typography 
-            variant="h5"
-            gutterBottom
-            sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+            variant="h2" 
+            component="h1"
+            className={styles.pageTitle}
           >
-            My Progress 📊
+            My Progress 
           </Typography>
 
-          {/* Progress Bar */}
-          <Card sx={{ mb: 3 }}>
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-              <Typography 
-                variant="h6"
-                gutterBottom
-                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-              >
-                Credits Completed
-              </Typography>
-              <LinearProgress 
-                variant="determinate" 
-                value={progressPercent}
-                sx={{ height: { xs: 8, sm: 6 } }}
-              />
-              <Typography 
-                variant="body2" 
-                sx={{ 
-                  mt: 1,
-                  fontSize: { xs: '0.875rem', sm: '0.875rem' }
-                }}
-              >
-                {completedCredits}/{totalCredits} credits ({progressPercent}%)
-              </Typography>
-            </CardContent>
-          </Card>
-
-          {/* Grade Average */}
-          <Box sx={{ mb: 3 }}>
-            <Card>
-              <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-                <Typography 
-                  variant="h6"
-                  sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-                >
-                  Grade Average
+          {/* Professional Stats Grid */}
+          <div className={styles.statsGrid}>
+            {/* Credits Progress Card */}
+            <Card className={styles.statCard}>
+              <CardContent className={styles.statCardContent}>
+                <Typography className={styles.statTitle}>
+                  Credits Completed
                 </Typography>
-                <Typography 
-                  variant="body1"
-                  sx={{ 
-                    fontSize: { xs: '1.25rem', sm: '1rem' },
-                    fontWeight: 'bold'
-                  }}
-                >
-                  {gpa}
+                <Typography className={`${styles.statValue} ${styles.creditsValue}`}>
+                  {completedCredits}/{totalCredits}
+                </Typography>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={progressPercent}
+                  className={styles.progressBar}
+                />
+                <Typography className={styles.progressText}>
+                  {progressPercent}% Complete
                 </Typography>
               </CardContent>
             </Card>
-          </Box>
 
-          {/* Completed Courses Table */}
-          <Typography 
-            variant="h6"
-            gutterBottom
-            sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-          >
-            Courses I've Completed
-          </Typography>
-          <TableContainer 
-            component={Paper} 
-            sx={{ 
-              mb: 4,
-              '& .MuiTable-root': {
-                minWidth: { xs: 'auto', sm: 650 }
-              }
-            }}
-          >
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                    Course Code
-                  </TableCell>
-                  <TableCell 
-                    align="right"
-                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                  >
-                    Grade
-                  </TableCell>
-                  <TableCell 
-                    align="right"
-                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                  >
-                    Year
-                  </TableCell>
-                  <TableCell 
-                    align="right"
-                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                  >
-                    Semester
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {courses.map((c, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                      {c.courseCode}
-                    </TableCell>
-                    <TableCell 
-                      align="right"
-                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                    >
-                      {c.grade}
-                    </TableCell>
-                    <TableCell 
-                      align="right"
-                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                    >
-                      {c.year}
-                    </TableCell>
-                    <TableCell 
-                      align="right"
-                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                    >
-                      {c.semester}
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {courses.length === 0 && (
+            {/* Grade Average Card */}
+            <Card className={styles.statCard}>
+              <CardContent className={styles.statCardContent}>
+                <Typography className={styles.statTitle}>
+                  Grade Average
+                </Typography>
+                <Typography className={`${styles.statValue} ${styles.gradeValue}`}>
+                  {gpa.toFixed(2)}
+                </Typography>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Professional Courses Section */}
+          <div className={styles.coursesSection}>
+            <Typography className={styles.sectionTitle}>
+              Completed Courses
+            </Typography>
+            <TableContainer 
+              component={Paper} 
+              className={styles.coursesTable}
+            >
+              <Table>
+                <TableHead className={styles.tableHeader}>
                   <TableRow>
-                    <TableCell 
-                      colSpan={4} 
-                      align="center"
-                      sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                    >
-                      No course data to display
+                    <TableCell className={styles.tableHeaderCell}>
+                      Course Code
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell}>
+                      Grade
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell}>
+                      Year
+                    </TableCell>
+                    <TableCell className={styles.tableHeaderCell}>
+                      Semester
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {courses.map((c, idx) => (
+                    <TableRow key={idx} className={styles.tableRow}>
+                      <TableCell className={styles.tableCell}>
+                        {c.courseCode}
+                      </TableCell>
+                      <TableCell className={`${styles.tableCell} ${styles.gradeCell}`}>
+                        {c.grade}
+                      </TableCell>
+                      <TableCell className={styles.tableCell}>
+                        {c.year}
+                      </TableCell>
+                      <TableCell className={styles.tableCell}>
+                        {c.semester}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {courses.length === 0 && (
+                    <TableRow className={styles.tableRow}>
+                      <TableCell colSpan={4} className={styles.emptyState}>
+                        No course data to display ✨
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
         </>
       )}
-    </Box>
+    </div>
   );
 };
 
