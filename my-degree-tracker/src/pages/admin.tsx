@@ -37,6 +37,8 @@ import {
 import { useAdmin } from '../hooks/useAdmin';
 import type { User, UserRole } from '../models/User';
 
+import styles from '../styles/Admin.module.css';
+
 const AdminPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -71,18 +73,15 @@ const AdminPage: React.FC = () => {
 
     let success = true;
 
-    // Update role if changed
     if (newRole !== selectedUser.role) {
       success = success && await updateUserRole(selectedUser.uid, newRole);
     }
 
-    // Update status if changed
     if (newStatus !== selectedUser.isActive) {
       success = success && await toggleUserStatus(selectedUser.uid, newStatus);
     }
 
     if (success) {
-      // Reload users to reflect changes
       await loadUsers();
       handleCloseDialog();
     }
@@ -97,11 +96,12 @@ const AdminPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box className={styles.adminContainer} sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography 
           variant="h3" 
           component="h1"
+          className={styles.adminTitle}
         >
           👑 User Management
         </Typography>
@@ -118,7 +118,7 @@ const AdminPage: React.FC = () => {
         </Alert>
       )}
 
-      <Card>
+      <Card className={styles.adminCard}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             System Users
@@ -130,7 +130,7 @@ const AdminPage: React.FC = () => {
           <TableContainer component={Paper} variant="outlined">
             <Table>
               <TableHead>
-                <TableRow>
+                <TableRow className={styles.adminTableHeader}>
                   <TableCell>User</TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>Role</TableCell>
@@ -140,7 +140,6 @@ const AdminPage: React.FC = () => {
               </TableHead>
               <TableBody>
                 {loading ? (
-                  // Loading skeleton
                   Array.from({ length: 3 }).map((_, index) => (
                     <TableRow key={index}>
                       {Array.from({ length: 5 }).map((_, cellIndex) => (
@@ -160,7 +159,7 @@ const AdminPage: React.FC = () => {
                   </TableRow>
                 ) : (
                   users.map((user) => (
-                    <TableRow key={user.uid} hover>
+                    <TableRow key={user.uid} hover className={styles.adminTableRow}>
                       <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           {user.role === 'admin' ? <AdminIcon color="error" /> : <PersonIcon color="success" />}
@@ -211,12 +210,11 @@ const AdminPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Edit User Dialog */}
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>
+        <DialogTitle className={styles.adminDialogTitle}>
           Edit User: {selectedUser?.displayName || selectedUser?.email}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent className={styles.adminDialogContent}>
           <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
             <FormControl fullWidth>
               <InputLabel>Role</InputLabel>
@@ -251,7 +249,7 @@ const AdminPage: React.FC = () => {
             />
 
             {selectedUser && (
-              <Box sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+              <Box className={styles.adminDialogBox}>
                 <Typography variant="body2" color="text.secondary">
                   <strong>Current Role:</strong> {selectedUser.role}
                 </Typography>
@@ -273,6 +271,7 @@ const AdminPage: React.FC = () => {
             onClick={handleSaveChanges} 
             variant="contained" 
             disabled={loading}
+            className={styles.saveButton}
             sx={{ minWidth: 100 }}
           >
             {loading ? 'Saving...' : 'Save Changes'}
