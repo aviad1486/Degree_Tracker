@@ -28,6 +28,7 @@ import AdminPage from './pages/admin';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleProtectedRoute from './components/RoleProtectedRoute';
+import DesktopOnly from './components/DesktopOnly';
 
 // Import database initialization
 import { setupAdminConsoleHelper } from './utils/databaseInit';
@@ -123,7 +124,9 @@ export default function App() {
               path="/students/new"
               element={
                 <RoleProtectedRoute requiredPermission="canEditStudents">
-                  <StudentForm />
+                  <DesktopOnly>
+                    <StudentForm />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -131,7 +134,9 @@ export default function App() {
               path="/students/edit/:id"
               element={
                 <RoleProtectedRoute requiredPermission="canEditStudents">
-                  <StudentForm />
+                  <DesktopOnly>
+                    <StudentForm />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -139,7 +144,9 @@ export default function App() {
               path="/students"
               element={
                 <RoleProtectedRoute requiredPermission="canEditStudents">
-                  <StudentList />
+                  <DesktopOnly>
+                    <StudentList />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -147,7 +154,9 @@ export default function App() {
               path="/courses/new"
               element={
                 <RoleProtectedRoute requiredPermission="canEditCourses">
-                  <CourseForm />
+                  <DesktopOnly>
+                    <CourseForm />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -155,7 +164,9 @@ export default function App() {
               path="/courses/edit/:courseCode"
               element={
                 <RoleProtectedRoute requiredPermission="canEditCourses">
-                  <CourseForm />
+                  <DesktopOnly>
+                    <CourseForm />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -163,7 +174,9 @@ export default function App() {
               path="/courses"
               element={
                 <RoleProtectedRoute requiredPermission="canEditCourses">
-                  <CourseList />
+                  <DesktopOnly>
+                    <CourseList />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -171,7 +184,9 @@ export default function App() {
               path="/student-courses/new"
               element={
                 <RoleProtectedRoute requiredPermission="canEditStudents">
-                  <StudentCourseForm />
+                  <DesktopOnly>
+                    <StudentCourseForm />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -179,7 +194,9 @@ export default function App() {
               path="/student-courses/edit/:index"
               element={
                 <RoleProtectedRoute requiredPermission="canEditStudents">
-                  <StudentCourseForm />
+                  <DesktopOnly>
+                    <StudentCourseForm />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -187,7 +204,9 @@ export default function App() {
               path="/student-courses"
               element={
                 <RoleProtectedRoute requiredPermission="canEditStudents">
-                  <StudentCourseList />
+                  <DesktopOnly>
+                    <StudentCourseList />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -195,7 +214,9 @@ export default function App() {
               path="/programs/new"
               element={
                 <RoleProtectedRoute requiredPermission="canEditPrograms">
-                  <ProgramForm />
+                  <DesktopOnly>
+                    <ProgramForm />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -203,7 +224,9 @@ export default function App() {
               path="/programs/edit/:name"
               element={
                 <RoleProtectedRoute requiredPermission="canEditPrograms">
-                  <ProgramForm />
+                  <DesktopOnly>
+                    <ProgramForm />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -211,7 +234,9 @@ export default function App() {
               path="/programs"
               element={
                 <RoleProtectedRoute requiredPermission="canEditPrograms">
-                  <ProgramList />
+                  <DesktopOnly>
+                    <ProgramList />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
@@ -219,7 +244,9 @@ export default function App() {
               path="/admin"
               element={
                 <RoleProtectedRoute requireAdmin={true}>
-                  <AdminPage />
+                  <DesktopOnly>
+                    <AdminPage />
+                  </DesktopOnly>
                 </RoleProtectedRoute>
               }
             />
