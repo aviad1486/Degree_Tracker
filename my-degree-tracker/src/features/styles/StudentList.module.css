@@ -1,0 +1,123 @@
+/* עמוד כללי */
+.studentListContainer {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  min-height: 100vh;
+  font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+  box-sizing: border-box;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* כרטיס כללי */
+.studentListCard {
+  background: rgba(30, 41, 59, 0.92);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  animation: slideUp 0.8s ease-out;
+}
+
+/* כותרת */
+.studentListTitle {
+  font-size: 5rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+  letter-spacing: 1px;
+}
+
+/* טבלה */
+.studentTableHeader {
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+}
+
+.studentTableHeaderCell {
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  font-size: 1rem !important;
+  text-align: center !important;
+  padding: 1rem !important;
+}
+
+.studentTableRow {
+  transition: all 0.3s ease-in-out;
+}
+
+.studentTableRow:hover {
+  background: rgba(59, 130, 246, 0.08) !important;
+  transform: scale(1.01);
+}
+
+.studentTableCell {
+  text-align: center !important;
+  color: #000000 !important;
+  font-weight: 500 !important;
+  padding: 1rem !important;
+  font-size: 0.95rem !important;
+}
+
+/* כפתורים */
+.actionButton {
+  border-radius: 10px !important;
+  padding: 0.4rem 0.8rem !important;
+  transition: all 0.3s ease;
+}
+
+.actionButton:hover {
+  transform: scale(1.12);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+}
+
+.editButton {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+  color: #fff !important;
+}
+
+.deleteButton {
+  background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+  color: #fff !important;
+}
+
+/* מצב ללא נתונים */
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 1rem;
+  animation: fadeInUp 1s ease-in-out;
+}
+
+/* Skeleton טעינה */
+.loadingSkeleton {
+  padding: 1rem;
+  animation: pulse 1.5s infinite;
+}
+
+/* אנימציות */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

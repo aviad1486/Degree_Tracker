@@ -1,191 +1,196 @@
 // src/Forms/StudentList.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
-  Table, TableHead, TableBody, TableRow, TableCell,
-  Paper, TableContainer, IconButton, Box, Typography, Button
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { useNavigate } from 'react-router-dom';
-import type { Student } from '../../models/Student';
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Tooltip,
+  Skeleton,
+  Button,
+} from "@mui/material";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { firestore } from "../../firestore/config";
+import type { Student } from "../../models/Student";
 
-import { firestore } from '../../firestore/config';
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
-
-const avgFromGradeSheet = (gradeSheet: Record<string, number> | undefined | null) => {
-  if (!gradeSheet || typeof gradeSheet !== 'object' || Array.isArray(gradeSheet)) return null;
-  const grades = Object.values(gradeSheet).filter(
-    (g) => typeof g === 'number' && !Number.isNaN(g)
-  );
-  if (grades.length === 0) return null;
-  const sum = grades.reduce((a, b) => a + b, 0);
-  return sum / grades.length;
-};
+import styles from "../styles/StudentList.module.css";
 
 const StudentList: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // טוען סטודנטים מ-Firestore
-  useEffect(() => {
-    const fetchStudents = async () => {
-      const snap = await getDocs(collection(firestore, 'students'));
-      const data = snap.docs.map(d => d.data() as Student);
+  const fetchStudents = async () => {
+    try {
+      const snapshot = await getDocs(collection(firestore, "students"));
+      const data: Student[] = snapshot.docs.map((docSnap) => ({
+        ...(docSnap.data() as Student),
+        id: docSnap.id,
+      }));
       setStudents(data);
-    };
+    } catch (error) {
+      console.error("❌ Error fetching students:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteDoc(doc(firestore, "students", id));
+      setStudents((prev) => prev.filter((s) => s.id !== id));
+    } catch (error) {
+      console.error("❌ Error deleting student:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchStudents();
   }, []);
 
-  // מוחק סטודנט מ-Firestore
-  const handleDelete = async (id: string) => {
-    await deleteDoc(doc(firestore, 'students', id));
-    setStudents(prev => prev.filter(s => s.id !== id));
-  };
-
-  const handleEdit = (id: string) => {
-    navigate(`/students/edit/${id}`);
-  };
-
   return (
-    <Box sx={{ mt: 4, mx: 'auto', maxWidth: 800, p: { xs: 2, sm: 0 } }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography 
-          variant="h6"
-          sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-        >
-          Students List
-        </Typography>
-      </Box>
-      <TableContainer 
-        component={Paper}
-        sx={{
-          '& .MuiTable-root': {
-            minWidth: { xs: 'auto', sm: 650 }
-          }
-        }}
-      >
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                Full Name
-              </TableCell>
-              <TableCell sx={{ 
-                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                display: { xs: 'none', sm: 'table-cell' }
-              }}>
-                ID
-              </TableCell>
-              <TableCell sx={{ 
-                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                display: { xs: 'none', md: 'table-cell' }
-              }}>
-                Email
-              </TableCell>
-              <TableCell sx={{ 
-                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                display: { xs: 'none', lg: 'table-cell' }
-              }}>
-                Courses
-              </TableCell>
-              <TableCell sx={{ 
-                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                display: { xs: 'none', md: 'table-cell' }
-              }}>
-                Program
-              </TableCell>
-              <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                Average
-              </TableCell>
-              <TableCell 
-                align="right"
-                sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-              >
-                Actions
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {students.map(student => (
-              <TableRow key={student.id}>
-                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  {student.fullName}
-                </TableCell>
-                <TableCell sx={{ 
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  display: { xs: 'none', sm: 'table-cell' }
-                }}>
-                  {student.id}
-                </TableCell>
-                <TableCell sx={{ 
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  display: { xs: 'none', md: 'table-cell' }
-                }}>
-                  {student.email}
-                </TableCell>
-                <TableCell sx={{ 
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  display: { xs: 'none', lg: 'table-cell' }
-                }}>
-                  {(student.courses || []).join(', ')}
-                </TableCell>
-                <TableCell sx={{ 
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  display: { xs: 'none', md: 'table-cell' }
-                }}>
-                  {student.program}
-                </TableCell>
-                <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                  {(() => {
-                    const avg = avgFromGradeSheet(student.gradeSheet);
-                    return avg === null ? '—' : avg.toFixed(1);
-                  })()}
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton 
-                    onClick={() => handleEdit(student.id)}
-                    size="small"
-                    sx={{ p: { xs: 0.5, sm: 1 } }}
+    <Box className={styles.studentListContainer}>
+      <Card className={styles.studentListCard}>
+        <CardContent>
+          <Typography className={styles.studentListTitle}>
+            Student Management
+          </Typography>
+
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead className={styles.studentTableHeader}>
+                <TableRow>
+                  <TableCell className={styles.studentTableHeaderCell}>
+                    Full Name
+                  </TableCell>
+                  <TableCell className={styles.studentTableHeaderCell}>
+                    ID
+                  </TableCell>
+                  <TableCell className={styles.studentTableHeaderCell}>
+                    Email
+                  </TableCell>
+                  <TableCell className={styles.studentTableHeaderCell}>
+                    Courses
+                  </TableCell>
+                  <TableCell className={styles.studentTableHeaderCell}>
+                    Program
+                  </TableCell>
+                  <TableCell className={styles.studentTableHeaderCell}>
+                    Average
+                  </TableCell>
+                  <TableCell
+                    className={styles.studentTableHeaderCell}
+                    align="right"
                   >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton 
-                    onClick={() => handleDelete(student.id)}
-                    size="small"
-                    sx={{ p: { xs: 0.5, sm: 1 } }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-            {students.length === 0 && (
-              <TableRow>
-                <TableCell 
-                  colSpan={7} 
-                  align="center"
-                  sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                >
-                  No students found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      {/* Add Student Button */}
-      <Box display="flex" justifyContent="flex-end" mt={2}>
-        <Button
-          variant="contained"
-          onClick={() => navigate('/students/new')}
-          sx={{ 
-            minHeight: { xs: 44, sm: 36 },
-            fontSize: { xs: '0.875rem', sm: '0.875rem' }
-          }}
-        >
-          Add Student
-        </Button>
-      </Box>
+                    Actions
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {loading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <TableRow key={i} className={styles.loadingSkeleton}>
+                      <TableCell colSpan={7}>
+                        <Skeleton variant="rectangular" height={40} />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : students.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className={styles.emptyState}>
+                      No students found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  students.map((student) => (
+                    <TableRow
+                      key={student.id}
+                      className={styles.studentTableRow}
+                    >
+                      <TableCell className={styles.studentTableCell}>
+                        {student.fullName}
+                      </TableCell>
+                      <TableCell className={styles.studentTableCell}>
+                        {student.id}
+                      </TableCell>
+                      <TableCell className={styles.studentTableCell}>
+                        {student.email}
+                      </TableCell>
+                      <TableCell className={styles.studentTableCell}>
+                        {(student.courses || []).join(", ")}
+                      </TableCell>
+                      <TableCell className={styles.studentTableCell}>
+                        {student.program}
+                      </TableCell>
+                      <TableCell className={styles.studentTableCell}>
+                        {(() => {
+                          const grades = student.gradeSheet
+                            ? Object.values(student.gradeSheet).filter(
+                                (g) =>
+                                  typeof g === "number" && !Number.isNaN(g)
+                              )
+                            : [];
+                          if (grades.length === 0) return "—";
+                          const avg =
+                            grades.reduce(
+                              (a, b) => a + (b as number),
+                              0
+                            ) / grades.length;
+                          return avg.toFixed(1);
+                        })()}
+                      </TableCell>
+                      <TableCell
+                        className={styles.studentTableCell}
+                        align="right"
+                      >
+                        <Tooltip title="Edit">
+                          <IconButton
+                            size="small"
+                            onClick={() =>
+                              navigate(`/students/edit/${student.id}`)
+                            }
+                            className={`${styles.actionButton} ${styles.editButton}`}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleDelete(student.id)}
+                            className={`${styles.actionButton} ${styles.deleteButton}`}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <Box sx={{ textAlign: "right", mt: 2 }}>
+            <Button
+              variant="contained"
+              onClick={() => navigate("/students/new")}
+            >
+              ➕ Add Student
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
     </Box>
   );
 };

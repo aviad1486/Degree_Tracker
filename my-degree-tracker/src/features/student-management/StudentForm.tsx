@@ -5,6 +5,8 @@ import { useStudentForm } from "../../hooks/useStudentForm";
 import { collection, getDocs } from "firebase/firestore";
 import { firestore } from "../../firestore/config";
 
+import styles from "../styles/StudentForm.module.css";
+
 const StudentForm: React.FC = () => {
   const {
     data, errors, snackOpen, snackMsg, snackSeverity,
@@ -14,7 +16,6 @@ const StudentForm: React.FC = () => {
   const [courseOptions, setCourseOptions] = useState<string[]>([]);
   const [programOptions, setProgramOptions] = useState<string[]>([]);
 
-  // טוען קורסים מ-Firestore להצגת אפשרויות
   useEffect(() => {
     const fetchCourses = async () => {
       const snap = await getDocs(collection(firestore, "courses"));
@@ -24,7 +25,6 @@ const StudentForm: React.FC = () => {
     fetchCourses();
   }, []);
 
-  // טוען מסלולים מ-Firestore להצגת אפשרויות
   useEffect(() => {
     const fetchPrograms = async () => {
       const snap = await getDocs(collection(firestore, "programs"));
@@ -35,12 +35,8 @@ const StudentForm: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
-      <Typography 
-        variant="h4" 
-        component="h1"
-        gutterBottom
-      >
+    <Box className={styles.studentFormContainer}>
+      <Typography className={styles.studentFormTitle}>
         {isEdit ? "Edit Student" : "Add Student"}
       </Typography>
 
@@ -52,6 +48,7 @@ const StudentForm: React.FC = () => {
         helperText={errors.id}
         required fullWidth margin="normal"
         disabled={isEdit}
+        className={styles.studentFormField}
       />
 
       <TextField
@@ -62,6 +59,7 @@ const StudentForm: React.FC = () => {
         helperText={errors.fullName}
         required fullWidth margin="normal"
         disabled={isEdit}
+        className={styles.studentFormField}
       />
 
       <TextField
@@ -72,9 +70,9 @@ const StudentForm: React.FC = () => {
         helperText={errors.email}
         required fullWidth margin="normal"
         disabled={isEdit}
+        className={styles.studentFormField}
       />
 
-      {/* בחירת קורסים מרובים */}
       <Autocomplete
         multiple
         options={courseOptions}
@@ -88,6 +86,7 @@ const StudentForm: React.FC = () => {
             helperText={errors.courses}
             required
             margin="normal"
+            className={styles.studentFormField}
           />
         )}
       />
@@ -99,6 +98,7 @@ const StudentForm: React.FC = () => {
         error={!!errors.assignments}
         helperText={errors.assignments}
         fullWidth margin="normal"
+        className={styles.studentFormField}
       />
 
       <TextField
@@ -109,9 +109,9 @@ const StudentForm: React.FC = () => {
         helperText={errors.gradeSheet}
         required fullWidth margin="normal"
         multiline minRows={3}
+        className={styles.studentFormField}
       />
 
-      {/* בחירת מסלול יחיד */}
       <Autocomplete
         options={programOptions}
         value={data.program || ""}
@@ -124,6 +124,7 @@ const StudentForm: React.FC = () => {
             helperText={errors.program}
             required
             margin="normal"
+            className={styles.studentFormField}
           />
         )}
       />
@@ -135,6 +136,7 @@ const StudentForm: React.FC = () => {
         error={!!errors.semester}
         helperText={errors.semester}
         required fullWidth margin="normal"
+        className={styles.studentFormField}
       >
         <MenuItem value="A">A</MenuItem>
         <MenuItem value="B">B</MenuItem>
@@ -149,10 +151,18 @@ const StudentForm: React.FC = () => {
         error={!!errors.completedCredits}
         helperText={errors.completedCredits}
         required fullWidth margin="normal"
+        className={styles.studentFormField}
       />
 
-      <Box mt={2} textAlign="right">
-        <Button variant="contained" onClick={handleSubmit}>
+      <Box className={styles.formButtons}>
+        <Button className={styles.cancelButton}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          className={styles.saveButton}
+        >
           {isEdit ? "Update" : "Save"}
         </Button>
       </Box>
