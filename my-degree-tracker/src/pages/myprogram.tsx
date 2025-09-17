@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box,
   Typography,
   LinearProgress,
   Card,
@@ -18,6 +17,7 @@ import { auth, firestore } from "../firestore/config";
 import { collection, query, where, getDocs, limit, doc, getDoc } from "firebase/firestore";
 import type { Student } from "../models/Student";
 import type { Program } from "../models/Program";
+import styles from "../styles/MyProgram.module.css";
 
 interface CourseInProgram {
   courseCode: string;
@@ -27,44 +27,49 @@ interface CourseInProgram {
 
 const MyProgram: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [program, setProgram] = useState<Program | null>(null);
   const [courses, setCourses] = useState<CourseInProgram[]>([]);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user?.email) {
         try {
-          // שליפת הסטודנט
-          const qStudent = query(
+          setLoading(true);
+          setError(null);
+
+          // Get student data
+          const studentsQuery = query(
             collection(firestore, "students"),
             where("email", "==", user.email),
             limit(1)
           );
-          const snap = await getDocs(qStudent);
+          const studentsSnapshot = await getDocs(studentsQuery);
 
-          if (!snap.empty) {
-            const student = snap.docs[0].data() as Student;
+          if (!studentsSnapshot.empty) {
+            const student = studentsSnapshot.docs[0].data() as Student;
 
-            // שליפת המסלול של הסטודנט
+            // Get student's program
             const programRef = doc(firestore, "programs", student.program);
-            const programSnap = await getDoc(programRef);
+            const programSnapshot = await getDoc(programRef);
 
-            if (programSnap.exists()) {
-              const programData = programSnap.data() as Program;
+            if (programSnapshot.exists()) {
+              const programData = programSnapshot.data() as Program;
               setProgram(programData);
 
-              // שליפת כל הקורסים במסלול
-              const allCoursesSnap = await getDocs(collection(firestore, "courses"));
-              const allCourses = allCoursesSnap.docs.map((d) => d.data() as any);
-
-              const courseMap: Record<string, any> = {};
-              allCourses.forEach((c) => (courseMap[c.courseCode] = c));
+              // Get all courses to create course details
+              const allCoursesSnapshot = await getDocs(collection(firestore, "courses"));
+              const courseMap = new Map<string, any>();
+              allCoursesSnapshot.docs.forEach(doc => {
+                const course = doc.data();
+                courseMap.set(course.courseCode, course);
+              });
 
               const programCourses: CourseInProgram[] = (programData.courses || []).map(
                 (code: string) => ({
                   courseCode: code,
-                  courseName: courseMap[code]?.courseName || code,
-                  credits: courseMap[code]?.credits || 0,
+                  courseName: courseMap.get(code)?.courseName || code,
+                  credits: courseMap.get(code)?.credits || 0,
                 })
               );
 
@@ -72,118 +77,140 @@ const MyProgram: React.FC = () => {
             }
           }
         } catch (err) {
-          console.error("❌ Error fetching program:", err);
+          console.error("Error fetching program:", err);
+          setError("Failed to load program data. Please try again.");
+        } finally {
+          setLoading(false);
         }
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
-    return () => unsub();
+    return () => unsubscribe();
   }, []);
 
+  if (loading) {
+    return (
+      <div className={styles.loading}>
+        <Typography variant="h6" className={styles.title}>Loading your program...</Typography>
+        <LinearProgress className={styles.progressBar} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.error}>
+        <Typography variant="h6" className={styles.title}>Error</Typography>
+        <Typography variant="body1">{error}</Typography>
+      </div>
+    );
+  }
+
+  if (!program) {
+    return (
+      <div className={styles.error}>
+        <Typography variant="h6" className={styles.title}>No Program Found</Typography>
+        <Typography variant="body1">You are not enrolled in any program yet.</Typography>
+      </div>
+    );
+  }
+
+  // Calculate statistics
+  const totalCourses = courses.length;
+  const totalCredits = courses.reduce((sum, course) => sum + course.credits, 0);
+
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 } }}>
-      {loading && <LinearProgress sx={{ mb: 2 }} />}
+    <div className={styles.container}>
+      <div className={styles.headerSection}>
+        <Typography variant="h4" className={styles.pageTitle}>
+          My Program
+        </Typography>
+        <Typography variant="body1" className={styles.subtitle}>
+          View your academic program and course requirements
+        </Typography>
+      </div>
 
-      {!loading && program && (
-        <>
-          <Typography 
-            variant="h5" 
-            gutterBottom
-            sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
-          >
-            My Program 🎓
+      {/* Statistics Grid */}
+      <div className={styles.statsGrid}>
+        <Card className={styles.statCard}>
+          <CardContent>
+            <Typography variant="h6" className={styles.statLabel}>
+              Total Courses
+            </Typography>
+            <Typography variant="h3" className={styles.statValue}>
+              {totalCourses}
+            </Typography>
+          </CardContent>
+        </Card>
+        
+        <Card className={styles.statCard}>
+          <CardContent>
+            <Typography variant="h6" className={styles.statLabel}>
+              Total Credits
+            </Typography>
+            <Typography variant="h3" className={styles.statValue}>
+              {totalCredits}
+            </Typography>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Program Information Card */}
+      <div className={styles.programInfoCard}>
+        <div className={styles.programInfoHeader}>
+          <Typography variant="h5" className={styles.programInfoTitle}>
+            Program Information
           </Typography>
+          <Typography variant="h6" className={styles.programName}>
+            {program.name}
+          </Typography>
+          <Typography variant="body1" className={styles.programDetails}>
+            Required Credits: {program.totalCreditsRequired}
+          </Typography>
+        </div>
+      </div>
 
-          {/* Program Details */}
-          <Card sx={{ mb: 3 }}>
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-              <Typography 
-                variant="h6"
-                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-              >
-                Program Name: {program.name}
-              </Typography>
-              <Typography 
-                variant="body1"
-                sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
-              >
-                Total Credits Required: {program.totalCreditsRequired}
-              </Typography>
-            </CardContent>
-          </Card>
-
-          {/* Program Courses Table */}
-          <Card>
-            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-              <Typography 
-                variant="h6" 
-                gutterBottom
-                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-              >
-                Course List in Program
-              </Typography>
-              <TableContainer 
-                component={Paper}
-                sx={{
-                  '& .MuiTable-root': {
-                    minWidth: { xs: 'auto', sm: 650 }
-                  }
-                }}
-              >
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        Course Code
-                      </TableCell>
-                      <TableCell sx={{ 
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        display: { xs: 'none', sm: 'table-cell' }
-                      }}>
-                        Course Name
-                      </TableCell>
-                      <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        Credits
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {courses.map((course, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                          {course.courseCode}
-                        </TableCell>
-                        <TableCell sx={{ 
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          display: { xs: 'none', sm: 'table-cell' }
-                        }}>
-                          {course.courseName}
-                        </TableCell>
-                        <TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                          {course.credits}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    {courses.length === 0 && (
-                      <TableRow>
-                        <TableCell 
-                          colSpan={3} 
-                          align="center"
-                          sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                        >
-                          No courses in program
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </CardContent>
-          </Card>
-        </>
-      )}
-    </Box>
+      {/* Course Table */}
+      <div className={styles.courseTableCard}>
+        <div className={styles.courseTableHeader}>
+          <Typography variant="h5" className={styles.courseTableTitle}>
+            Program Courses
+          </Typography>
+        </div>
+        <TableContainer component={Paper} className={styles.tableContainer}>
+          <Table className={styles.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell className={styles.tableHeader}>Course Code</TableCell>
+                <TableCell className={styles.tableHeader}>Course Name</TableCell>
+                <TableCell className={styles.tableHeader}>Credits</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {courses.length > 0 ? (
+                courses.map((course, index) => (
+                  <TableRow key={index} className={styles.tableRow}>
+                    <TableCell className={styles.tableCell}>{course.courseCode}</TableCell>
+                    <TableCell className={styles.tableCell}>{course.courseName}</TableCell>
+                    <TableCell className={`${styles.tableCell} ${styles.creditsCell}`}>
+                      {course.credits}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className={styles.noDataCell}>
+                    No courses in program
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    </div>
   );
 };
 
