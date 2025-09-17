@@ -36,7 +36,11 @@ const StudentForm: React.FC = () => {
 
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
-      <Typography variant="h6" gutterBottom>
+      <Typography 
+        variant="h4" 
+        component="h1"
+        gutterBottom
+      >
         {isEdit ? "Edit Student" : "Add Student"}
       </Typography>
 

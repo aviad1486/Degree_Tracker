@@ -82,12 +82,12 @@ const HomePage: React.FC = () => {
         <>
           {/* Personal Greeting */}
           <Typography 
-            variant="h5" 
+            variant="h4" 
+            component="h1"
             gutterBottom
             sx={{ 
-              fontSize: { xs: '1.25rem', sm: '1.5rem' },
               textAlign: { xs: 'center', sm: 'left' },
-              mb: { xs: 2, sm: 1 }
+              mb: { xs: 2, sm: 3 }
             }}
           >
             Hello, {studentName ?? "Student"}! 👋
@@ -107,14 +107,14 @@ const HomePage: React.FC = () => {
               <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                 <Typography 
                   variant="h6"
-                  sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}
+                  component="h3"
                 >
                   Credits Completed
                 </Typography>
                 <Typography 
-                  variant="body1"
+                  variant="h5"
+                  component="div"
                   sx={{ 
-                    fontSize: { xs: '1.1rem', sm: '1rem' },
                     fontWeight: 'bold',
                     color: 'primary.main'
                   }}
@@ -128,14 +128,14 @@ const HomePage: React.FC = () => {
               <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                 <Typography 
                   variant="h6"
-                  sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}
+                  component="h3"
                 >
                   Grade Average
                 </Typography>
                 <Typography 
-                  variant="body1"
+                  variant="h5"
+                  component="div"
                   sx={{ 
-                    fontSize: { xs: '1.1rem', sm: '1rem' },
                     fontWeight: 'bold',
                     color: 'secondary.main'
                   }}
@@ -149,14 +149,13 @@ const HomePage: React.FC = () => {
               <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                 <Typography 
                   variant="h6"
-                  sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}
+                  component="h3"
                 >
                   Study Program
                 </Typography>
                 <Typography 
                   variant="body1"
                   sx={{ 
-                    fontSize: { xs: '0.9rem', sm: '1rem' },
                     wordBreak: 'break-word'
                   }}
                 >
