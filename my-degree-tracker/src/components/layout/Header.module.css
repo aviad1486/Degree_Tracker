@@ -1,0 +1,228 @@
+/* Professional Header Styling */
+.headerAppBar {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  position: fixed !important;
+  z-index: 1300 !important;
+}
+
+.headerToolbar {
+  justify-content: space-between !important;
+  min-height: 64px !important;
+  padding: 0 24px !important;
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+@media (max-width: 600px) {
+  .headerToolbar {
+    min-height: 56px !important;
+    padding: 0 8px !important;
+  }
+}
+
+.leftSection {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+}
+
+@media (max-width: 600px) {
+  .leftSection {
+    gap: 8px !important;
+  }
+}
+
+.menuButton {
+  color: inherit !important;
+  transition: all 0.3s ease !important;
+  border-radius: 12px !important;
+}
+
+.menuButton:hover {
+  background-color: rgba(139, 92, 246, 0.2) !important;
+  transform: scale(1.05);
+}
+
+.logoText {
+  color: transparent !important;
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6, #06b6d4) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  font-family: 'Inter', sans-serif !important;
+  transition: all 0.3s ease !important;
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logoText:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
+
+.logoTextDesktop {
+  font-size: 1.5rem !important;
+  display: block !important;
+}
+
+@media (max-width: 600px) {
+  .logoTextDesktop {
+    display: none !important;
+  }
+}
+
+.logoTextMobile {
+  font-size: 1.1rem !important;
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .logoTextMobile {
+    display: block !important;
+  }
+}
+
+.rightSection {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+}
+
+@media (max-width: 600px) {
+  .rightSection {
+    gap: 8px !important;
+  }
+}
+
+.dateTime {
+  color: #94a3b8 !important;
+  font-weight: 500 !important;
+  font-family: 'Inter', sans-serif !important;
+  padding: 8px 16px !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.dateTime:hover {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border-color: rgba(139, 92, 246, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+.dateTimeDesktop {
+  font-size: 0.9rem !important;
+  display: block !important;
+}
+
+@media (max-width: 960px) {
+  .dateTimeDesktop {
+    display: none !important;
+  }
+}
+
+.dateTimeMobile {
+  font-size: 0.8rem !important;
+  display: none !important;
+  padding: 6px 12px !important;
+}
+
+@media (max-width: 960px) {
+  .dateTimeMobile {
+    display: block !important;
+  }
+}
+
+.userButton {
+  color: inherit !important;
+  transition: all 0.3s ease !important;
+  border-radius: 50% !important;
+  padding: 8px !important;
+  background: rgba(139, 92, 246, 0.1) !important;
+  border: 1px solid rgba(139, 92, 246, 0.3) !important;
+}
+
+.userButton:hover {
+  background: rgba(139, 92, 246, 0.2) !important;
+  border-color: rgba(139, 92, 246, 0.5) !important;
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3) !important;
+}
+
+.loginButton {
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6) !important;
+  color: white !important;
+  border: none !important;
+  font-weight: 600 !important;
+  padding: 8px 20px !important;
+  border-radius: 20px !important;
+  text-transform: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.loginButton:hover {
+  background: linear-gradient(135deg, #7c3aed, #2563eb) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4) !important;
+}
+
+@media (max-width: 600px) {
+  .loginButton {
+    font-size: 0.8rem !important;
+    padding: 6px 16px !important;
+  }
+}
+
+.userMenu {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+  margin-top: 8px !important;
+}
+
+.userMenuItem {
+  color: #e2e8f0 !important;
+  padding: 12px 20px !important;
+  font-family: 'Inter', sans-serif !important;
+  transition: all 0.3s ease !important;
+  border-radius: 8px !important;
+  margin: 4px 8px !important;
+}
+
+.userMenuItem:hover {
+  background: rgba(139, 92, 246, 0.2) !important;
+  transform: translateX(4px);
+}
+
+.userMenuItemDisabled {
+  color: #94a3b8 !important;
+  padding: 12px 20px !important;
+  font-family: 'Inter', sans-serif !important;
+  border-radius: 8px !important;
+  margin: 4px 8px !important;
+}
+
+.userMenuItemDisabled:hover {
+  background: transparent !important;
+}
+
+.userName {
+  font-weight: 600 !important;
+  color: #e2e8f0 !important;
+}
+
+.userRole {
+  color: #94a3b8 !important;
+  font-size: 0.8rem !important;
+}

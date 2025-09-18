@@ -25,166 +25,138 @@ import {
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useUserRole } from '../../hooks/useUserRole';
+import styles from './MainDrawer.module.css';
 
 export default function MainDrawer() {
   const { user, permissions } = useUserRole();
 
   return (
-    <div>
+    <div className={styles.drawerContainer}>
       <Toolbar />
       
       {/* Sidebar Header */}
-      <Box sx={{ px: 2, py: 2, borderBottom: '1px solid #e0e0e0' }}>
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            fontWeight: 'bold',
-            color: 'primary.main',
-            fontSize: '1.1rem'
-          }}
-        >
+      <Box className={styles.drawerHeader}>
+        <Typography variant="h6" className={styles.drawerTitle}>
           🎓 Degree Tracker
         </Typography>
-        <Typography 
-          variant="caption" 
-          sx={{ 
-            color: 'text.secondary',
-            fontSize: '0.75rem'
-          }}
-        >
+        <Typography variant="caption" className={styles.drawerSubtitle}>
           Academic Degree Management System
         </Typography>
         {user && (
           <Typography 
             variant="caption" 
-            sx={{ 
-              color: user.role === 'admin' ? 'error.main' : 'success.main',
-              fontSize: '0.7rem',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              display: 'block',
-              mt: 0.5
-            }}
+            className={`${styles.userRole} ${user.role === 'admin' ? styles.userRoleAdmin : ''}`}
           >
-            {user.role === 'admin' ? '👑 Administrator' : '👤 User'}
+            {user.role === 'admin' ? '👑 Administrator' : '🎯 Student'}
           </Typography>
         )}
       </Box>
 
-      <List>
+      <List className={styles.navigationList}>
         {/* Personal Pages */}
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/">
-            <ListItemIcon><HomeIcon /></ListItemIcon>
-            <ListItemText primary="Home" />
+        <ListItem className={styles.listItem} disablePadding>
+          <ListItemButton component={Link} to="/" className={styles.listItemButton}>
+            <ListItemIcon className={styles.listItemIcon}><HomeIcon /></ListItemIcon>
+            <ListItemText primary="Home" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/progress">
-            <ListItemIcon><TimelineIcon /></ListItemIcon>
-            <ListItemText primary="My Progress" />
+        <ListItem className={styles.listItem} disablePadding>
+          <ListItemButton component={Link} to="/progress" className={styles.listItemButton}>
+            <ListItemIcon className={styles.listItemIcon}><TimelineIcon /></ListItemIcon>
+            <ListItemText primary="My Progress" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/grade-report">
-            <ListItemIcon><AssessmentIcon /></ListItemIcon>
-            <ListItemText primary="Grade Report" />
+        <ListItem className={styles.listItem} disablePadding>
+          <ListItemButton component={Link} to="/grade-report" className={styles.listItemButton}>
+            <ListItemIcon className={styles.listItemIcon}><AssessmentIcon /></ListItemIcon>
+            <ListItemText primary="Grade Report" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/my-courses">
-            <ListItemIcon><MenuBookIcon /></ListItemIcon>
-            <ListItemText primary="My Courses" />
+        <ListItem className={styles.listItem} disablePadding>
+          <ListItemButton component={Link} to="/my-courses" className={styles.listItemButton}>
+            <ListItemIcon className={styles.listItemIcon}><MenuBookIcon /></ListItemIcon>
+            <ListItemText primary="My Courses" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/my-program">
-            <ListItemIcon><TableChartIcon /></ListItemIcon>
-            <ListItemText primary="My Program" />
+        <ListItem className={styles.listItem} disablePadding>
+          <ListItemButton component={Link} to="/my-program" className={styles.listItemButton}>
+            <ListItemIcon className={styles.listItemIcon}><TableChartIcon /></ListItemIcon>
+            <ListItemText primary="My Program" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/help">
-            <ListItemIcon><HelpIcon /></ListItemIcon>
-            <ListItemText primary="Help & Support" />
+        <ListItem className={styles.listItem} disablePadding>
+          <ListItemButton component={Link} to="/help" className={styles.listItemButton}>
+            <ListItemIcon className={styles.listItemIcon}><HelpIcon /></ListItemIcon>
+            <ListItemText primary="Help & Support" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 
         {/* Management Screens - Only show if user has permission */}
         {permissions.canViewManagement && (
           <>
-            <Divider sx={{ my: 1 }} />
-            <Box sx={{ px: 2, py: 1 }}>
-              <Typography 
-                variant="caption" 
-                sx={{ 
-                  color: 'text.secondary',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px'
-                }}
-              >
+            <Divider className={styles.sectionDivider} />
+            <Box className={styles.sectionHeader}>
+              <Typography variant="caption" className={styles.sectionTitle}>
                 System Management
               </Typography>
             </Box>
 
             {permissions.canEditStudents && (
-              <ListItem disablePadding>
-                <ListItemButton component={Link} to="/students">
-                  <ListItemIcon><PeopleIcon /></ListItemIcon>
-                  <ListItemText primary="Students List" />
+              <ListItem className={styles.listItem} disablePadding>
+                <ListItemButton component={Link} to="/students" className={styles.listItemButton}>
+                  <ListItemIcon className={styles.listItemIcon}><PeopleIcon /></ListItemIcon>
+                  <ListItemText primary="Students List" className={styles.listItemText} />
                 </ListItemButton>
               </ListItem>
             )}
 
             {permissions.canEditCourses && (
-              <ListItem disablePadding>
-                <ListItemButton component={Link} to="/courses">
-                  <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
-                  <ListItemText primary="Courses List" />
+              <ListItem className={styles.listItem} disablePadding>
+                <ListItemButton component={Link} to="/courses" className={styles.listItemButton}>
+                  <ListItemIcon className={styles.listItemIcon}><LibraryBooksIcon /></ListItemIcon>
+                  <ListItemText primary="Courses List" className={styles.listItemText} />
                 </ListItemButton>
               </ListItem>
             )}
 
             {permissions.canEditStudents && (
-              <ListItem disablePadding>
-                <ListItemButton component={Link} to="/student-courses">
-                  <ListItemIcon><AssignmentIcon /></ListItemIcon>
-                  <ListItemText primary="Student Course Records" />
+              <ListItem className={styles.listItem} disablePadding>
+                <ListItemButton component={Link} to="/student-courses" className={styles.listItemButton}>
+                  <ListItemIcon className={styles.listItemIcon}><AssignmentIcon /></ListItemIcon>
+                  <ListItemText primary="Student Course Records" className={styles.listItemText} />
                 </ListItemButton>
               </ListItem>
             )}
 
             {permissions.canEditPrograms && (
-              <ListItem disablePadding>
-                <ListItemButton component={Link} to="/programs">
-                  <ListItemIcon><SettingsIcon /></ListItemIcon>
-                  <ListItemText primary="Programs List" />
+              <ListItem className={styles.listItem} disablePadding>
+                <ListItemButton component={Link} to="/programs" className={styles.listItemButton}>
+                  <ListItemIcon className={styles.listItemIcon}><SettingsIcon /></ListItemIcon>
+                  <ListItemText primary="Programs List" className={styles.listItemText} />
                 </ListItemButton>
               </ListItem>
             )}
 
             {permissions.canAssignRoles && (
-              <ListItem disablePadding>
-                <ListItemButton component={Link} to="/admin">
-                  <ListItemIcon><AdminIcon /></ListItemIcon>
-                  <ListItemText primary="User Management" />
+              <ListItem className={styles.listItem} disablePadding>
+                <ListItemButton component={Link} to="/admin" className={styles.listItemButton}>
+                  <ListItemIcon className={styles.listItemIcon}><AdminIcon /></ListItemIcon>
+                  <ListItemText primary="User Management" className={styles.listItemText} />
                 </ListItemButton>
               </ListItem>
             )}
           </>
         )}
 
-        <Divider sx={{ my: 1 }} />
+        <Divider className={styles.sectionDivider} />
 
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/logout">
+        <ListItem className={styles.listItem} disablePadding>
+          <ListItemButton component={Link} to="/logout" className={styles.logoutButton}>
             <ListItemIcon><ExitToAppIcon /></ListItemIcon>
             <ListItemText primary="Logout" />
           </ListItemButton>

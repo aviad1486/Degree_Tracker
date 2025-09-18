@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserRole } from '../../hooks/useUserRole';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../firestore/config';
+import styles from './Header.module.css';
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -42,24 +43,15 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   };
 
   return (
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-      <Toolbar sx={{ 
-        justifyContent: 'space-between',
-        minHeight: { xs: 56, sm: 64 },
-        px: { xs: 1, sm: 2 }
-      }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+    <AppBar className={styles.headerAppBar}>
+      <Toolbar className={styles.headerToolbar}>
+        <Box className={styles.leftSection}>
           <IconButton
-            color="inherit"
+            className={styles.menuButton}
             edge="start"
             onClick={onMenuClick}
             aria-label="menu"
-            sx={{ 
-              display: { xs: 'block', sm: 'none' },
-              '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.1)'
-              }
-            }}
+            sx={{ display: { xs: 'block', sm: 'none' } }}
             title="תפריט ניווט"
           >
             <MenuIcon />
@@ -67,60 +59,43 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           <Typography
             variant="h6"
             onClick={() => navigate('/')}
-            sx={{
-              color: 'inherit',
-              textDecoration: 'none',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              fontSize: { xs: '1rem', sm: '1.25rem' },
-              display: { xs: 'none', sm: 'block' }
-            }}
+            className={`${styles.logoText} ${styles.logoTextDesktop}`}
+            sx={{ display: { xs: 'none', sm: 'block' } }}
           >
-            Degree Tracker System
+            🎓 Degree Tracker
           </Typography>
           <Typography
             variant="h6"
             onClick={() => navigate('/')}
-            sx={{
-              color: 'inherit',
-              textDecoration: 'none',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              display: { xs: 'block', sm: 'none' }
-            }}
+            className={`${styles.logoText} ${styles.logoTextMobile}`}
+            sx={{ display: { xs: 'block', sm: 'none' } }}
           >
-            DTS
+            🎓 DTS
           </Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+        <Box className={styles.rightSection}>
           <Typography 
             variant="body2" 
-            sx={{ 
-              display: { xs: 'none', md: 'block' },
-              fontSize: { xs: '0.75rem', sm: '0.875rem' }
-            }}
+            className={`${styles.dateTime} ${styles.dateTimeDesktop}`}
+            sx={{ display: { xs: 'none', md: 'block' } }}
           >
-            {dateTime.toLocaleString()}
+            📅 {dateTime.toLocaleString()}
           </Typography>
           <Typography 
             variant="body2" 
-            sx={{ 
-              display: { xs: 'block', md: 'none' },
-              fontSize: '0.75rem'
-            }}
+            className={`${styles.dateTime} ${styles.dateTimeMobile}`}
+            sx={{ display: { xs: 'block', md: 'none' } }}
           >
-            {dateTime.toLocaleTimeString()}
+            🕒 {dateTime.toLocaleTimeString()}
           </Typography>
           
           {user ? (
             <>
               <IconButton
-                color="inherit"
+                className={styles.userButton}
                 onClick={handleUserMenuClick}
                 size="small"
-                sx={{ ml: 1 }}
                 aria-controls={open ? 'user-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
@@ -133,18 +108,13 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                 open={open}
                 onClose={handleUserMenuClose}
                 onClick={handleUserMenuClose}
+                className={styles.userMenu}
                 PaperProps={{
+                  className: styles.userMenu,
                   elevation: 0,
                   sx: {
                     overflow: 'visible',
-                    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                     mt: 1.5,
-                    '& .MuiAvatar-root': {
-                      width: 32,
-                      height: 32,
-                      ml: -0.5,
-                      mr: 1,
-                    },
                     '&:before': {
                       content: '""',
                       display: 'block',
@@ -153,42 +123,39 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                       right: 14,
                       width: 10,
                       height: 10,
-                      bgcolor: 'background.paper',
+                      bgcolor: 'rgba(15, 23, 42, 0.95)',
                       transform: 'translateY(-50%) rotate(45deg)',
                       zIndex: 0,
+                      border: '1px solid rgba(139, 92, 246, 0.2)',
                     },
                   },
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               >
-                <MenuItem onClick={handleUserMenuClose} disabled>
-                  <Typography variant="body2">
-                    {user.displayName || user.email}
+                <MenuItem className={styles.userMenuItemDisabled} disabled>
+                  <Typography variant="body2" className={styles.userName}>
+                    👤 {user.displayName || user.email}
                   </Typography>
                 </MenuItem>
-                <MenuItem onClick={handleUserMenuClose} disabled>
-                  <Typography variant="caption" color="text.secondary">
-                    {user.role === 'admin' ? '👑 Administrator' : '👤 User'}
+                <MenuItem className={styles.userMenuItemDisabled} disabled>
+                  <Typography variant="caption" className={styles.userRole}>
+                    {user.role === 'admin' ? '👑 Administrator' : '🎯 Student'}
                   </Typography>
                 </MenuItem>
-                <MenuItem onClick={handleLogout}>
-                  Logout
+                <MenuItem className={styles.userMenuItem} onClick={handleLogout}>
+                  🚪 Logout
                 </MenuItem>
               </Menu>
             </>
           ) : (
             <Button
               variant="outlined"
-              color="inherit"
               size="small"
               onClick={() => navigate('/login')}
-              sx={{ 
-                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                px: { xs: 1, sm: 2 }
-              }}
+              className={styles.loginButton}
             >
-              Login
+              🔐 Login
             </Button>
           )}
         </Box>
