@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TextField, Button, Box, Typography, MenuItem, Autocomplete } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import SnackbarNotification from "../../components/ui/SnackbarNotification";
 import { useStudentForm } from "../../hooks/useStudentForm";
 import { collection, getDocs } from "firebase/firestore";
@@ -8,6 +9,7 @@ import { firestore } from "../../firestore/config";
 import styles from "../styles/StudentForm.module.css";
 
 const StudentForm: React.FC = () => {
+  const navigate = useNavigate();
   const {
     data, errors, snackOpen, snackMsg, snackSeverity,
     setSnackOpen, handleChange, handleSubmit, isEdit, setData
@@ -155,7 +157,10 @@ const StudentForm: React.FC = () => {
       />
 
       <Box className={styles.formButtons}>
-        <Button className={styles.cancelButton}>
+        <Button 
+          className={styles.cancelButton}
+          onClick={() => navigate("/students")}
+        >
           Cancel
         </Button>
         <Button
