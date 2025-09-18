@@ -60,42 +60,42 @@ export default function HamburgerDrawer({ onClose }: HamburgerDrawerProps) {
         <ListItem className={styles.listItem} disablePadding>
           <ListItemButton component={Link} to="/" onClick={onClose} className={styles.listItemButton}>
             <ListItemIcon className={styles.listItemIcon}><HomeIcon /></ListItemIcon>
-            <ListItemText primary="🏠 Home" className={styles.listItemText} />
+            <ListItemText primary="Home" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 
         <ListItem className={styles.listItem} disablePadding>
           <ListItemButton component={Link} to="/progress" onClick={onClose} className={styles.listItemButton}>
             <ListItemIcon className={styles.listItemIcon}><TimelineIcon /></ListItemIcon>
-            <ListItemText primary="📈 My Progress" className={styles.listItemText} />
+            <ListItemText primary="My Progress" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 
         <ListItem className={styles.listItem} disablePadding>
           <ListItemButton component={Link} to="/grade-report" onClick={onClose} className={styles.listItemButton}>
             <ListItemIcon className={styles.listItemIcon}><AssessmentIcon /></ListItemIcon>
-            <ListItemText primary="📊 Grade Report" className={styles.listItemText} />
+            <ListItemText primary="Grade Report" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 
         <ListItem className={styles.listItem} disablePadding>
           <ListItemButton component={Link} to="/my-courses" onClick={onClose} className={styles.listItemButton}>
             <ListItemIcon className={styles.listItemIcon}><MenuBookIcon /></ListItemIcon>
-            <ListItemText primary="📚 My Courses" className={styles.listItemText} />
+            <ListItemText primary="My Courses" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 
         <ListItem className={styles.listItem} disablePadding>
           <ListItemButton component={Link} to="/my-program" onClick={onClose} className={styles.listItemButton}>
             <ListItemIcon className={styles.listItemIcon}><TableChartIcon /></ListItemIcon>
-            <ListItemText primary="🎯 My Program" className={styles.listItemText} />
+            <ListItemText primary="My Program" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 
         <ListItem className={styles.listItem} disablePadding>
           <ListItemButton component={Link} to="/help" onClick={onClose} className={styles.listItemButton}>
             <ListItemIcon className={styles.listItemIcon}><HelpIcon /></ListItemIcon>
-            <ListItemText primary="❓ Help & Support" className={styles.listItemText} />
+            <ListItemText primary="Help & Support" className={styles.listItemText} />
           </ListItemButton>
         </ListItem>
 

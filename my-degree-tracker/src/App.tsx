@@ -4,19 +4,19 @@ import { Box, Drawer, Toolbar, Container } from '@mui/material';
 
 import { Header, Footer, MainDrawer, HamburgerDrawer } from './components/layout';
 
-import HomePage from './pages/HomePage';
+import HomePage from './pages/homepage';
 import { StudentForm, StudentList, StudentCourseForm, StudentCourseList } from './features/student-management';
 import { CourseForm, CourseList } from './features/course-management';
 import { ProgramForm, ProgramList } from './features/program-management';
 
-import MyProgress from './pages/MyProgress';
-import GradeReport from './pages/GradeReport';
-import HelpSupport from './pages/HelpSupport';
-import Logout from './pages/Logout';
-import MyCourses from './pages/MyCourses';
-import MyProgram from './pages/MyProgram';
-import Login from './pages/Login';
-import AdminPage from './pages/Admin';
+import MyProgress from './pages/myprogress';
+import GradeReport from './pages/gradereport';
+import HelpSupport from './pages/helpsupport';
+import Logout from './pages/logout';
+import MyCourses from './pages/mycourses';
+import MyProgram from './pages/myprogram';
+import Login from './pages/login';
+import AdminPage from './pages/admin';
 
 import { ProtectedRoute, RoleProtectedRoute, DesktopOnly } from './components/shared';
 
