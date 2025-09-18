@@ -36,7 +36,7 @@ const StudentForm: React.FC = () => {
 
   return (
     <Box className={styles.studentFormContainer}>
-      <Typography className={styles.studentFormTitle}>
+      <Typography variant="h3" className={styles.studentFormTitle}>
         {isEdit ? "Edit Student" : "Add Student"}
       </Typography>
 

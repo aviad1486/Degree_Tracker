@@ -29,7 +29,7 @@ const ProgramForm: React.FC = () => {
 
   return (
     <Box className={styles.programFormContainer}>
-      <Typography variant="h4" className={styles.programFormTitle}>
+      <Typography variant="h3" className={styles.programFormTitle}>
         {isEdit ? "Edit Study Program" : "Add Study Program"}
       </Typography>
 

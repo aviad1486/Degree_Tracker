@@ -1,0 +1,61 @@
+.formContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.formCard {
+  background: #f9fafb;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 600px;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.formTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.formField {
+  margin-top: 1rem !important;
+}
+
+.actionsContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.cancelButton {
+  background: #ef4444 !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+}
+
+.saveButton {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+}
+
+.saveButton:hover {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
