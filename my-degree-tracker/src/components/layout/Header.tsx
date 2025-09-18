@@ -62,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             className={`${styles.logoText} ${styles.logoTextDesktop}`}
             sx={{ display: { xs: 'none', sm: 'block' } }}
           >
-            🎓 Degree Tracker
+            🎓 Degree Tracker System
           </Typography>
           <Typography
             variant="h6"
