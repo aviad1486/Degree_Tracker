@@ -1,0 +1,340 @@
+/* Professional Login Styles */
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background decoration */
+.container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+  animation: rotate 20s linear infinite;
+  z-index: 0;
+}
+
+.container::after {
+  content: '';
+  position: absolute;
+  bottom: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+  animation: rotate -25s linear infinite;
+  z-index: 0;
+}
+
+.loginCard {
+  background: rgba(30, 41, 59, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 24px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+  z-index: 1;
+  animation: fadeInUp 1s ease-out;
+  overflow: hidden;
+}
+
+.loginCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #8b5cf6, #3b82f6, #06b6d4);
+  border-radius: 24px 24px 0 0;
+}
+
+.loginCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 80px rgba(139, 92, 246, 0.3) !important;
+  border-color: rgba(139, 92, 246, 0.5);
+}
+
+.progressBar {
+  height: 4px !important;
+  border-radius: 0 !important;
+  background: rgba(139, 92, 246, 0.2) !important;
+}
+
+.progressBar .MuiLinearProgress-bar {
+  background: linear-gradient(90deg, #8b5cf6, #3b82f6, #06b6d4) !important;
+}
+
+.cardContent {
+  padding: 3rem 2.5rem !important;
+  text-align: center;
+}
+
+.title {
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6, #06b6d4) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  margin-bottom: 0.5rem !important;
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 1.2s ease-out;
+}
+
+.subtitle {
+  color: #94a3b8 !important;
+  font-size: 1.1rem !important;
+  margin-bottom: 2rem !important;
+  font-weight: 400 !important;
+  animation: fadeInUp 1.4s ease-out;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeInUp 1.6s ease-out;
+}
+
+.inputField {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+}
+
+.inputField:hover {
+  background: rgba(255, 255, 255, 1) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2) !important;
+}
+
+.inputField.Mui-focused {
+  background: rgba(255, 255, 255, 1) !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.4) !important;
+}
+
+.inputField .MuiOutlinedInput-root {
+  color: #1f2937 !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+}
+
+.inputField .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(139, 92, 246, 0.4) !important;
+  border-width: 2px !important;
+}
+
+.inputField .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(139, 92, 246, 0.7) !important;
+}
+
+.inputField .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #8b5cf6 !important;
+  border-width: 3px !important;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.3) !important;
+}
+
+.inputField .MuiInputLabel-root {
+  color: rgba(55, 65, 81, 0.8) !important;
+  font-weight: 600 !important;
+}
+
+.inputField .MuiInputLabel-root.Mui-focused {
+  color: #8b5cf6 !important;
+  font-weight: 700 !important;
+}
+
+.loginButton {
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  padding: 0.875rem 2rem !important;
+  border-radius: 12px !important;
+  text-transform: none !important;
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3) !important;
+  transition: all 0.3s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.loginButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.loginButton:hover {
+  background: linear-gradient(135deg, #7c3aed, #2563eb) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4) !important;
+}
+
+.loginButton:hover::before {
+  left: 100%;
+}
+
+.loginButton:disabled {
+  background: rgba(71, 85, 105, 0.5) !important;
+  color: rgba(148, 163, 184, 0.7) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.helpButton {
+  background: transparent !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(71, 85, 105, 0.5) !important;
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 12px !important;
+  text-transform: none !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+}
+
+.helpButton:hover {
+  background: rgba(139, 92, 246, 0.1) !important;
+  border-color: rgba(139, 92, 246, 0.5) !important;
+  color: #c4b5fd !important;
+  transform: translateY(-2px) !important;
+}
+
+.errorAlert {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  border-radius: 12px !important;
+  color: #fca5a5 !important;
+  margin-bottom: 1.5rem !important;
+  animation: shake 0.5s ease-in-out;
+}
+
+.errorAlert .MuiAlert-icon {
+  color: #ef4444 !important;
+}
+
+.welcomeText {
+  color: #cbd5e1 !important;
+  font-size: 0.95rem !important;
+  margin-top: 1.5rem !important;
+  font-style: italic !important;
+  opacity: 0.8;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+    min-height: 100vh;
+  }
+  
+  .loginCard {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 16px !important;
+  }
+  
+  .cardContent {
+    padding: 2rem 1.5rem !important;
+  }
+  
+  .title {
+    font-size: 2rem !important;
+  }
+  
+  .subtitle {
+    font-size: 1rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .form {
+    gap: 1.25rem;
+  }
+  
+  .loginButton {
+    font-size: 1rem !important;
+    padding: 0.75rem 1.5rem !important;
+  }
+  
+  .helpButton {
+    font-size: 0.9rem !important;
+    padding: 0.625rem 1.25rem !important;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    padding: 1.5rem;
+  }
+  
+  .loginCard {
+    max-width: 400px;
+  }
+}
+
+/* Focus styles for accessibility */
+.loginButton:focus,
+.helpButton:focus {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+}
+
+.inputField:focus-within {
+  outline: 2px solid rgba(139, 92, 246, 0.5);
+  outline-offset: 2px;
+}

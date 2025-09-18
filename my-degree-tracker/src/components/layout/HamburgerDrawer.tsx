@@ -159,7 +159,7 @@ export default function HamburgerDrawer({ onClose }: HamburgerDrawerProps) {
               <ListItem disablePadding>
                 <ListItemButton component={Link} to="/student-courses" onClick={onClose}>
                   <ListItemIcon><AssignmentIcon /></ListItemIcon>
-                  <ListItemText primary="Student Grades" />
+                  <ListItemText primary="Student Course Records" />
                 </ListItemButton>
               </ListItem>
             )}

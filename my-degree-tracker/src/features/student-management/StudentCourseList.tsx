@@ -82,7 +82,7 @@ const StudentCourseList: React.FC = () => {
       <Card className={styles.listCard}>
         <CardContent>
           <Typography variant="h2" className={styles.listTitle}>
-            Student Grades
+            Student Course Records
           </Typography>
 
           <TableContainer component={Paper}>

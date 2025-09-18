@@ -156,7 +156,7 @@ export default function MainDrawer() {
               <ListItem disablePadding>
                 <ListItemButton component={Link} to="/student-courses">
                   <ListItemIcon><AssignmentIcon /></ListItemIcon>
-                  <ListItemText primary="Student Grades" />
+                  <ListItemText primary="Student Course Records" />
                 </ListItemButton>
               </ListItem>
             )}

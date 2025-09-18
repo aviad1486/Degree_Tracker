@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Box,
   Typography,
   TextField,
   Button,
@@ -11,8 +10,9 @@ import {
 } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth, firestore } from "../firestore/config"; // הקובץ שלך
+import { auth, firestore } from "../firestore/config";
 import { doc, getDoc } from "firebase/firestore";
+import styles from "../styles/Login.module.css";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");       // מייל של המשתמש
@@ -64,112 +64,74 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: { xs: "calc(100vh - 120px)", sm: "80vh" },
-        p: { xs: 2, sm: 3 }
-      }}
-    >
-      <Card sx={{ 
-        width: { xs: '100%', sm: 400 }, 
-        maxWidth: 400,
-        boxShadow: { xs: 2, sm: 3 }
-      }}>
-        {loading && <LinearProgress />}
-        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-          <Typography 
-            variant="h5" 
-            gutterBottom
-            sx={{ 
-              fontSize: { xs: '1.25rem', sm: '1.5rem' },
-              textAlign: 'center',
-              mb: { xs: 2, sm: 3 }
-            }}
-          >
-            Login 🔐
+    <div className={styles.container}>
+      <Card className={styles.loginCard}>
+        {loading && <LinearProgress className={styles.progressBar} />}
+        <CardContent className={styles.cardContent}>
+          <Typography variant="h4" className={styles.title}>
+            Welcome 
+          </Typography>
+          <Typography variant="body1" className={styles.subtitle}>
+            Sign in to access your degree tracker
           </Typography>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+            <Alert severity="error" className={styles.errorAlert}>
               {error}
             </Alert>
           )}
 
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleLogin} className={styles.form}>
             <TextField
               id="email"
-              label="Email"
+              label="Email Address"
+              type="email"
               fullWidth
-              margin="normal"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              size={window.innerWidth < 600 ? 'small' : 'medium'}
-              sx={{ 
-                '& .MuiInputLabel-root': { 
-                  fontSize: { xs: '0.875rem', sm: '1rem' } 
-                },
-                '& .MuiInputBase-input': { 
-                  fontSize: { xs: '0.875rem', sm: '1rem' } 
-                }
-              }}
+              className={styles.inputField}
+              variant="outlined"
             />
             <TextField
               id="password"
               label="Password (ID Number)"
               type="password"
               fullWidth
-              margin="normal"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              size={window.innerWidth < 600 ? 'small' : 'medium'}
-              sx={{ 
-                '& .MuiInputLabel-root': { 
-                  fontSize: { xs: '0.875rem', sm: '1rem' } 
-                },
-                '& .MuiInputBase-input': { 
-                  fontSize: { xs: '0.875rem', sm: '1rem' } 
-                }
-              }}
+              className={styles.inputField}
+              variant="outlined"
             />
 
             <Button
               type="submit"
               variant="contained"
-              color="primary"
               fullWidth
-              sx={{ 
-                mt: { xs: 2, sm: 2 },
-                py: { xs: 1.5, sm: 1 },
-                fontSize: { xs: '0.875rem', sm: '1rem' }
-              }}
+              className={styles.loginButton}
               disabled={loading}
             >
-              Login
+              {loading ? "Signing In..." : "Sign In"}
             </Button>
 
             <Button
               variant="outlined"
-              color="secondary"
               fullWidth
-              sx={{ 
-                mt: 1,
-                py: { xs: 1.5, sm: 1 },
-                fontSize: { xs: '0.875rem', sm: '1rem' }
-              }}
+              className={styles.helpButton}
               component={Link}
               to="/help"
             >
               Need Help? 🆘
             </Button>
           </form>
+
+          <Typography variant="body2" className={styles.welcomeText}>
+            Track your academic journey with confidence
+          </Typography>
         </CardContent>
       </Card>
-    </Box>
+    </div>
   );
 };
 
