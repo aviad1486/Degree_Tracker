@@ -10,11 +10,11 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Paper,
   IconButton,
   Tooltip,
   Skeleton,
   Button,
-  Paper,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -22,34 +22,48 @@ import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { firestore } from "../../firestore/config";
 import type { Course } from "../../models/Course";
 
-import styles from "../styles/CourseList.module.css";
+import SnackbarNotification from "../../components/ui/SnackbarNotification";
+import styles from "../styles/Lists.module.css";
 
 const CourseList: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackMsg, setSnackMsg] = useState("");
+  const [snackSeverity, setSnackSeverity] = useState<"success" | "error">("success");
+
   const navigate = useNavigate();
 
   const fetchCourses = async () => {
     try {
       const snapshot = await getDocs(collection(firestore, "courses"));
-      const data: Course[] = snapshot.docs.map((docSnap) => ({
+      const data = snapshot.docs.map((docSnap) => ({
         ...(docSnap.data() as Course),
         courseCode: docSnap.id,
       }));
       setCourses(data);
     } catch (error) {
       console.error("❌ Error fetching courses:", error);
+      setSnackMsg("Error fetching courses");
+      setSnackSeverity("error");
+      setSnackOpen(true);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (courseCode: string) => {
     try {
-      await deleteDoc(doc(firestore, "courses", id));
-      setCourses((prev) => prev.filter((c) => c.courseCode !== id));
+      await deleteDoc(doc(firestore, "courses", courseCode));
+      setCourses((prev) => prev.filter((c) => c.courseCode !== courseCode));
+      setSnackMsg("Course deleted successfully");
+      setSnackSeverity("success");
+      setSnackOpen(true);
     } catch (error) {
       console.error("❌ Error deleting course:", error);
+      setSnackMsg("Error deleting course");
+      setSnackSeverity("error");
+      setSnackOpen(true);
     }
   };
 
@@ -58,29 +72,41 @@ const CourseList: React.FC = () => {
   }, []);
 
   return (
-    <Box className={styles.courseListContainer}>
-      <Card className={styles.courseListCard}>
+    <Box className={styles.listContainer}>
+      <Card className={styles.listCard}>
         <CardContent>
-          <Typography className={styles.courseListTitle}>
-            Course Management
+          <Typography variant="h2" className={styles.listTitle}>
+            Course List
           </Typography>
 
-          <TableContainer component={Paper} className={styles.tableWrapper}>
+          <TableContainer component={Paper}>
             <Table>
-              <TableHead className={styles.tableHeader}>
+              <TableHead className={styles.listTableHeader}>
                 <TableRow>
-                  <TableCell className={styles.tableHeaderCell}>Code</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Name</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Credits</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Semester</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Assignments</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Actions</TableCell>
+                  <TableCell className={styles.listTableHeaderCell}>
+                    Course Code
+                  </TableCell>
+                  <TableCell className={styles.listTableHeaderCell}>
+                    Course Name
+                  </TableCell>
+                  <TableCell className={styles.listTableHeaderCell}>
+                    Credits
+                  </TableCell>
+                  <TableCell className={styles.listTableHeaderCell}>
+                    Semester
+                  </TableCell>
+                  <TableCell className={styles.listTableHeaderCell}>
+                    Assignments
+                  </TableCell>
+                  <TableCell className={styles.listTableHeaderCell}>
+                    Actions
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {loading ? (
                   Array.from({ length: 3 }).map((_, i) => (
-                    <TableRow key={i}>
+                    <TableRow key={i} className={styles.loadingSkeleton}>
                       <TableCell colSpan={6}>
                         <Skeleton variant="rectangular" height={40} />
                       </TableCell>
@@ -94,23 +120,23 @@ const CourseList: React.FC = () => {
                   </TableRow>
                 ) : (
                   courses.map((course) => (
-                    <TableRow key={course.courseCode} className={styles.tableRow}>
-                      <TableCell className={styles.tableCell}>
+                    <TableRow key={course.courseCode} className={styles.listTableRow}>
+                      <TableCell className={styles.listTableCell}>
                         {course.courseCode}
                       </TableCell>
-                      <TableCell className={styles.tableCell}>
+                      <TableCell className={styles.listTableCell}>
                         {course.courseName}
                       </TableCell>
-                      <TableCell className={styles.tableCell}>
+                      <TableCell className={styles.listTableCell}>
                         {course.credits}
                       </TableCell>
-                      <TableCell className={styles.tableCell}>
+                      <TableCell className={styles.listTableCell}>
                         {course.semester}
                       </TableCell>
-                      <TableCell className={styles.tableCell}>
+                      <TableCell className={styles.listTableCell}>
                         {(course.assignments || []).join(", ")}
                       </TableCell>
-                      <TableCell className={styles.tableCell}>
+                      <TableCell className={styles.listTableCell}>
                         <Tooltip title="Edit">
                           <IconButton
                             size="small"
@@ -137,17 +163,20 @@ const CourseList: React.FC = () => {
             </Table>
           </TableContainer>
 
-          <Box sx={{ textAlign: "center", mt: 3 }}>
-            <Button
-              variant="contained"
-              onClick={() => navigate("/courses/new")}
-              className={styles.addButton}
-            >
+          <Box sx={{ textAlign: "right", mt: 2 }}>
+            <Button variant="contained" onClick={() => navigate("/courses/new")}>
               ➕ Add Course
             </Button>
           </Box>
         </CardContent>
       </Card>
+
+      <SnackbarNotification
+        open={snackOpen}
+        severity={snackSeverity}
+        message={snackMsg}
+        onClose={() => setSnackOpen(false)}
+      />
     </Box>
   );
 };

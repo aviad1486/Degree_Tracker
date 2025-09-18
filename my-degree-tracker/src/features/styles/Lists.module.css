@@ -1,5 +1,5 @@
 /* עמוד כללי */
-.studentListContainer {
+.listContainer {
   padding: 1.5rem;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   min-height: 100vh;
@@ -9,7 +9,7 @@
 }
 
 /* כרטיס כללי */
-.studentListCard {
+.listCard {
   background: rgba(30, 41, 59, 0.92);
   border-radius: 20px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
@@ -20,7 +20,7 @@
 }
 
 /* כותרת */
-.studentListTitle {
+.listTitle {
   font-size: 5rem;
   font-weight: 800;
   text-align: center;
@@ -34,11 +34,11 @@
 }
 
 /* טבלה */
-.studentTableHeader {
+.listTableHeader {
   background: linear-gradient(90deg, #3b82f6, #06b6d4);
 }
 
-.studentTableHeaderCell {
+.listTableHeaderCell {
   font-weight: 700 !important;
   color: #ffffff !important;
   font-size: 1rem !important;
@@ -46,16 +46,16 @@
   padding: 1rem !important;
 }
 
-.studentTableRow {
+.listTableRow {
   transition: all 0.3s ease-in-out;
 }
 
-.studentTableRow:hover {
+.listTableRow:hover {
   background: rgba(59, 130, 246, 0.08) !important;
   transform: scale(1.01);
 }
 
-.studentTableCell {
+.listTableCell {
   text-align: center !important;
   color: #000000 !important;
   font-weight: 500 !important;

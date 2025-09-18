@@ -1,3 +1,4 @@
+// src/Forms/ProgramList.tsx
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -13,85 +14,92 @@ import {
   Paper,
   IconButton,
   Tooltip,
-  Button,
   Skeleton,
+  Button,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import type { Program } from "../../models/Program";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-
 import { firestore } from "../../firestore/config";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import type { Program } from "../../models/Program";
 
-import styles from "../styles/ProgramList.module.css";
+import SnackbarNotification from "../../components/ui/SnackbarNotification";
+import styles from "../styles/Lists.module.css";
 
 const ProgramList: React.FC = () => {
   const [programs, setPrograms] = useState<(Program & { id: string })[]>([]);
   const [loading, setLoading] = useState(true);
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackMsg, setSnackMsg] = useState("");
+  const [snackSeverity, setSnackSeverity] = useState<"success" | "error">("success");
   const navigate = useNavigate();
 
   // טוען את כל ה-Programs מ-Firestore
-  useEffect(() => {
-    const fetchPrograms = async () => {
-      try {
-        const snap = await getDocs(collection(firestore, "programs"));
-        const data = snap.docs.map((d) => ({
-          id: d.id,
-          ...(d.data() as Program),
-        }));
-        setPrograms(data);
-      } catch (err) {
-        console.error("❌ Error fetching programs:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPrograms();
-  }, []);
+  const fetchPrograms = async () => {
+    try {
+      const snap = await getDocs(collection(firestore, "programs"));
+      const data = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Program) }));
+      setPrograms(data);
+    } catch (error) {
+      console.error("❌ Error fetching programs:", error);
+      setSnackMsg("Error loading programs");
+      setSnackSeverity("error");
+      setSnackOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // מוחק Program לפי ה-id שלו
   const handleDelete = async (docId: string) => {
-    await deleteDoc(doc(firestore, "programs", docId));
-    setPrograms((prev) => prev.filter((p) => p.id !== docId));
+    try {
+      await deleteDoc(doc(firestore, "programs", docId));
+      setPrograms((prev) => prev.filter((p) => p.id !== docId));
+      setSnackMsg("Program deleted successfully");
+      setSnackSeverity("success");
+      setSnackOpen(true);
+    } catch (error) {
+      console.error("❌ Error deleting program:", error);
+      setSnackMsg("Error deleting program");
+      setSnackSeverity("error");
+      setSnackOpen(true);
+    }
   };
 
   const handleEdit = (docId: string) => {
     navigate(`/programs/edit/${docId}`);
   };
 
+  useEffect(() => {
+    fetchPrograms();
+  }, []);
+
   return (
-    <Box className={styles.programListContainer}>
-      <Card className={styles.programListCard}>
+    <Box className={styles.listContainer}>
+      <Card className={styles.listCard}>
         <CardContent>
-          <Typography className={styles.programListTitle}>
+          <Typography variant="h2" className={styles.listTitle}>
             Study Programs
           </Typography>
 
-          <TableContainer component={Paper} className={styles.tableWrapper}>
-            <Table size="small">
-              <TableHead>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead className={styles.listTableHeader}>
                 <TableRow>
-                  <TableCell className={styles.tableHeaderCell}>
+                  <TableCell className={styles.listTableHeaderCell}>
                     Program Name
                   </TableCell>
-                  <TableCell className={styles.tableHeaderCell}>
+                  <TableCell className={styles.listTableHeaderCell}>
                     Total Credits
                   </TableCell>
-                  <TableCell
-                    className={styles.tableHeaderCell}
-                    sx={{ display: { xs: "none", md: "table-cell" } }}
-                  >
+                  <TableCell className={styles.listTableHeaderCell}>
                     Courses
                   </TableCell>
-                  <TableCell
-                    className={styles.tableHeaderCell}
-                    sx={{ display: { xs: "none", lg: "table-cell" } }}
-                  >
+                  <TableCell className={styles.listTableHeaderCell}>
                     Created
                   </TableCell>
                   <TableCell
-                    className={styles.tableHeaderCell}
+                    className={styles.listTableHeaderCell}
                     align="right"
                   >
                     Actions
@@ -101,7 +109,7 @@ const ProgramList: React.FC = () => {
               <TableBody>
                 {loading ? (
                   Array.from({ length: 3 }).map((_, i) => (
-                    <TableRow key={i}>
+                    <TableRow key={i} className={styles.loadingSkeleton}>
                       <TableCell colSpan={5}>
                         <Skeleton variant="rectangular" height={40} />
                       </TableCell>
@@ -110,40 +118,34 @@ const ProgramList: React.FC = () => {
                 ) : programs.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className={styles.emptyState}>
-                      No study programs found.
+                      No study programs found
                     </TableCell>
                   </TableRow>
                 ) : (
                   programs.map((program) => (
-                    <TableRow key={program.id} className={styles.tableRow}>
-                      <TableCell className={styles.tableCell}>
+                    <TableRow key={program.id} className={styles.listTableRow}>
+                      <TableCell className={styles.listTableCell}>
                         {program.name}
                       </TableCell>
-                      <TableCell className={styles.tableCell}>
+                      <TableCell className={styles.listTableCell}>
                         {program.totalCreditsRequired}
                       </TableCell>
-                      <TableCell
-                        className={styles.tableCell}
-                        sx={{ display: { xs: "none", md: "table-cell" } }}
-                      >
+                      <TableCell className={styles.listTableCell}>
                         {program.courses.join(", ")}
                       </TableCell>
-                      <TableCell
-                        className={styles.tableCell}
-                        sx={{ display: { xs: "none", lg: "table-cell" } }}
-                      >
+                      <TableCell className={styles.listTableCell}>
                         {program.createdAt
                           ? new Date(program.createdAt).toLocaleString()
                           : "—"}
                       </TableCell>
                       <TableCell
-                        className={`${styles.tableCell} ${styles.actionsCell}`}
+                        className={styles.listTableCell}
                         align="right"
                       >
                         <Tooltip title="Edit">
                           <IconButton
-                            onClick={() => handleEdit(program.id)}
                             size="small"
+                            onClick={() => handleEdit(program.id)}
                             className={`${styles.actionButton} ${styles.editButton}`}
                           >
                             <EditIcon fontSize="small" />
@@ -151,8 +153,8 @@ const ProgramList: React.FC = () => {
                         </Tooltip>
                         <Tooltip title="Delete">
                           <IconButton
-                            onClick={() => handleDelete(program.id)}
                             size="small"
+                            onClick={() => handleDelete(program.id)}
                             className={`${styles.actionButton} ${styles.deleteButton}`}
                           >
                             <DeleteIcon fontSize="small" />
@@ -170,13 +172,19 @@ const ProgramList: React.FC = () => {
             <Button
               variant="contained"
               onClick={() => navigate("/programs/new")}
-              className={styles.addButton}
             >
               ➕ Add Program
             </Button>
           </Box>
         </CardContent>
       </Card>
+
+      <SnackbarNotification
+        open={snackOpen}
+        severity={snackSeverity}
+        message={snackMsg}
+        onClose={() => setSnackOpen(false)}
+      />
     </Box>
   );
 };
