@@ -130,9 +130,18 @@ const MyCourses: React.FC = () => {
 
   if (loading) {
     return (
-      <div className={styles.loading}>
-        <Typography variant="h6" className={styles.title}>Loading your courses...</Typography>
-        <LinearProgress className={styles.progressBar} />
+      <div className={styles.loading} style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        textAlign: 'center'
+      }}>
+        <Typography variant="h6" className={styles.title} style={{ color: 'white', marginBottom: '1rem' }}>
+          Loading your courses...
+        </Typography>
+        <LinearProgress className={styles.progressBar} style={{ width: '300px', height: '4px' }} />
       </div>
     );
   }

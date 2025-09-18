@@ -112,10 +112,26 @@ const GradeReport: React.FC = () => {
     return () => unsub();
   }, []);
 
+  if (loading) {
+    return (
+      <div className={styles.gradeReportContainer} style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        textAlign: 'center'
+      }}>
+        <Typography variant="h6" style={{ color: 'white', marginBottom: '1rem' }}>
+          Loading Grade Report...
+        </Typography>
+        <LinearProgress style={{ width: '300px', height: '4px' }} />
+      </div>
+    );
+  }
+
   return (
     <div className={styles.gradeReportContainer}>
-      {loading && <LinearProgress className={styles.loadingBar} />}
-
       {!loading && student && (
         <>
           {/* Professional Page Title */}

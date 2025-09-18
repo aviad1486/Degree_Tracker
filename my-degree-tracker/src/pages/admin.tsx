@@ -25,8 +25,8 @@ import {
   Switch,
   FormControlLabel,
   Alert,
-  Skeleton,
   Tooltip,
+  LinearProgress,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -95,6 +95,24 @@ const AdminPage: React.FC = () => {
     return isActive ? 'success' : 'warning';
   };
 
+  if (loading) {
+    return (
+      <Box className={styles.adminContainer} style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        textAlign: 'center'
+      }}>
+        <Typography variant="h6" style={{ color: 'white', marginBottom: '1rem' }}>
+          👥 Loading User Management...
+        </Typography>
+        <LinearProgress style={{ width: '300px', height: '4px' }} />
+      </Box>
+    );
+  }
+
   return (
     <Box className={styles.adminContainer} sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -139,17 +157,7 @@ const AdminPage: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {loading ? (
-                  Array.from({ length: 3 }).map((_, index) => (
-                    <TableRow key={index}>
-                      {Array.from({ length: 5 }).map((_, cellIndex) => (
-                        <TableCell key={cellIndex}>
-                          <Skeleton variant="text" />
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : users.length === 0 ? (
+                {users.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
                       <Typography color="text.secondary">

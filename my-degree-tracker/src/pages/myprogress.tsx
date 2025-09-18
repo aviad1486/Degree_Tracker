@@ -84,10 +84,26 @@ const MyProgress: React.FC = () => {
 
   const progressPercent = Math.round((completedCredits / totalCredits) * 100);
 
+  if (loading) {
+    return (
+      <div className={styles.progressContainer} style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        textAlign: 'center'
+      }}>
+        <Typography variant="h6" style={{ color: 'white', marginBottom: '1rem' }}>
+          Loading Your Progress...
+        </Typography>
+        <LinearProgress style={{ width: '300px', height: '4px' }} />
+      </div>
+    );
+  }
+
   return (
     <div className={styles.progressContainer}>
-      {loading && <LinearProgress className={styles.loadingBar} />}
-
       {!loading && (
         <>
           {/* Professional Page Title */}

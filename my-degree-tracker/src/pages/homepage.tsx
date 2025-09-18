@@ -74,10 +74,26 @@ const HomePage: React.FC = () => {
     return () => unsub();
   }, []);
 
+  if (loading) {
+    return (
+      <div className={styles.homepageContainer} style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        textAlign: 'center'
+      }}>
+        <Typography variant="h6" style={{ color: 'white', marginBottom: '1rem' }}>
+          Loading Your Dashboard...
+        </Typography>
+        <LinearProgress style={{ width: '300px', height: '4px' }} />
+      </div>
+    );
+  }
+
   return (
     <div className={styles.homepageContainer}>
-      {loading && <LinearProgress className={styles.loadingBar} />}
-
       {!loading && (
         <>
           {/* Professional Welcome Title */}

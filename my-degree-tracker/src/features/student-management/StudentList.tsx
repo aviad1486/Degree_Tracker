@@ -13,8 +13,8 @@ import {
   Paper,
   IconButton,
   Tooltip,
-  Skeleton,
   Button,
+  LinearProgress,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -73,6 +73,24 @@ const StudentList: React.FC = () => {
     fetchStudents();
   }, []);
 
+  if (loading) {
+    return (
+      <Box className={styles.listContainer} style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        textAlign: 'center'
+      }}>
+        <Typography variant="h6" style={{ color: 'white', marginBottom: '1rem' }}>
+          📚 Loading Student List...
+        </Typography>
+        <LinearProgress style={{ width: '300px', height: '4px' }} />
+      </Box>
+    );
+  }
+
   return (
     <Box className={styles.listContainer}>
       <Card className={styles.listCard}>
@@ -97,15 +115,7 @@ const StudentList: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {loading ? (
-                  Array.from({ length: 3 }).map((_, i) => (
-                    <TableRow key={i} className={styles.loadingSkeleton}>
-                      <TableCell colSpan={7}>
-                        <Skeleton variant="rectangular" height={40} />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : students.length === 0 ? (
+                {students.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className={styles.emptyState}>
                       No students found
