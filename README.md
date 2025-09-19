@@ -1,13 +1,12 @@
 # 🎓 Degree Tracker - Your Academic Journey Simplified
 
-[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://degree-tracker-fe674.web.app)
+[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)]
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Material-UI](https://img.shields.io/badge/Material--UI-0081CB?style=for-the-badge&logo=material-ui&logoColor=white)](https://mui.com/)
 
 > **Transform your academic experience with intelligent degree management**
 
-[🌐 **Live Demo**](https://degree-tracker-fe674.web.app) | [📊 **Project Console**](https://console.firebase.google.com/project/degree-tracker-fe674/overview)
 
 ---
 
@@ -108,7 +107,7 @@ Every year, thousands of students struggle with:
 
 ### 🚀 **Start Your Academic Success Journey Today!**
 
-[**Get Started Now →**](https://degree-tracker-fe674.web.app)
+[**Get Started Now →**]
 
 *Transform the way you track, plan, and achieve your academic goals.*
 
